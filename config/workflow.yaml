@@ -1,0 +1,5688 @@
+# 所有带General-Poc-的都是所有资产都要运行这个Poc
+General-Poc-Shiro:
+  type:
+    - root
+    - base
+  pocs:
+    - technologies/shiro-detect.yaml
+General-Poc-Leak:
+  type:
+    - root
+  pocs:
+    - git-config.yaml
+    - exposed-svn.yaml
+General-Poc-Log4j2:
+  type:
+    - root
+    - base
+  pocs:
+    # Apache Log4j2 JNDI 远程命令执行漏洞
+    - cves/2021/CVE-2021-44228.yaml
+    - cves/2021/CVE-2021-45046.yaml
+# 若依 ruoyi
+若依-管理系统:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/ruoyi/ruoyi-shiro-default-key-cbc.yaml
+    - pocs/user/vulnerabilities/ruoyi/ruoyi-shiro-default-key-gcm.yaml
+EasyReport:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/easyreport/easyreport-shiro-default-key-cbc.yaml
+    - pocs/user/vulnerabilities/easyreport/easyreport-default-login.yaml
+泛微-EMobile:
+  type:
+    - root
+  pocs:
+    - cnvd/2017/CNVD-2017-03561.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-mobile-upload-save-arbitrary-file-upload.yaml
+    - weaver-e-mobile-client-do-rce.yaml
+MetInfo:
+  type:
+    - root
+  pocs:
+    - cnvd/2018/CNVD-2018-13393.yaml
+    - cves/2019/CVE-2019-16996.yaml
+    - cves/2019/CVE-2019-16997.yaml
+    - cves/2019/CVE-2019-17418.yaml
+    - vulnerabilities/other/metinfo-lfi.yaml
+Xiuno-BBS:
+  type:
+    - root
+  pocs:
+    - cnvd/2019/CNVD-2019-01348.yaml
+catfishcms:
+  type:
+    - root
+  pocs:
+    - cnvd/2019/CNVD-2019-06255.yaml
+致远互联-OA:
+  type:
+    - root
+  pocs:
+    # 致远OA A8 htmlofficeservlet 任意文件上传漏洞
+    - pocs/user/cnvd/2019/CNVD-2019-19299.yaml
+    # seeyon/webmail.do 任意文件下载
+    - cnvd/2020/CNVD-2020-62422.yaml
+    # 未授权访问
+    - misconfiguration/seeyon-unauth.yaml
+    # ajax.do 未授权访问
+    - misconfiguration/zhiyuan-oa-unauthorized.yaml
+    # NCFindWeb 目录遍历
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    # CNVD-2021-01627 thirdpartyController ajax.do 任意文件上传
+    - vulnerabilities/seeyon/zhiyuan-file-upload.yaml
+    # 致远OA A6 DownExcelBeanServlet 用户敏感信息泄露 下载OA中的用户信息
+    - vulnerabilities/seeyon/zhiyuan-oa-info-leak.yaml
+    # getSessionList.jsp Session泄漏漏洞
+    - vulnerabilities/seeyon/zhiyuan-oa-session-leak.yaml
+    # 致远OA ajax.do 任意文件上传 CNVD-2021-01627
+    - pocs/user/vulnerabilities/seeyon/seeyon-ajax-unauth.yaml
+    # 致远OA A6 config.jsp 敏感信息泄漏漏洞
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-a6-config-jsp-info-leak.yaml
+    # 致远OA A6 createMysql.jsp 数据库敏感信息泄露
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-a6-createMysql-user-info-leak.yaml
+    # 致远OA A6 initDataAssess.jsp 用户敏感信息泄露
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-a6-initDataAssess-user-info-leak.yaml
+    # 致远OA A6 setextno.jsp SQL注入漏洞
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-a6-setextno-sqli.yaml
+    # A8+企业版 默认口令
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-a8-default-login.yaml
+    # 致远OA A8 status.jsp 信息泄露漏洞 状态监控页面信息泄露
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-a8-m-information-disclosure.yaml
+    # 致远OA Fastjson 远程代码执行
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-fastjson-rce.yaml
+    # 致远OA log4jshell
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-log4jshell.yaml
+    # 致远OA wpsAssistServlet 任意文件上传漏洞
+    - pocs/user/vulnerabilities/seeyon/seeyon-oa-sp2-wpsAssistServlet-arbitrary-file-upload.yaml
+泛微-协同办公OA:
+  type:
+    - root
+  pocs:
+    # 泛微 Beanshell RCE
+    - cnvd/2019/CNVD-2019-32204.yaml
+    # /page/exportImport/uploadOperation.jsp 任意文件上传
+    - vulnerabilities/weaver/ecology/ecology-arbitrary-file-upload.yaml
+    # weaver/ln.FileDownload? 任意文件包含
+    - vulnerabilities/weaver/ecology/ecology-filedownload-directory-traversal.yaml
+    # org.springframework.web 本地文件包含
+    - vulnerabilities/weaver/ecology/ecology-springframework-directory-traversal.yaml
+    # SyncUserInfo.jsp sql注入
+    - vulnerabilities/weaver/ecology/ecology-syncuserinfo-sqli.yaml
+    # getdata.jsp?cmd=getSelectAllId 注入
+    - vulnerabilities/weaver/ecology/ecology-v8-sqli.yaml
+    # 泛微OA E-Cology uploadOperation.jsp 任意文件上传
+    - vulnerabilities/weaver/oa-v9-uploads-file.yaml
+    # 泛微 Beanshell RCE
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-bshservlet-rce.yaml
+    # getdata.jsp?cmd=getSelectAllId sql注入
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-getdata-sqli.yaml
+    # 泛微OA E-Cology getSqlData SQL注入
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-getsqldata-sqli.yaml
+    # 泛微OA E-Cology HrmCareerApplyPerView.jsp SQL注入漏洞
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-hrmcarreerapplyperview-sqli.yaml
+    # 泛微OA E-Cology jqueryFileTree.jsp 目录遍历漏洞
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-jqueryfiletree-directory-traversal.yaml
+    # KtreeUploadAction 任意文件上传
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-ktreeuploadaction-arbitrary-file-upload.yaml
+    # 泛微OA E-Cology LoginSSO.jsp SQL注入漏洞 CNVD-2021-33202
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-loginsso-sqli.yaml
+    # SptmForPortalThumbnail.jsp 任意文件读取
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-sptmforportalthumbnail-arbitrary-file-read.yaml
+    # 泛微OA E-Cology uploadOperation.jsp 任意文件上传
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-uploadoperation-arbitrary-file-upload.yaml
+    # validate.jsp sql注入
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-validate-sqli.yaml
+    # 泛微OA E-Cology VerifyQuickLogin.jsp 任意管理员登录漏洞
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-verifyquicklogin-arbitrary-login.yaml
+    # 泛微OA E-Cology WorkflowCenterTreeData SQL注入漏洞
+    - pocs/user/vulnerabilities/weaver/weaver-e-cology-workflowcentertreedata-sqli.yaml
+    # 泛微OA E-Weaver SignatureDownLoad接口存在任意文件读取漏洞
+    - pocs/user/vulnerabilities/weaver/weaver-e-weaver-signaturedownload-arbitrary-file-read.yaml
+    # checkserver sql注入漏洞
+    - weaver-ecology-oa-plugin-checkserver-setting-sqli.yaml
+    # E-Cology V9 - SQL Injection
+    - CNVD-2023-12632.yaml
+    - ecology-oa-byxml-xxe.yaml
+    - ecology-oa-filedownloadforoutdoc-sqli.yaml
+泛微-EOffice:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-49104.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-group-xml-sqli.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-mobile-upload-save-arbitrary-file-upload.yaml
+    # 官方的
+    - vulnerabilities/weaver/ecology/ecology-mysql-config.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-mysql-config-info-leak.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-officeserver-arbitrary-file-read.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-uploadify-arbitrary-file-upload.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-uploadify-arbitrary-file-upload2.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-uploadify-arbitrary-file-upload3.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-userselect-unauth.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-v10-office-server-arbitrary-file-upload.yaml
+    - pocs/user/vulnerabilities/weaver/weaver-e-office-xmlrpcservlet-arbitrary-file-read.yaml
+    - weaver-e-office-login-quick-seesionkey.yaml
+SangFor-EDR:
+  type:
+    - root
+  pocs:
+    - cnvd/2020/CNVD-2020-46552.yaml
+    - vulnerabilities/sangfor/sangfor-edr-auth-bypass.yaml
+    - vulnerabilities/sangfor/sangfor-edr-rce.yaml
+锐捷Smartweb:
+  type:
+    - root
+  pocs:
+    - cnvd/2020/CNVD-2020-56167.yaml
+    - cnvd/2021/CNVD-2021-17369.yaml
+H5S视频平台:
+  type:
+    - root
+  pocs:
+    - cnvd/2020/CNVD-2020-67113.yaml
+weiphp:
+  type:
+    - root
+  pocs:
+    - cnvd/2020/CNVD-2020-68596.yaml
+    - cves/2020/CVE-2020-20300.yaml
+    - exposed-panels/weiphp-panel.yaml
+Ruijie-NBR路由器:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-09650.yaml
+    - ruijie-nbr-router-fileupload-upload.yaml
+锐捷网络-EWEB网管系统:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-09650.yaml
+MessageSolution:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-10543.yaml
+Ruijie-RG-UAC:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-14536.yaml
+    - vulnerabilities/ruijie/ruijie-password-leak.yaml
+ShopXO电商系统:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-15822.yaml
+Empire Software - Empirecms:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-15824.yaml
+# 亿邮电子邮件系统
+Eyou-mail system:
+  type:
+    - root
+  pocs:
+    # 亿邮电子邮件系统 moni_detail.do 远程命令执行漏洞
+    - cnvd/2021/CNVD-2021-26422.yaml
+    - cves/2014/CVE-2014-1203.yaml
+# 蓝凌OA
+LandRay-OA system:
+  type:
+    - root
+  pocs:
+    - cnvd/2021/CNVD-2021-28277.yaml
+    - pocs/user/vulnerabilities/landray/landray-oa-datajson-rce.yaml
+    - pocs/user/vulnerabilities/landray/landray-oa-erp-data-rce.yaml
+    - pocs/user/vulnerabilities/landray/landray-oa-sysSearchMain-editParam-rce.yaml
+    - pocs/user/vulnerabilities/landray/landray-oa-treexml-rce.yaml
+用友-时空KSOA:
+  type:
+    - root
+  pocs:
+    # 社区的会漏一部分带waf的
+    - pocs/user/cnvd/2021/CNVD-2021-30167.yaml
+    # 用友 ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    - yonyou-nc-accept-arbitrary-file-upload.yaml
+    - yonyou-nc-baseapp-uploadservlet-deserialization-rce.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+Yonyou-UFIDA-NC:
+  type:
+    - root
+  pocs:
+    # 社区的会漏一部分带waf的
+    - pocs/user/cnvd/2021/CNVD-2021-30167.yaml
+    # 用友 ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    - yonyou-nc-accept-arbitrary-file-upload.yaml
+    - yonyou-nc-baseapp-uploadservlet-deserialization-rce.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+    - yonyou-nc-grouptemplet-file-upload.yaml
+    - yonyou-ufida-nc-username-leak.yaml
+用友-ECLIENT:
+  type:
+    - root
+  pocs:
+    # 社区的会漏一部分带waf的
+    - pocs/user/cnvd/2021/CNVD-2021-30167.yaml
+    # 用友 ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    - yonyou-nc-accept-arbitrary-file-upload.yaml
+    - yonyou-nc-baseapp-uploadservlet-deserialization-rce.yaml
+    - vulnerabilities/yonyou/erp-nc-directory-traversal.yaml
+    - vulnerabilities/yonyou/wooyun-path-traversal.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+    - yonyou-nc-grouptemplet-file-upload.yaml
+Yonyou-UFIDA:
+  type:
+    - root
+  pocs:
+    - pocs/user/cnvd/2021/CNVD-2021-30167.yaml
+    # 用友 ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    - yonyou-nc-accept-arbitrary-file-upload.yaml
+    - yonyou-nc-baseapp-uploadservlet-deserialization-rce.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+    - yonyou-nc-grouptemplet-file-upload.yaml
+用友-ERP-NC:
+  type:
+    - root
+  pocs:
+    - pocs/user/cnvd/2021/CNVD-2021-30167.yaml
+    # 用友 ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    # ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/yonyou/erp-nc-directory-traversal.yaml
+    - vulnerabilities/yonyou/wooyun-path-traversal.yaml
+    - yonyou-nc-accept-arbitrary-file-upload.yaml
+    - yonyou-nc-baseapp-uploadservlet-deserialization-rce.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+    - yonyou-nc-grouptemplet-file-upload.yaml
+用友-GRP-U8:
+  type:
+    - root
+  pocs:
+    # 用友 GRP-U8 UploadFileData 任意文件上传漏洞
+    - pocs/user/vulnerabilities/yonyou/yonyou-erp-u8-uploadfiledata-arbitrary-file-upload.yaml
+    # 用友 GRP-U8 Proxy SQL注入 CNNVD-201610-923
+    - pocs/user/vulnerabilities/yonyou/yonyou-grp-u8-sqli.yaml
+    # UploadFileData 文件上传漏洞
+    - pocs/user/vulnerabilities/yonyou/yonyou-grp-u8-uploadfiledata-arbitrary-file-upload.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+    - yonyou-nc-grouptemplet-file-upload.yaml
+用友-NC-Cloud:
+  type:
+    - root
+  pocs:
+    - pocs/user/cnvd/2021/CNVD-2021-30167.yaml
+    # 用友 ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    # ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/yonyou/erp-nc-directory-traversal.yaml
+    - vulnerabilities/yonyou/wooyun-path-traversal.yaml
+    - yonyou-nc-accept-arbitrary-file-upload.yaml
+    - yonyou-nc-baseapp-uploadservlet-deserialization-rce.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+    - yonyou-nc-grouptemplet-file-upload.yaml
+向日葵:
+  type:
+    - root
+  pocs:
+    - pocs/user/cnvd/2022/CNVD-2022-03672.yaml
+易软天创-禅道系统:
+  type:
+    - root
+    - dir
+  pocs:
+    - cnvd/2022/CNVD-2022-42853.yaml
+IBM-Lotus-Domino:
+  type:
+    - root
+  pocs:
+    - cves/2005/CVE-2005-2428.yaml
+Cherokee:
+  type:
+    - root
+  pocs:
+    - cves/2006/CVE-2006-1681.yaml
+Struts2:
+  type:
+    - root
+    - base
+    - dir
+  pocs:
+    # s2-001
+    - cves/2007/CVE-2007-4556.yaml
+    # S2-008
+    - cves/2012/CVE-2012-0392.yaml
+    # Dev Mode
+    - cves/2012/CVE-2012-0394.yaml
+    # S2-012
+    - cves/2013/CVE-2013-1965.yaml
+    - cves/2013/CVE-2013-2248.yaml
+    - cves/2013/CVE-2013-2251.yaml
+    - cves/2016/CVE-2016-3081.yaml
+    - cves/2017/CVE-2017-12611.yaml
+    - cves/2017/CVE-2017-5638.yaml
+    - cves/2017/CVE-2017-9791.yaml
+    - cves/2017/CVE-2017-9805.yaml
+    - cves/2018/CVE-2018-11776.yaml
+    - cves/2019/CVE-2019-0230.yaml
+    # S2-061
+    - cves/2020/CVE-2020-17530.yaml
+    # Struts2 S2-062
+    - cves/2021/CVE-2021-31805.yaml
+    - exposures/logs/struts-debug-mode.yaml
+    - exposures/logs/struts-problem-report.yaml
+phpPgAdmin:
+  type:
+    - root
+  pocs:
+    - cves/2007/CVE-2007-5728.yaml
+    - cves/2008/CVE-2008-5587.yaml
+    - exposed-panels/phppgadmin-panel.yaml
+    - technologies/phppgadmin-version.yaml
+AppServ:
+  type:
+    - root
+  pocs:
+    - cves/2008/CVE-2008-2398.yaml
+CMSimple:
+  type:
+    - root
+  pocs:
+    - cves/2008/CVE-2008-2650.yaml
+Joomla:
+  type:
+    - root
+  pocs:
+    - cves/2007/CVE-2007-4504.yaml
+    - cves/2008/CVE-2008-4668.yaml
+    - cves/2008/CVE-2008-4764.yaml
+    - cves/2008/CVE-2008-6080.yaml
+    - cves/2008/CVE-2008-6172.yaml
+    - cves/2008/CVE-2008-6222.yaml
+    - cves/2009/CVE-2009-1496.yaml
+    - cves/2009/CVE-2009-2015.yaml
+    - cves/2009/CVE-2009-2100.yaml
+    - cves/2009/CVE-2009-3053.yaml
+    - cves/2009/CVE-2009-3318.yaml
+    - cves/2009/CVE-2009-4202.yaml
+    - cves/2009/CVE-2009-4679.yaml
+    - cves/2010/CVE-2010-0157.yaml
+    - cves/2010/CVE-2010-0467.yaml
+    - cves/2010/CVE-2010-0696.yaml
+    - cves/2010/CVE-2010-0759.yaml
+    - cves/2010/CVE-2010-0942.yaml
+    - cves/2010/CVE-2010-0943.yaml
+    - cves/2010/CVE-2010-0944.yaml
+    - cves/2010/CVE-2010-0972.yaml
+    - cves/2010/CVE-2010-0982.yaml
+    - cves/2010/CVE-2010-0985.yaml
+    - cves/2010/CVE-2010-1056.yaml
+    - cves/2010/CVE-2010-1081.yaml
+    - cves/2010/CVE-2010-1217.yaml
+    - cves/2010/CVE-2010-1219.yaml
+    - cves/2010/CVE-2010-1302.yaml
+    - cves/2010/CVE-2010-1304.yaml
+    - cves/2010/CVE-2010-1305.yaml
+    - cves/2010/CVE-2010-1306.yaml
+    - cves/2010/CVE-2010-1307.yaml
+    - cves/2010/CVE-2010-1308.yaml
+    - cves/2010/CVE-2010-1312.yaml
+    - cves/2010/CVE-2010-1313.yaml
+    - cves/2010/CVE-2010-1314.yaml
+    - cves/2010/CVE-2010-1315.yaml
+    - cves/2010/CVE-2010-1340.yaml
+    - cves/2010/CVE-2010-1345.yaml
+    - cves/2010/CVE-2010-1352.yaml
+    - cves/2010/CVE-2010-1353.yaml
+    - cves/2010/CVE-2010-1354.yaml
+    - cves/2010/CVE-2010-1461.yaml
+    - cves/2010/CVE-2010-1469.yaml
+    - cves/2010/CVE-2010-1470.yaml
+    - cves/2010/CVE-2010-1471.yaml
+    - cves/2010/CVE-2010-1472.yaml
+    - cves/2010/CVE-2010-1473.yaml
+    - cves/2010/CVE-2010-1474.yaml
+    - cves/2010/CVE-2010-1475.yaml
+    - cves/2010/CVE-2010-1476.yaml
+    - cves/2010/CVE-2010-1478.yaml
+    - cves/2010/CVE-2010-1491.yaml
+    - cves/2010/CVE-2010-1494.yaml
+    - cves/2010/CVE-2010-1495.yaml
+    - cves/2010/CVE-2010-1531.yaml
+    - cves/2010/CVE-2010-1532.yaml
+    - cves/2010/CVE-2010-1533.yaml
+    - cves/2010/CVE-2010-1534.yaml
+    - cves/2010/CVE-2010-1535.yaml
+    - cves/2010/CVE-2010-1540.yaml
+    - cves/2010/CVE-2010-1601.yaml
+    - cves/2010/CVE-2010-1602.yaml
+    - cves/2010/CVE-2010-1603.yaml
+    - cves/2010/CVE-2010-1607.yaml
+    - cves/2010/CVE-2010-1653.yaml
+    - cves/2010/CVE-2010-1657.yaml
+    - cves/2010/CVE-2010-1658.yaml
+    - cves/2010/CVE-2010-1659.yaml
+    - cves/2010/CVE-2010-1714.yaml
+    - cves/2010/CVE-2010-1715.yaml
+    - cves/2010/CVE-2010-1717.yaml
+    - cves/2010/CVE-2010-1718.yaml
+    - cves/2010/CVE-2010-1719.yaml
+    - cves/2010/CVE-2010-1722.yaml
+    - cves/2010/CVE-2010-1723.yaml
+    - cves/2010/CVE-2010-1858.yaml
+    - cves/2010/CVE-2010-1875.yaml
+    - cves/2010/CVE-2010-1878.yaml
+    - cves/2010/CVE-2010-1952.yaml
+    - cves/2010/CVE-2010-1953.yaml
+    - cves/2010/CVE-2010-1954.yaml
+    - cves/2010/CVE-2010-1955.yaml
+    - cves/2010/CVE-2010-1956.yaml
+    - cves/2010/CVE-2010-1957.yaml
+    - cves/2010/CVE-2010-1977.yaml
+    - cves/2010/CVE-2010-1979.yaml
+    - cves/2010/CVE-2010-1980.yaml
+    - cves/2010/CVE-2010-1981.yaml
+    - cves/2010/CVE-2010-1982.yaml
+    - cves/2010/CVE-2010-1983.yaml
+    - cves/2010/CVE-2010-2033.yaml
+    - cves/2010/CVE-2010-2034.yaml
+    - cves/2010/CVE-2010-2035.yaml
+    - cves/2010/CVE-2010-2036.yaml
+    - cves/2010/CVE-2010-2037.yaml
+    - cves/2010/CVE-2010-2045.yaml
+    - cves/2010/CVE-2010-2050.yaml
+    - cves/2010/CVE-2010-2122.yaml
+    - cves/2010/CVE-2010-2128.yaml
+    - cves/2010/CVE-2010-2259.yaml
+    - cves/2010/CVE-2010-2507.yaml
+    - cves/2010/CVE-2010-2680.yaml
+    - cves/2010/CVE-2010-2682.yaml
+    - cves/2010/CVE-2010-2857.yaml
+    - cves/2010/CVE-2010-2918.yaml
+    - cves/2010/CVE-2010-2920.yaml
+    - cves/2010/CVE-2010-3203.yaml
+    - cves/2010/CVE-2010-3426.yaml
+    - cves/2010/CVE-2010-4617.yaml
+    - cves/2010/CVE-2010-4719.yaml
+    - cves/2010/CVE-2010-4769.yaml
+    - cves/2010/CVE-2010-4977.yaml
+    - cves/2010/CVE-2010-5028.yaml
+    - cves/2010/CVE-2010-5286.yaml
+    - cves/2011/CVE-2011-4804.yaml
+    - cves/2015/CVE-2015-4074.yaml
+    - cves/2015/CVE-2015-7297.yaml
+    - cves/2017/CVE-2017-8917.yaml
+    - cves/2018/CVE-2018-6008.yaml
+    - cves/2018/CVE-2018-17254.yaml
+    - cves/2019/CVE-2019-9922.yaml
+    - cves/2020/CVE-2020-23972.yaml
+    - cves/2021/CVE-2021-28377.yaml
+    - cves/2023/CVE-2023-23752.yaml
+    - joomla-jvehicles-lfi.yaml
+    - rusty-joomla.yaml
+Parallels H-Sphere:
+  type:
+    - root
+  pocs:
+    - cves/2008/CVE-2008-6465.yaml
+Zeroshell-Firewall:
+  type:
+    - root
+  pocs:
+    - cves/2009/CVE-2009-0545.yaml
+    - cves/2019/CVE-2019-12725.yaml
+    - exposed-panels/zeroshell-login.yaml
+HORDE- Mail System:
+  type:
+    - root
+  pocs:
+    - cves/2005/CVE-2005-3344.yaml
+    - cves/2009/CVE-2009-0932.yaml
+    - exposed-panels/horde-login-panel.yaml
+    - exposed-panels/horde-webmail-login.yaml
+phpMyAdmin:
+  type:
+    - root
+    - dir
+  pocs:
+    - cves/2009/CVE-2009-1151.yaml
+    - cves/2018/CVE-2018-12613.yaml
+    - cves/2019/CVE-2019-12616.yaml
+    # phpMyAdmin < 4.8.5 - Local File Read
+    - cves/2019/CVE-2019-6799.yaml
+    - cves/2022/CVE-2022-23808.yaml
+    - default-logins/phpmyadmin/phpmyadmin-default-login.yaml
+    - exposed-panels/phpmyadmin-panel.yaml
+    - misconfiguration/phpmyadmin/phpmyadmin-misconfiguration.yaml
+    - misconfiguration/phpmyadmin/phpmyadmin-server-import.yaml
+    - misconfiguration/phpmyadmin/phpmyadmin-setup.yaml
+    # phpmyadmin 未授权访问
+    - vulnerabilities/phpmyadmin-unauth.yaml
+Linksys-IP-Cameras:
+  type:
+    - root
+  pocs:
+    - cves/2009/CVE-2009-1558.yaml
+    - cves/2020/CVE-2020-35713.yaml
+    - exposed-panels/linksys-wifi-login.yaml
+Adobe-ColdFusion:
+  type:
+    - root
+  pocs:
+    - cves/2009/CVE-2009-1872.yaml
+    - cves/2010/CVE-2010-2861.yaml
+    - cves/2018/CVE-2018-15961.yaml
+    - cves/2021/CVE-2021-21087.yaml
+    - exposed-panels/adobe/adobe-component-login.yaml
+    - exposed-panels/coldfusion-administrator-login.yaml
+    - exposures/files/cold-fusion-cfcache-map.yaml
+    - technologies/adobe/adobe-coldfusion-detect.yaml
+    - technologies/adobe/adobe-coldfusion-error-detect.yaml
+    - vulnerabilities/other/coldfusion-debug-xss.yaml
+    - CVE-2023-26360.yaml
+    - CVE-2023-38205.yaml
+AWSTATS-Log Analysis:
+  type:
+    - root
+  pocs:
+    - cves/2009/CVE-2009-5020.yaml
+    - cves/2012/CVE-2012-4547.yaml
+    - exposures/configs/awstats-config.yaml
+    - exposures/configs/awstats-script.yaml
+    - misconfiguration/awstats-listing.yaml
+APACHE-Axis2:
+  type:
+    - root
+  pocs:
+    - cves/2010/CVE-2010-0219.yaml
+    - exposures/files/axis-happyaxis.yaml
+    - technologies/apache/apache-axis-detect.yaml
+JBoss-EAP:
+  type:
+    - root
+  pocs:
+    - cves/2010/CVE-2010-1429.yaml
+    - default-logins/jboss/jboss-jbpm-default-login.yaml
+    - default-logins/jboss/jmx-default-login.yaml
+ListSERV Maestro:
+  type:
+    - root
+  pocs:
+    - cves/2010/CVE-2010-1870.yaml
+tiki-Wiki-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2010/CVE-2010-4239.yaml
+    - cves/2011/CVE-2011-4336.yaml
+    - exposed-panels/tikiwiki-cms.yaml
+    - vulnerabilities/other/tikiwiki-reflected-xss.yaml
+Chyrp:
+  type:
+    - root
+  pocs:
+    - cves/2011/CVE-2011-2744.yaml
+    - cves/2011/CVE-2011-2780.yaml
+CISCO-UCM:
+  type:
+    - root
+  pocs:
+    - cves/2011/CVE-2011-3315.yaml
+    - cves/2013/CVE-2013-5528.yaml
+OpenEMR:
+  type:
+    - root
+  pocs:
+    - cves/2012/CVE-2012-0991.yaml
+    - cves/2019/CVE-2019-14530.yaml
+    - default-logins/openemr/openemr-default-login.yaml
+    - exposed-panels/openemr-detect.yaml
+Dolibarr:
+  type:
+    - root
+  pocs:
+    - cves/2012/CVE-2012-1226.yaml
+    - cves/2018/CVE-2018-10095.yaml
+    - exposed-panels/dolibarr-panel.yaml
+    # Dolibarr Unauthenticated Contacts Database Theft
+    - CVE-2023-33568.yaml
+MySqlDumper:
+  type:
+    - root
+  pocs:
+    - cves/2012/CVE-2012-4253.yaml
+Flatnux-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2012/CVE-2012-4878.yaml
+ManageEngine-Firewall-Analyzer:
+  type:
+    - root
+  pocs:
+    - cves/2012/CVE-2012-4889.yaml
+    - cves/2015/CVE-2015-7780.yaml
+    - cves/2018/CVE-2018-12998.yaml
+Axigen-Mail-Server:
+  type:
+    - root
+  pocs:
+    - cves/2012/CVE-2012-4940.yaml
+    - exposed-panels/axigen-webmail.yaml
+Xibo-Digital-Signage:
+  type:
+    - root
+  pocs:
+    - cves/2013/CVE-2013-5979.yaml
+Zimbra-Collaboration-Suite:
+  type:
+    - root
+  pocs:
+    - cves/2013/CVE-2013-7091.yaml
+    - cves/2018/CVE-2018-14013.yaml
+    - cves/2019/CVE-2019-9670.yaml
+    - cves/2020/CVE-2020-7796.yaml
+    - cves/2022/CVE-2022-37042.yaml
+    - exposed-panels/zimbra-web-client.yaml
+    - exposed-panels/zimbra-web-login.yaml
+    - technologies/zimbra-detect.yaml
+    - vulnerabilities/other/zimbra-preauth-ssrf.yaml
+Lighttpd:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-2323.yaml
+    - technologies/default-lighttpd-page.yaml
+Elasticsearch:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-3120.yaml
+    - cves/2015/CVE-2015-1427.yaml
+    - cves/2015/CVE-2015-3337.yaml
+    - cves/2015/CVE-2015-5531.yaml
+    - cves/2021/CVE-2021-22145.yaml
+    - misconfiguration/elasticsearch.yaml
+    - technologies/elasticsearch-sql-client-detect.yaml
+    - vulnerabilities/other/elasticsearch5-log4j-rce.yaml
+    - elasticsearch-default-login.yaml
+Seagate-NAS:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-3206.yaml
+    - cves/2018/CVE-2018-12296.yaml
+    - cves/2018/CVE-2018-12300.yaml
+Drupal:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-3704.yaml
+    # Drupal - Remote Code Execution 社区的判断条件有点小问题
+    - pocs/user/cves/2018/CVE-2018-7600.yaml
+    # Drupal - Remote Code Execution
+    - cves/2018/CVE-2018-7602.yaml
+    - cves/2018/CVE-2018-9205.yaml
+    - cves/2019/CVE-2019-6340.yaml
+    - exposed-panels/drupal-login.yaml
+    - exposures/apis/drupal-jsonapi-user-listing.yaml
+    - exposures/files/drupal-install.yaml
+    - misconfiguration/drupal/drupal-user-enum-ajax.yaml
+    - misconfiguration/drupal/drupal-user-enum-redirect.yaml
+    - technologies/drupal-detect.yaml
+    - vulnerabilities/drupal/drupal-avatar-xss.yaml
+Node.js:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-3744.yaml
+    - cves/2017/CVE-2017-14849.yaml
+    - cves/2018/CVE-2018-3714.yaml
+    - cves/2021/CVE-2021-21315.yaml
+    - cves/2021/CVE-2021-32819.yaml
+    - cves/2022/CVE-2022-29078.yaml
+WebLogic:
+  type:
+    - root
+  pocs:
+    # Weblogic SSRF漏洞
+    - cves/2014/CVE-2014-4210.yaml
+    - CVE-2016-3510.yaml
+    # Weblogic XMLDecoder 远程代码执行漏洞
+    - cves/2017/CVE-2017-10271.yaml
+    - cves/2017/CVE-2017-3506.yaml
+    - cves/2018/CVE-2018-2628.yaml
+    - cves/2018/CVE-2018-2893.yaml
+    - cves/2018/CVE-2018-2894.yaml
+    # Weblogic 反序列化远程代码执行漏洞
+    - cves/2019/CVE-2019-2725.yaml
+    - cves/2019/CVE-2019-2729.yaml
+    - cves/2020/CVE-2020-14750.yaml
+    - cves/2020/CVE-2020-14882.yaml
+    - cves/2020/CVE-2020-14883.yaml
+    - cves/2020/CVE-2020-2551.yaml
+    - cves/2020/CVE-2020-2733.yaml
+    - cves/2022/CVE-2022-21371.yaml
+    - default-logins/weblogic/weblogic-weak-login.yaml
+    - exposed-panels/weblogic-login.yaml
+    - exposed-panels/weblogic-uddiexplorer.yaml
+    - network/detection/weblogic-iiop-detect.yaml
+    - network/detection/weblogic-t3-detect.yaml
+    # Weblogic LDAP 远程代码执行漏洞
+    - pocs/user/cves/2021/CVE-2021-2109.yaml
+webEdition:
+  type:
+    - root
+    - dir
+  pocs:
+    - cves/2014/CVE-2014-5258.yaml
+Osclass:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-6308.yaml
+SOPlanning:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-8676.yaml
+Gogs:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-8682.yaml
+    - cves/2018/CVE-2018-18925.yaml
+    - cves/2020/CVE-2020-15867.yaml
+    - cves/2022/CVE-2022-0870.yaml
+    - cves/2022/CVE-2022-0415.yaml
+    - exposed-panels/gogs-panel.yaml
+    - exposures/files/gogs-install-exposure.yaml
+    - misconfiguration/installer/gogs-installer.yaml
+Netsweeper:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-9606.yaml
+    - cves/2014/CVE-2014-9607.yaml
+    - cves/2014/CVE-2014-9609.yaml
+    - cves/2014/CVE-2014-9614.yaml
+    - cves/2014/CVE-2014-9615.yaml
+    - cves/2014/CVE-2014-9617.yaml
+    - cves/2014/CVE-2014-9618.yaml
+    - cves/2020/CVE-2020-13167.yaml
+    - technologies/netsweeper-webadmin-detect.yaml
+    - vulnerabilities/netsweeper/netsweeper-open-redirect.yaml
+    - vulnerabilities/netsweeper/netsweeper-rxss.yaml
+ICewarp:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-1503.yaml
+    - cves/2019/CVE-2019-12593.yaml
+    - cves/2020/CVE-2020-27982.yaml
+    - cves/2020/CVE-2020-8512.yaml
+    - cves/2021/CVE-2021-36580.yaml
+    - exposed-panels/icewarp-panel-detect.yaml
+    - vulnerabilities/other/icewarp-open-redirect.yaml
+    - vulnerabilities/other/icewarp-webclient-rce.yaml
+IceWarp-服务器:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-12593.yaml
+Eclipse-Jetty:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-2080.yaml
+    - cves/2021/CVE-2021-28164.yaml
+    - cves/2021/CVE-2021-28169.yaml
+    - cves/2021/CVE-2021-34429.yaml
+    - misconfiguration/jetty-showcontexts-enable.yaml
+    - technologies/default-jetty-page.yaml
+TP-LINK:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-3035.yaml
+    - cves/2021/CVE-2021-41653.yaml
+Ruby-on-Rails:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-3224.yaml
+    - cves/2018/CVE-2018-3760.yaml
+    - cves/2019/CVE-2019-5418.yaml
+    - cves/2020/CVE-2020-8163.yaml
+ResourceSpace:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-3648.yaml
+    - cves/2021/CVE-2021-41951.yaml
+Bonita-BPM-Portal:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-3897.yaml
+Symfony:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-4050.yaml
+    - exposures/configs/symfony-database-config.yaml
+    - exposures/configs/symfony-profiler.yaml
+    - exposures/configs/symfony-security-config.yaml
+    - exposures/files/symfony-properties-ini.yaml
+    - exposures/files/symfony-security.yaml
+    - misconfiguration/symfony-debug.yaml
+    - misconfiguration/symfony-fosjrouting-bundle.yaml
+    - technologies/default-symfony-page.yaml
+Koha:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-4632.yaml
+Xceedium-Xsuite:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-4666.yaml
+    - cves/2015/CVE-2015-4668.yaml
+D_Link-DVG-N5402SP:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-7245.yaml
+IBM-WebSphere:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-7450.yaml
+    - cves/2021/CVE-2021-27748.yaml
+    - exposed-panels/ibm/ibm-websphere-admin-panel.yaml
+    - exposed-panels/ibm/ibm-websphere-panel.yaml
+    - misconfiguration/ibm-friendly-path-exposure.yaml
+    - technologies/default-websphere-liberty.yaml
+Kentico-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-7823.yaml
+    - cves/2017/CVE-2017-17736.yaml
+    - cves/2019/CVE-2019-10068.yaml
+    - exposed-panels/kentico-login.yaml
+SourceBans:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-8349.yaml
+ATLASSIAN-Confluence:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-8399.yaml
+    - cves/2018/CVE-2018-5230.yaml
+    - cves/2019/CVE-2019-3396.yaml
+    - cves/2021/CVE-2021-26084.yaml
+    - cves/2021/CVE-2021-26085.yaml
+    - cves/2022/CVE-2022-26134.yaml
+    - cves/2022/CVE-2022-26138.yaml
+    - exposed-panels/servicedesk-login-panel.yaml
+    - misconfiguration/confluence-dashboard.yaml
+    - misconfiguration/confluence/confluence-oauth-admin.yaml
+    - technologies/confluence-detect.yaml
+    - vulnerabilities/confluence/confluence-ssrf-sharelinks.yaml
+    - vulnerabilities/jira/jira-servicedesk-signup.yaml
+    - CVE-2019-3398.yaml
+Umbraco:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-8813.yaml
+    - exposed-panels/umbraco-login.yaml
+    - misconfiguration/installer/umbraco-installer.yaml
+    - vulnerabilities/other/umbraco-base-ssrf.yaml
+Adobe-Experience-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-0957.yaml
+    - cves/2019/CVE-2019-8086.yaml
+    - default-logins/aem/aem-default-login.yaml
+    - default-logins/aem/aem-felix-console.yaml
+    - exposed-panels/adobe/adobe-experience-manager-login.yaml
+    - exposed-panels/adobe/aem-crx-package-manager.yaml
+    - exposed-panels/adobe/aem-sling-login.yaml
+    - misconfiguration/aem/aem-acs-common.yaml
+    - misconfiguration/aem/aem-bg-servlet.yaml
+    - misconfiguration/aem/aem-bulkeditor.yaml
+    - misconfiguration/aem/aem-cached-pages.yaml
+    - misconfiguration/aem/aem-childrenlist-xss.yaml
+    - misconfiguration/aem/aem-crx-browser.yaml
+    - misconfiguration/aem/aem-crx-bypass.yaml
+    - misconfiguration/aem/aem-crx-namespace.yaml
+    - misconfiguration/aem/aem-crx-search.yaml
+    - misconfiguration/aem/aem-custom-script.yaml
+    - misconfiguration/aem/aem-debugging-libraries.yaml
+    - misconfiguration/aem/aem-default-get-servlet.yaml
+    - misconfiguration/aem/aem-disk-usage.yaml
+    - misconfiguration/aem/aem-dump-contentnode.yaml
+    - misconfiguration/aem/aem-explorer-nodetypes.yaml
+    - misconfiguration/aem/aem-external-link-checker.yaml
+    - misconfiguration/aem/aem-gql-servlet.yaml
+    - misconfiguration/aem/aem-groovyconsole.yaml
+    - misconfiguration/aem/aem-hash-querybuilder.yaml
+    - misconfiguration/aem/aem-jcr-querybuilder.yaml
+    - misconfiguration/aem/aem-login-status.yaml
+    - misconfiguration/aem/aem-merge-metadata-servlet.yaml
+    - misconfiguration/aem/aem-misc-admin.yaml
+    - misconfiguration/aem/aem-offloading-browser.yaml
+    - misconfiguration/aem/aem-osgi-bundles.yaml
+    - misconfiguration/aem/aem-querybuilder-feed-servlet.yaml
+    - misconfiguration/aem/aem-querybuilder-internal-path-read.yaml
+    - misconfiguration/aem/aem-querybuilder-json-servlet.yaml
+    - misconfiguration/aem/aem-security-users.yaml
+    - misconfiguration/aem/aem-setpreferences-xss.yaml
+    - misconfiguration/aem/aem-sling-userinfo.yaml
+    - misconfiguration/aem/aem-userinfo-servlet.yaml
+    - misconfiguration/aem/aem-wcm-suggestions-servlet.yaml
+    - misconfiguration/aem/aem-xss-childlist-selector.yaml
+    - technologies/aem-cms.yaml
+    - technologies/aem-detect.yaml
+APACHE-ActiveMQ:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-3088.yaml
+    - cves/2018/CVE-2018-8006.yaml
+    - default-logins/activemq/activemq-default-login.yaml
+    - exposed-panels/activemq-panel.yaml
+    - network/detection/activemq-openwire-transport-detect.yaml
+    - network/detection/apache-activemq-detect.yaml
+NETGEAR-DGN2200:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-5649.yaml
+NETGEAR-DGND3700:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-5649.yaml
+NETGEAR-R6250:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-6277.yaml
+    - cves/2017/CVE-2017-5521.yaml
+Sony-IPELA-Engine-IP-Camera:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-7834.yaml
+SPIP:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-7981.yaml
+    - CVE-2023-27372.yaml
+ZABBIX-监控系统:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-10134.yaml
+    - cves/2019/CVE-2019-17382.yaml
+    # 社区的有fuzz标签，默认不运行
+    - pocs/user/cves/2019/CVE-2019-17382.yaml
+    - cves/2022/CVE-2022-23131.yaml
+    - cves/2022/CVE-2022-23134.yaml
+    - cves/2022/CVE-2022-26148.yaml
+    - default-logins/zabbix/zabbix-default-login.yaml
+    - exposed-panels/zabbix-server-login.yaml
+    - misconfiguration/zabbix-dashboards-access.yaml
+    - misconfiguration/zabbix-error.yaml
+DotNetNuke:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-0929.yaml
+    - cves/2017/CVE-2017-9822.yaml
+NETGEAR-R8500:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R8300:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R7000:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R6400:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R7300:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R7100LG:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R6300v2:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-WNDR3400v3:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-WNR3500Lv2:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R6700:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R6900:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+NETGEAR-R8000:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5521.yaml
+Intel-AMT:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5689.yaml
+KodiTV:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-5982.yaml
+phpCollab:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-6090.yaml
+    - exposed-panels/phpcollab-panel.yaml
+Microsoft-IIS6.0:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-7269.yaml
+MantisBT:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-7615.yaml
+    - default-logins/mantisbt/mantisbt-default-credential.yaml
+    - exposed-panels/mantisbt-panel.yaml
+HIKVISION-视频监控:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-7921.yaml
+    - hikvision-rce-cve-2021-36260.yaml
+    - cves/2021/CVE-2021-36260.yaml
+    - exposures/configs/hikvision-info-leak.yaml
+    - technologies/hikvision-detect.yaml
+ATLASSIAN-JIRA:
+  type:
+    - root
+  pocs:
+    - cves/2007/CVE-2007-0885.yaml
+    - cves/2017/CVE-2017-9506.yaml
+    - cves/2018/CVE-2018-20824.yaml
+    - cves/2019/CVE-2019-11581.yaml
+    - cves/2019/CVE-2019-3401.yaml
+    - cves/2019/CVE-2019-3402.yaml
+    - cves/2019/CVE-2019-3403.yaml
+    - cves/2019/CVE-2019-8442.yaml
+    - cves/2019/CVE-2019-8446.yaml
+    - cves/2019/CVE-2019-8449.yaml
+    - cves/2019/CVE-2019-8451.yaml
+    - cves/2020/CVE-2020-14179.yaml
+    - cves/2020/CVE-2020-14181.yaml
+    - cves/2020/CVE-2020-29453.yaml
+    - cves/2020/CVE-2020-36289.yaml
+    - cves/2020/CVE-2020-9344.yaml
+    - cves/2021/CVE-2021-26086.yaml
+    - cves/2022/CVE-2022-0540.yaml
+    - cves/2022/CVE-2022-39960.yaml
+    # Atlassian Jira 缺陷跟踪管理系统 snjCustomDesignConfig 文件 fileName 参数任意文件读取漏洞
+    - cves/2023/CVE-2023-26255.yaml
+    # Atlassian Jira 缺陷跟踪管理系统 snjFooterNavigationConfig 文件 fileName 参数任意文件读取漏洞
+    - cves/2023/CVE-2023-26256.yaml
+    - exposed-panels/jira-detect.yaml
+    - exposed-panels/servicedesk-login-panel.yaml
+    - misconfiguration/confluence/confluence-oauth-admin.yaml
+    - technologies/jira-serverinfo.yaml
+    - vulnerabilities/jira/jira-servicedesk-signup.yaml
+    - vulnerabilities/jira/jira-unauthenticated-adminprojects.yaml
+    - vulnerabilities/jira/jira-unauthenticated-dashboards.yaml
+    - vulnerabilities/jira/jira-unauthenticated-installed-gadgets.yaml
+    - vulnerabilities/jira/jira-unauthenticated-projectcategories.yaml
+    - vulnerabilities/jira/jira-unauthenticated-projects.yaml
+    - vulnerabilities/jira/jira-unauthenticated-resolutions.yaml
+    - vulnerabilities/jira/jira-unauthenticated-screens.yaml
+    - vulnerabilities/jira/jira-unauthenticated-user-picker.yaml
+Boa-WebServer:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-9833.yaml
+Yaws:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-10974.yaml
+DataTaker:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-11165.yaml
+DT8x-HTTP-Server:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-11165.yaml
+Subrion-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-11444.yaml
+    - exposed-panels/subrion-login.yaml
+    - technologies/subrion-cms-detect.yaml
+ManageEngine-ServiceDesk:  # ZOHO-ManageEngine-ServiceDesk
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-11512.yaml
+    - cves/2018/CVE-2018-12998.yaml
+    - cves/2021/CVE-2021-44077.yaml
+    - cves/2022/CVE-2022-47966.yaml
+FineCMS:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-11586.yaml
+    - cves/2017/CVE-2017-11629.yaml
+    - vulnerabilities/other/finecms-sqli.yaml
+Supervisor-monitoring system:  # Supervisor-监控系统
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-11610.yaml
+JBoss-AS:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12149.yaml
+    - default-logins/jboss/jboss-jbpm-default-login.yaml
+    - default-logins/jboss/jmx-default-login.yaml
+    # /invoker/JMXInvokerServlet 反序列化漏洞
+    - pocs/user/cves/2017/CVE-2017-7501.yaml
+    # JBoss 4.x JBossMQ JMS 反序列化漏洞
+    - pocs/user/cves/2017/CVE-2017-7504.yaml
+Jboss:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12149.yaml
+    - default-logins/jboss/jboss-jbpm-default-login.yaml
+    - default-logins/jboss/jmx-default-login.yaml
+    # /invoker/JMXInvokerServlet 反序列化漏洞
+    - pocs/user/cves/2017/CVE-2017-7501.yaml
+    # JBoss 4.x JBossMQ JMS 反序列化漏洞
+    - pocs/user/cves/2017/CVE-2017-7504.yaml
+HPE-ILO:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12542.yaml
+HP-System-Management:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12544.yaml
+DokuWiki:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12583.yaml
+    - misconfiguration/installer/dokuwiki-installer.yaml
+Apache-Tomcat:
+  type:
+    - root
+  pocs:
+    - CVE-2017-12617.yaml
+    # Apache Tomcat 远程代码执行漏洞
+    - cves/2017/CVE-2017-12615.yaml
+    # Apache Mod_jk 访问控制权限绕过
+    - cves/2018/CVE-2018-11759.yaml
+    - cves/2018/CVE-2018-11784.yaml
+    - cves/2019/CVE-2019-0221.yaml
+    # Apache Tomcat AJP 文件包含漏洞
+    - cves/2020/CVE-2020-1938.yaml
+    - cves/2020/CVE-2020-9484.yaml
+    - default-logins/apache/tomcat-default-login.yaml
+    - default-logins/apache/tomcat-examples-login.yaml
+    - exposed-panels/apache/public-tomcat-manager.yaml
+    - misconfiguration/tomcat-cookie-exposed.yaml
+APACHE-Solr:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12629.yaml
+    - cves/2019/CVE-2019-0193.yaml
+    - cves/2019/CVE-2019-17558.yaml
+    - cves/2021/CVE-2021-27905.yaml
+    - pocs/user/cves/2021/CVE-2021-27905.yaml
+    - exposed-panels/solr-exposure.yaml
+    - misconfiguration/solr-query-dashboard.yaml
+    # 包含了自定义的poc
+    - vulnerabilities/apache/apache-solr-file-read.yaml
+    - apache-solr-log4j-rce.yaml
+APACHE-CouchDB:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12635.yaml
+    - exposed-panels/couchdb-exposure.yaml
+    - exposed-panels/couchdb-fauxton.yaml
+    - vulnerabilities/other/couchdb-adminparty.yaml
+    - pocs/user/vulnerabilities/apache/apache-couchdb-unauth.yaml
+    - CVE-2022-24706.yaml
+SAP-NetWeaver-Application-Server-Java:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12637.yaml
+SAP-Web-App-Server:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-2389.yaml
+    - cves/2017/CVE-2017-12637.yaml
+    - cves/2018/CVE-2018-2392.yaml
+    - cves/2020/CVE-2020-6207.yaml
+    - cves/2020/CVE-2020-6287.yaml
+    - cves/2020/CVE-2020-6308.yaml
+    - cves/2021/CVE-2021-42063.yaml
+    - cves/2022/CVE-2022-22536.yaml
+    - exposed-panels/fiori-launchpad.yaml
+    - exposed-panels/hmc-hybris-panel.yaml
+    - exposed-panels/sap-cloud-analytics.yaml
+    - exposed-panels/sap-hana-xsengine-panel.yaml
+    - exposed-panels/sap-netweaver-portal.yaml
+    - exposed-panels/sap-successfactors-detect.yaml
+    - exposed-panels/sapfiori-panel.yaml
+    - misconfiguration/sap/sap-directory-listing.yaml
+    - misconfiguration/sap/sap-netweaver-info-leak.yaml
+    - network/sap-router-info-leak.yaml
+    - network/sap-router.yaml
+    - technologies/omni-commerce-connect-detect.yaml
+    - technologies/sap-spartacus-detect.yaml
+    - technologies/sap/sap-igs-detect.yaml
+    - technologies/sap/sap-netweaver-detect.yaml
+    - technologies/sap/sap-netweaver-webgui.yaml
+    - technologies/sap/sap-web-dispatcher-admin-portal.yaml
+    - technologies/sap/sap-web-dispatcher.yaml
+    - vulnerabilities/other/sap-redirect.yaml
+Django:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-12794.yaml
+    - cves/2018/CVE-2018-14574.yaml
+    - cves/2020/CVE-2020-9402.yaml
+    - exposed-panels/django-admin-panel.yaml
+    - exposures/configs/django-variables-exposed.yaml
+    - exposures/files/django-secret-key.yaml
+    - exposures/logs/django-debug-exposure.yaml
+    - file/logs/django-framework-exceptions.yaml
+    - misconfiguration/django-debug-detect.yaml
+    - technologies/default-django-page.yaml
+open-Dreambox:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-14135.yaml
+    - cves/2017/CVE-2017-15287.yaml
+    - technologies/dreambox-detect.yaml
+Fortinet-product:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-3978.yaml
+    - cves/2018/CVE-2018-13379.yaml
+    - cves/2017/CVE-2017-14186.yaml
+    - cves/2018/CVE-2018-13380.yaml
+    - cves/2021/CVE-2021-3378.yaml
+    - cves/2021/CVE-2021-43062.yaml
+    - cves/2022/CVE-2022-40684.yaml
+    - exposed-panels/forti/fortiadc-panel.yaml
+    - exposed-panels/fortinet/fortiap-panel.yaml
+    - exposed-panels/fortinet/fortimail-panel.yaml
+    - exposed-panels/fortinet/fortinet-fortigate-panel.yaml
+    - exposed-panels/fortinet/fortinet-panel.yaml
+    - exposed-panels/fortinet/fortios-management-panel.yaml
+    - exposed-panels/fortinet/fortios-panel.yaml
+    - exposed-panels/fortinet/fortitester-login-panel.yaml
+    - exposed-panels/fortinet/fortiweb-panel.yaml
+    - token-spray/api-fortitoken-cloud.yaml
+Trixbox:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-5111.yaml
+    - cves/2017/CVE-2017-14535.yaml
+    - cves/2017/CVE-2017-14537.yaml
+WSO2-Data-Services-Server:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-14651.yaml
+FiberHome-公司产品:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-15647.yaml
+Palo-Alto-Network:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-15944.yaml
+    - cves/2018/CVE-2018-10141.yaml
+    - cves/2020/CVE-2020-2036.yaml
+    - default-logins/paloalto/panos-default-login.yaml
+    - exposed-panels/globalprotect-panel.yaml
+Next.js:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-16877.yaml
+    - cves/2018/CVE-2018-6184.yaml
+    - cves/2020/CVE-2020-5284.yaml
+    - vulnerabilities/other/nextjs-redirect.yaml
+GoAhead:
+  type:
+    - root
+  pocs:
+    - pocs/user/cves/2017/CVE-2017-17562.yaml
+Avantfax-公司产品:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-18024.yaml
+    - exposed-panels/avantfax-panel.yaml
+Graphite-Browser:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-18638.yaml
+    - exposed-panels/graphite-browser.yaml
+Oracle-GlassFish-Server-OSE-4.1:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-1000028.yaml
+Oracle-GlassFish-Server-OSE-3.0.1:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-1000029.yaml
+Primetek-Primefaces:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-1000486.yaml
+Cisco-RV132W:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-0127.yaml
+Cisco-RV134W:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-0127.yaml
+Cisco-ASA:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-0296.yaml
+Dell-Remote-Access-Controller:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1207.yaml
+Spring-Hibernate-SpringMVC-整合框架:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1271.yaml
+Spring-Framework:
+  type:
+    - root
+    - dir
+  pocs:
+    - springboot-env-all-check.yaml
+    - swagger-api.yaml
+    - cves/2016/CVE-2016-4977.yaml
+    - cves/2018/CVE-2018-1271.yaml
+    - cves/2018/CVE-2018-1273.yaml
+    - cves/2019/CVE-2019-3799.yaml
+    - cves/2020/CVE-2020-5405.yaml
+    - cves/2020/CVE-2020-5410.yaml
+    - cves/2020/CVE-2020-5412.yaml
+    - cves/2022/CVE-2022-22963.yaml
+    - cves/2021/CVE-2021-21234.yaml
+    - cves/2021/CVE-2021-22053.yaml
+    - cves/2021/CVE-2021-31602.yaml
+    - cves/2022/CVE-2022-22947.yaml
+    - cves/2022/CVE-2022-22965.yaml
+    - exposures/files/exposed-alps-spring.yaml
+    - misconfiguration/jolokia/jolokia-info-disclosure.yaml
+    - misconfiguration/jolokia/jolokia-list.yaml
+    - misconfiguration/jolokia/jolokia-mbean-search.yaml
+    - misconfiguration/jolokia/jolokia-unauthenticated-lfi.yaml
+    - misconfiguration/springboot/spring-eureka.yaml
+    - misconfiguration/springboot/springboot-auditevents.yaml
+    - misconfiguration/springboot/springboot-autoconfig.yaml
+    - misconfiguration/springboot/springboot-beans.yaml
+    - misconfiguration/springboot/springboot-caches.yaml
+    - misconfiguration/springboot/springboot-conditions.yaml
+    - misconfiguration/springboot/springboot-configprops.yaml
+    - misconfiguration/springboot/springboot-dump.yaml
+    - misconfiguration/springboot/springboot-env.yaml
+    - misconfiguration/springboot/springboot-features.yaml
+    - misconfiguration/springboot/springboot-flyway.yaml
+    - misconfiguration/springboot/springboot-gateway.yaml
+    - misconfiguration/springboot/springboot-health.yaml
+    - misconfiguration/springboot/springboot-heapdump.yaml
+    - misconfiguration/springboot/springboot-httptrace.yaml
+    - misconfiguration/springboot/springboot-info.yaml
+    - misconfiguration/springboot/springboot-jolokia.yaml
+    - misconfiguration/springboot/springboot-liquidbase.yaml
+    - misconfiguration/springboot/springboot-logfile.yaml
+    - misconfiguration/springboot/springboot-loggerconfig.yaml
+    - misconfiguration/springboot/springboot-loggers.yaml
+    - misconfiguration/springboot/springboot-mappings.yaml
+    - misconfiguration/springboot/springboot-metrics.yaml
+    - misconfiguration/springboot/springboot-scheduledtasks.yaml
+    - misconfiguration/springboot/springboot-status.yaml
+    - misconfiguration/springboot/springboot-threaddump.yaml
+    - misconfiguration/springboot/springboot-trace.yaml
+    - vulnerabilities/springboot/springboot-actuators-jolokia-xxe.yaml
+    - vulnerabilities/springboot/springboot-h2-db-rce.yaml
+    - vulnerabilities/springboot/springboot-log4j-rce.yaml
+    - pocs/user/vulnerabilities/spring/jolokia-logback-jndi-rce.yaml
+    - pocs/user/vulnerabilities/spring/jolokia-realm-jndi-rce.yaml
+APACHE-tika:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1335.yaml
+Oracle-Fusion-Middleware:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-2791.yaml
+    - cves/2018/CVE-2018-3238.yaml
+    - cves/2019/CVE-2019-2578.yaml
+    - cves/2019/CVE-2019-2579.yaml
+    - cves/2020/CVE-2020-14864.yaml
+    - cves/2020/CVE-2020-14883.yaml
+Oracle-E-Business-Suite:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-3167.yaml
+    - cves/2022/CVE-2022-21500.yaml
+    - cves/2022/CVE-2022-21587.yaml
+    - oracle-ebs-bispgrapgh-file-read.yaml
+Grav-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-5233.yaml
+    - cves/2020/CVE-2020-11529.yaml
+SugarCRM:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-5715.yaml
+    - cves/2019/CVE-2019-14974.yaml
+    - exposed-panels/sugarcrm-panel.yaml
+vBulletin:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-6200.yaml
+    - cves/2019/CVE-2019-16759.yaml
+    - cves/2020/CVE-2020-12720.yaml
+    - cves/2020/CVE-2020-17496.yaml
+    - CVE-2023-25135.yaml
+    - CVE-2016-6195.yaml
+DedeCMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-18608.yaml
+    - cves/2018/CVE-2018-6910.yaml
+    - cves/2018/CVE-2018-7700.yaml
+    - vulnerabilities/dedecms/dedecms-carbuyaction-fileinclude.yaml
+    - vulnerabilities/dedecms/dedecms-config-xss.yaml
+    - vulnerabilities/dedecms/dedecms-membergroup-sqli.yaml
+    - vulnerabilities/dedecms/dedecms-openredirect.yaml
+    - vulnerabilities/dedecms/dedecms-rce.yaml
+    - CVE-2017-17731.yaml
+Anchor-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-7251.yaml
+uWSGI:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-7490.yaml
+    - exposures/files/uwsgi-ini.yaml
+COUCH-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-7662.yaml
+Acrolinx-Dashboard:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-7719.yaml
+    - exposed-panels/acrolinx-dashboard.yaml
+Apache-OFBiz:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-8033.yaml
+    - cves/2020/CVE-2020-1943.yaml
+    - cves/2020/CVE-2020-9496.yaml
+    # Apache OFBiz RMI反序列化漏洞
+    - cves/2021/CVE-2021-26295.yaml
+    - cves/2021/CVE-2021-30128.yaml
+    - default-logins/ofbiz/ofbiz-default-login.yaml
+    - vulnerabilities/apache/apache-ofbiz-log4j-rce.yaml
+Embedthis-Appweb:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-8715.yaml
+Etherpad-Lite:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-9845.yaml
+    - misconfiguration/unauth-etherpad.yaml
+AudioCodes:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-10093.yaml
+    - default-logins/audiocodes/audiocodes-default-login.yaml
+Zend-Server:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-10230.yaml
+    - exposures/configs/zend-config-file.yaml
+    - technologies/zend-server-test-page.yaml
+    - vulnerabilities/zend/zend-v1-xss.yaml
+DASAN-路由器:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-10562.yaml
+LG-NAS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-10818.yaml
+DLink-Router:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-7245.yaml
+    - cves/2018/CVE-2018-10822.yaml
+    - cves/2018/CVE-2018-10823.yaml
+    - cves/2018/CVE-2018-15517.yaml
+    - cves/2019/CVE-2019-13101.yaml
+    - cves/2019/CVE-2019-16920.yaml
+    - cves/2019/CVE-2019-17506.yaml
+    - cves/2020/CVE-2020-24579.yaml
+    - cves/2020/CVE-2020-25078.yaml
+    - cves/2020/CVE-2020-25506.yaml
+    - cves/2020/CVE-2020-9376.yaml
+    - cves/2021/CVE-2021-21816.yaml
+    - cves/2021/CVE-2021-46379.yaml
+    - cves/2021/CVE-2021-46381.yaml
+    - cves/2022/CVE-2022-28955.yaml
+    - exposed-panels/d-link-wireless.yaml
+    - misconfiguration/d-link-arbitary-fileread.yaml
+    - vulnerabilities/other/dlink-850L-info-leak.yaml
+Orchid-Core-VMS-IPConfigure:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-10956.yaml
+    - exposed-panels/orchid-vms-panel.yaml
+Monstra-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-11227.yaml
+    - cves/2018/CVE-2018-11473.yaml
+    - cves/2018/CVE-2018-16979.yaml
+    - cves/2020/CVE-2020-23697.yaml
+OpenCart:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-11231.yaml
+    - exposed-panels/opencart-panel.yaml
+splunk-日志分析:
+  type:
+    - root
+    - base
+    - dir
+  pocs:
+    - cves/2018/CVE-2018-11409.yaml
+    - exposed-panels/splunk-enterprise-panel.yaml
+    - exposed-panels/splunk-login.yaml
+OE-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12095.yaml
+CirCarLife-Scada:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12634.yaml
+    - cves/2018/CVE-2018-16668.yaml
+    - cves/2018/CVE-2018-16670.yaml
+    - cves/2018/CVE-2018-16671.yaml
+    - exposed-panels/circarlife-setup.yaml
+ZOHO-流量管理:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+ZOHO-ManageEngine-Desktop:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+    - cves/2021/CVE-2021-44515.yaml
+    - cves/2022/CVE-2022-23779.yaml
+ManageEngine-ADSelfService:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+    - cves/2021/CVE-2021-40539.yaml
+ManageEngine-SupportCenter:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+ManageEngine-ADAudit:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+    - cves/2022/CVE-2022-28219.yaml
+ManageEngine-DeviceExpert:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+ManageEngine-OpManager:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+    - cves/2020/CVE-2020-12116.yaml
+ManageEngine-Applications-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-12998.yaml
+Zeta Producer Desktop CMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-13980.yaml
+Zimbra-mail system:
+  type:
+    - root
+  pocs:
+    - cves/2013/CVE-2013-7091.yaml
+    - cves/2018/CVE-2018-14013.yaml
+    - cves/2019/CVE-2019-9670.yaml
+    - cves/2020/CVE-2020-7796.yaml
+    - cves/2022/CVE-2022-37042.yaml
+    - exposed-panels/zimbra-web-client.yaml
+    - exposed-panels/zimbra-web-login.yaml
+    - technologies/zimbra-detect.yaml
+    - vulnerabilities/other/zimbra-preauth-ssrf.yaml
+Responsive-Filemanager:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-14728.yaml
+    - cves/2018/CVE-2018-15535.yaml
+cgit:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-14912.yaml
+LGATE-902:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-14916.yaml
+    - cves/2018/CVE-2018-14918.yaml
+LogonTracer:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-16167.yaml
+SuperSign-EZ:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-16288.yaml
+Nuxeo-Platform:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-16341.yaml
+    - exposed-panels/nuxeo-platform-panel.yaml
+FUEL-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-16763.yaml
+    - default-logins/fuelcms/fuelcms-default-login.yaml
+    - exposed-panels/fuelcms-panel.yaml
+RubedoCMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-16836.yaml
+Kibana:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-17246.yaml
+    - cves/2019/CVE-2019-7609.yaml
+    - exposed-panels/kibana-panel.yaml
+    - misconfiguration/exposed-kibana.yaml
+DotCMS:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-17422.yaml
+    - cves/2022/CVE-2022-26352.yaml
+    - exposed-panels/dotcms-admin-panel.yaml
+Azure-Kubernetes:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-18264.yaml
+    - cves/2019/CVE-2019-11248.yaml
+    - cves/2022/CVE-2022-45933.yaml
+    - default-logins/rancher/rancher-default-login.yaml
+    - exposed-panels/argocd-login.yaml
+    - exposed-panels/kubernetes-dashboard.yaml
+    - exposed-panels/kubernetes-enterprise-manager.yaml
+    - exposed-panels/kubernetes-mirantis.yaml
+    - exposed-panels/kubernetes-web-view.yaml
+    - exposed-panels/rancher-panel.yaml
+    - exposures/configs/kubernetes-kustomization-disclosure.yaml
+    - exposures/files/kubernetes-etcd-keys.yaml
+    - misconfiguration/kubernetes/kubernetes-metrics.yaml
+    - misconfiguration/kubernetes/kubernetes-pods.yaml
+    - misconfiguration/kubernetes/kubernetes-resource-report.yaml
+    - technologies/azure-kubernetes-service.yaml
+    - technologies/kubernetes-operational-view-detect.yaml
+    - technologies/kubernetes/etcd/etcd-keys.yaml
+    - technologies/kubernetes/kube-api/kube-api-deployments.yaml
+    - technologies/kubernetes/kube-api/kube-api-namespaces.yaml
+    - technologies/kubernetes/kube-api/kube-api-nodes.yaml
+    - technologies/kubernetes/kube-api/kube-api-pods.yaml
+    - technologies/kubernetes/kube-api/kube-api-secrets.yaml
+    - technologies/kubernetes/kube-api/kube-api-services.yaml
+    - technologies/kubernetes/kube-api/kube-api-version.yaml
+    - technologies/kubernetes/kubelet/kubelet-healthz.yaml
+    - technologies/kubernetes/kubelet/kubelet-metrics.yaml
+    - technologies/kubernetes/kubelet/kubelet-pods.yaml
+    - technologies/kubernetes/kubelet/kubelet-runningpods.yaml
+    - technologies/kubernetes/kubelet/kubelet-stats.yaml
+    - technologies/kubernetes/kubernetes-version.yaml
+CentOS-WebPanel:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-18323.yaml
+    - cves/2022/CVE-2022-44877.yaml
+    - exposed-panels/cwp-webpanel.yaml
+mini_httpd:
+  type:
+    - root
+  pocs:
+    # ACME Mini_httpd 任意文件读取漏洞
+    - cves/2018/CVE-2018-18778.yaml
+DomainMOD:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1000856.yaml
+    - cves/2018/CVE-2018-19136.yaml
+    - cves/2018/CVE-2018-19137.yaml
+    - cves/2018/CVE-2018-19749.yaml
+    - cves/2018/CVE-2018-19751.yaml
+    - cves/2018/CVE-2018-19752.yaml
+    - cves/2018/CVE-2018-19892.yaml
+    - cves/2018/CVE-2018-19914.yaml
+    - cves/2018/CVE-2018-19915.yaml
+    - cves/2018/CVE-2018-20009.yaml
+    - cves/2018/CVE-2018-20010.yaml
+    - cves/2018/CVE-2018-20011.yaml
+    - cves/2019/CVE-2019-15811.yaml
+    - cves/2020/CVE-2020-20988.yaml
+Wowza Streaming Engine Manager:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-19365.yaml
+Oracle-Secure-Global-Desktop:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-19439.yaml
+PHP-Proxy:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-19458.yaml
+Adiscon-LogAnalyzer:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-19877.yaml
+    - exposed-panels/adiscon-loganalyzer.yaml
+Jolokia:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1000129.yaml
+    - cves/2018/CVE-2018-1000130.yaml
+    - misconfiguration/jolokia/jolokia-info-disclosure.yaml
+    - misconfiguration/jolokia/jolokia-list.yaml
+    - misconfiguration/jolokia/jolokia-mbean-search.yaml
+    - misconfiguration/jolokia/jolokia-unauthenticated-lfi.yaml
+    - technologies/jolokia-detect.yaml
+    - vulnerabilities/jolokia/jolokia-heap-info-disclosure.yaml
+    - vulnerabilities/springboot/springboot-actuators-jolokia-xxe.yaml
+    - vulnerabilities/springboot/springboot-h2-db-rce.yaml
+    - pocs/user/vulnerabilities/spring/jolokia-logback-jndi-rce.yaml
+    - pocs/user/vulnerabilities/spring/jolokia-realm-jndi-rce.yaml
+Cobbler-Web-Interface:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1000226.yaml
+    - cves/2021/CVE-2021-40323.yaml
+    - default-logins/cobbler/cobbler-default-login.yaml
+    - exposed-panels/cobbler-webgui.yaml
+    - misconfiguration/cobbler-exposed-directory.yaml
+    - technologies/cobbler-version.yaml
+GitList:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1000533.yaml
+    - misconfiguration/gitlist-disclosure.yaml
+Jenkins:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-1000600.yaml
+    - cves/2018/CVE-2018-1000861.yaml
+    - cves/2019/CVE-2019-10405.yaml
+    - cves/2019/CVE-2019-10475.yaml
+    - cves/2020/CVE-2020-2096.yaml
+    - cves/2020/CVE-2020-2103.yaml
+    - cves/2020/CVE-2020-2140.yaml
+    - cves/2022/CVE-2022-36883.yaml
+    - default-logins/jenkins/jenkins-default.yaml
+    - exposed-panels/jenkins-api-panel.yaml
+    - exposed-panels/jenkins-login.yaml
+    - misconfiguration/jenkins/jenkins-openuser-register.yaml
+    - technologies/jenkins-detect.yaml
+    - vulnerabilities/jenkins/jenkins-asyncpeople.yaml
+    - vulnerabilities/jenkins/jenkins-script.yaml
+    - vulnerabilities/jenkins/jenkins-stack-trace.yaml
+    - vulnerabilities/jenkins/unauthenticated-jenkins.yaml
+Cisco-Router:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-1653.yaml
+    - cves/2021/CVE-2021-1472.yaml
+    - cisco-rv110w-rv130w-rv215w-router-information-leakage.yaml
+Cisco-Prime-Infrastructure:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-1821.yaml
+Oracle-Business-Intelligence:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-2588.yaml
+    - cves/2019/CVE-2019-2616.yaml
+    - cves/2019/CVE-2019-2767.yaml
+    - businessintelligence-default-login.yaml
+Crestron-AirMedia:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-3929.yaml
+YouPHPTube-Encoder:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-5127.yaml
+Pypiserver:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-6802.yaml
+Zarafa-WebApp:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-7219.yaml
+Nexus-Repository-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-7238.yaml
+    - cves/2009/CVE-2009-4679.yaml
+    - default-logins/nexus/nexus-default-login.yaml
+Linear-eMerge:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-7254.yaml
+    - cves/2019/CVE-2019-7255.yaml
+    - cves/2019/CVE-2019-7256.yaml
+    - cves/2022/CVE-2022-31269.yaml
+    - cves/2022/CVE-2022-31499.yaml
+    - cves/2022/CVE-2022-31798.yaml
+    - cves/2022/CVE-2022-46381.yaml
+OpTergy-product:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-7275.yaml
+SonicWALL-Company Products:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-7481.yaml
+    - cves/2021/CVE-2021-20031.yaml
+    - cves/2021/CVE-2021-20038.yaml
+    - exposed-panels/sonic-wall-application.yaml
+    - exposed-panels/sonicwall-analyzer-login.yaml
+    - exposed-panels/sonicwall-management-panel.yaml
+    - exposed-panels/sonicwall-sslvpn-panel.yaml
+    - technologies/sonicwall-email-security-detect.yaml
+    - vulnerabilities/other/sonicwall-sslvpn-shellshock.yaml
+KindEditor:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-7543.yaml
+Total.js:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-8903.yaml
+ZZZCMS:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-9041.yaml
+    - cves/2022/CVE-2022-23881.yaml
+jfrog-Artifactory:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-9733.yaml
+    - cves/2019/CVE-2019-17444.yaml
+GETSIMPLE-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-9915.yaml
+    - exposed-panels/getsimple-installation.yaml
+    - technologies/getsimple-cms-detect.yaml
+TECLIB-GLPI:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-10232.yaml
+    - cves/2020/CVE-2020-11034.yaml
+    - cves/2021/CVE-2021-39211.yaml
+    - cves/2021/CVE-2021-43778.yaml
+    - cves/2022/CVE-2022-35914.yaml
+    - default-logins/glpi/glpi-default-login.yaml
+    - exposed-panels/glpi-panel.yaml
+    - exposures/files/glpi-status-ldap-domain-disclosure.yaml
+    - misconfiguration/glpi-directory-listing.yaml
+BlogEngineNET:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-10717.yaml
+Mongo-Express:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-10758.yaml
+    - cves/2020/CVE-2020-24391.yaml
+PulseSecure-SSL-VPN:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-11510.yaml
+Atlassian-Crowd:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-11580.yaml
+Grandnode:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-12276.yaml
+Deltek Maconomy:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-12314.yaml
+LiveZilla:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-12962.yaml
+    - exposed-panels/livezilla-login-panel.yaml
+Lansweeper:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-13462.yaml
+    - exposed-panels/lansweeper-login.yaml
+    - misconfiguration/unauthenticated-lansweeper.yaml
+Werkzeug:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-14322.yaml
+Webmin:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-15107.yaml
+    - cves/2022/CVE-2022-0824.yaml
+    - exposed-panels/webmin-panel.
+    - cves/2022/CVE-2022-36446.yaml
+LISTSERV:
+  type:
+    - root
+  pocs:
+    - cves/2010/CVE-2010-1870.yaml
+    - cves/2019/CVE-2019-15501.yaml
+    - cves/2022/CVE-2022-39195.yaml
+HARBOR:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-16097.yaml
+    - exposed-panels/harbor-panel.yaml
+    - technologies/harbor-detect.yaml
+nostromo:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-16278.yaml
+# 蜂网互联企业级路由器
+Bee network interconnection - interconnected enterprise-class router:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-16313.yaml
+Yachtcontrol:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-17270.yaml
+Mi-router:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-18371.yaml
+    - exposed-panels/xiaomi-wireless-router-login.yaml
+strapi-Headless-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-18818.yaml
+    - exposed-panels/strapi-documentation.yaml
+    - exposed-panels/strapi-panel.yaml
+    - exposures/apis/strapi-page.yaml
+    - technologies/strapi-cms-detect.yaml
+Citrix-Access-Gateway:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-19781.yaml
+    - cves/2020/CVE-2020-8191.yaml
+    - cves/2020/CVE-2020-8193.yaml
+    - cves/2020/CVE-2020-8194.yaml
+    - CVE-2023-24488.yaml
+Citrix-Netscaler:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-19781.yaml
+    - cves/2020/CVE-2020-8191.yaml
+    - cves/2020/CVE-2020-8193.yaml
+    - cves/2020/CVE-2020-8194.yaml
+Citrix-ADC:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-19781.yaml
+    - cves/2020/CVE-2020-8191.yaml
+    - cves/2020/CVE-2020-8193.yaml
+    - cves/2020/CVE-2020-8194.yaml
+Citrix-XenMobile:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-8209.yaml
+    - vulnerabilities/other/xenmobile-server-log4j.yaml
+TOTO_LINK-WIRELESS-ROUTER:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-19824.yaml
+    - cves/2021/CVE-2021-42887.yaml
+    - cves/2022/CVE-2022-25082.yaml
+phpMyChat-Plus:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-19908.yaml
+TVT-NVMS-1000:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-20085.yaml
+PANDORAFMS-产品:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-20224.yaml
+    - cves/2020/CVE-2020-8497.yaml
+influxdata-InfluxDB:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-20933.yaml
+    - exposed-panels/influxdb-panel.yaml
+    - technologies/influxdb-version-detect.yaml
+GitLab:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-2096.yaml
+    - cves/2020/CVE-2020-26413.yaml
+    - cves/2021/CVE-2021-22205.yaml
+    - cves/2021/CVE-2021-22214.yaml
+    - cves/2021/CVE-2021-4191.yaml
+    - cves/2022/CVE-2022-0735.yaml
+    - cves/2022/CVE-2022-1162.yaml
+    - cves/2022/CVE-2022-2185.yaml
+    - default-logins/gitlab/gitlab-weak-login.yaml
+    - exposed-panels/gitlab-detect.yaml
+    - misconfiguration/gitlab/gitlab-api-user-enum.yaml
+    - misconfiguration/gitlab/gitlab-public-repos.yaml
+    - misconfiguration/gitlab/gitlab-public-signup.yaml
+    - misconfiguration/gitlab/gitlab-public-snippets.yaml
+    - misconfiguration/gitlab/gitlab-uninitialized-password.yaml
+    - token-spray/api-gitlab.yaml
+    - vulnerabilities/gitlab/gitlab-rce.yaml
+    - cves/2023/CVE-2023-2825.yaml
+Cisco-VPN:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-3187.yaml
+    - cves/2020/CVE-2020-3452.yaml
+    - cves/2020/CVE-2020-3580.yaml
+    - cves/2021/CVE-2021-1472.yaml
+IBM-Maximo:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-4463.yaml
+Adobe-Magento:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-2067.yaml
+    - cves/2015/CVE-2015-2068.yaml
+    - cves/2020/CVE-2020-5776.yaml
+    - cves/2020/CVE-2020-5777.yaml
+    - exposed-panels/magento-admin-panel.yaml
+    - exposed-panels/magento-downloader-panel.yaml
+    - exposures/configs/magento-config-disclosure.yaml
+    - misconfiguration/installer/magento-installer.yaml
+    - technologies/magento-detect.yaml
+    - technologies/magmi-detect.yaml
+    - vulnerabilities/magento/magento-2-exposed-api.yaml
+    - vulnerabilities/magento/magento-cacheleak.yaml
+    - vulnerabilities/magento/magento-unprotected-dev-files.yaml
+Unraid:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-5847.yaml
+F5-BIGIP:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-5902.yaml
+    - cves/2021/CVE-2021-22986.yaml
+    - cves/2022/CVE-2022-1388.yaml
+    - exposed-panels/bigip-rest-panel.yaml
+    - technologies/bigip-config-utility-detect.yaml
+    - technologies/bigip-detect.yaml
+SAP-management system:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-6207.yaml
+openSIS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-6637.yaml
+    - cves/2021/CVE-2021-40542.yaml
+    - cves/2021/CVE-2021-41691.yaml
+    - exposed-panels/opensis-panel.yaml
+    - misconfiguration/installer/opensis-installer.yaml
+    - vulnerabilities/other/opensis-lfi.yaml
+Liferay:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-7961.yaml
+    - exposed-panels/liferay-portal.yaml
+    - misconfiguration/liferay/liferay-api.yaml
+    - misconfiguration/liferay/liferay-axis.yaml
+    - misconfiguration/liferay/liferay-jsonws.yaml
+    - vulnerabilities/j2ee/liferay-resource-leak.yaml
+Intellian-Aptus-Web:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-7980.yaml
+    - exposed-panels/intellian-aptus-panel.yaml
+DrayTek-Vigor-Router:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-8515.yaml
+PlaySMS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-8644.yaml
+EyesOfNetwork:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-8654.yaml
+CACTI-monitoring system:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-8813.yaml
+    - cves/2021/CVE-2021-26247.yaml
+    - cves/2022/CVE-2022-46169.yaml
+    - exposed-panels/cacti-panel.yaml
+    - vulnerabilities/other/cacti-weathermap-file-write.yaml
+Citrix-ShareFile:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-8982.yaml
+exacqVision-网络服务:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-9047.yaml
+    - default-logins/exacqvision/exacqvision-default-login.yaml
+Oracle-iPlanet:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-9315.yaml
+rConfig:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-16662.yaml
+    - cves/2020/CVE-2020-9425.yaml
+    - cves/2020/CVE-2020-10546.yaml
+    - cves/2020/CVE-2020-10547.yaml
+    - cves/2020/CVE-2020-10548.yaml
+    - cves/2020/CVE-2020-10549.yaml
+    - vulnerabilities/other/rconfig-file-upload.yaml
+APACHE-Skywalking:
+  type:
+    - root
+  pocs:
+    # Apache SkyWalking graphql SQL注入漏洞
+    - cves/2020/CVE-2020-9483.yaml
+    - vulnerabilities/skywalking/skywalking-log4j-rce.yaml
+Craft-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-9757.yaml
+SolarWinds-Orion:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-19386.yaml
+    - cves/2020/CVE-2020-10148.yaml
+    - exposed-panels/solarwinds-orion.yaml
+    - default-logins/solarwinds/solarwinds-default-login.yaml
+KEYCLOAK-身份认证系统:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-10770.yaml
+    - cves/2021/CVE-2021-20323.yaml
+    - exposed-panels/key-cloak-admin-panel.yaml
+    - exposures/configs/keycloak-openid-config.yaml
+    - exposures/files/keycloak-json.yaml
+    - vulnerabilities/other/keycloak-xss.yaml
+Wavlink-WN530HG4:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-10973.yaml
+    - cves/2022/CVE-2022-34045.yaml
+    - cves/2022/CVE-2022-34047.yaml
+    - cves/2022/CVE-2022-34049.yaml
+Grafana_Labs-公司产品:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-11110.yaml
+    - cves/2021/CVE-2021-27358.yaml
+    - cves/2021/CVE-2021-39226.yaml
+    - cves/2021/CVE-2021-41174.yaml
+    - cves/2021/CVE-2021-43798.yaml
+    - cves/2022/CVE-2022-26148.yaml
+    - default-logins/grafana/grafana-default-login.yaml
+    - exposed-panels/grafana-detect.yaml
+    - misconfiguration/grafana-public-signup.yaml
+    - grafana-file-read.yaml
+MicroStrategy-Server:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-18775.yaml
+    - cves/2018/CVE-2018-18777.yaml
+    - cves/2019/CVE-2019-18957.yaml
+    - cves/2020/CVE-2020-11450.yaml
+    - technologies/microstrategy-detect.yaml
+    - vulnerabilities/other/microstrategy-ssrf.yaml
+LimeSurvey:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-11455.yaml
+    - misconfiguration/installer/limesurvey-installer.yaml
+SuperWebMailer:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-11546.yaml
+PRTG-Network-Monitor:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-11547.yaml
+    - default-logins/prtg/prtg-default-login.yaml
+    - misconfiguration/unauthenticated-prtg.yaml
+Kong-Admin:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-11710.yaml
+Micro Focus:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-11853.yaml
+    - cves/2020/CVE-2020-11854.yaml
+    - exposed-panels/microfocus-admin-server.yaml
+    - exposed-panels/microfocus-filr-panel.yaml
+    - exposed-panels/microfocus-vibe-panel.yaml
+    - default-logins/UCMDB/ucmdb-default-login.yaml
+APACHE-Airflow:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-11978.yaml
+    - cves/2020/CVE-2020-13927.yaml
+    - cves/2020/CVE-2020-17526.yaml
+    - cves/2021/CVE-2021-38540.yaml
+    - cves/2022/CVE-2022-24288.yaml
+    - default-logins/apache/airflow-default-login.yaml
+    - exposed-panels/airflow-panel.yaml
+    - exposures/configs/airflow-configuration-exposure.yaml
+    - misconfiguration/airflow/airflow-debug.yaml
+    - misconfiguration/airflow/unauthenticated-airflow.yaml
+    - technologies/apache/airflow-detect.yaml
+    - CVE-2020-11981.yaml
+Apache-Cocoon:
+  type:
+    - root
+  pocs:
+    # Apache Cocoon XML注入
+    - cves/2020/CVE-2020-11991.yaml
+WAVLINK-Wi-Fi-APP:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-10973.yaml
+    - cves/2020/CVE-2020-12127.yaml
+    - cves/2020/CVE-2020-13117.yaml
+    - cves/2022/CVE-2022-2486.yaml
+    - cves/2022/CVE-2022-2487.yaml
+    - cves/2022/CVE-2022-2488.yaml
+    - cves/2022/CVE-2022-30489.yaml
+    - cves/2022/CVE-2022-31845.yaml
+    - cves/2022/CVE-2022-31846.yaml
+    - cves/2022/CVE-2022-31847.yaml
+    - cves/2022/CVE-2022-34045.yaml
+    - cves/2022/CVE-2022-34046.yaml
+    - cves/2022/CVE-2022-34047.yaml
+    - cves/2022/CVE-2022-34048.yaml
+    - cves/2022/CVE-2022-34049.yaml
+    - cves/2022/CVE-2022-34576.yaml
+    - misconfiguration/unauth-wavink-panel.yaml
+    - cves/2022/CVE-2022-48165.yaml
+TEAMPASS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-12478.yaml
+Microweber:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-13405.yaml
+    - cves/2022/CVE-2022-0281.yaml
+    - cves/2022/CVE-2022-0378.yaml
+    - cves/2022/CVE-2022-0660.yaml
+    - cves/2022/CVE-2022-0678.yaml
+    - cves/2022/CVE-2022-0928.yaml
+    - cves/2022/CVE-2022-0954.yaml
+    - cves/2022/CVE-2022-0963.yaml
+    - cves/2022/CVE-2022-0968.yaml
+    - cves/2022/CVE-2022-1439.yaml
+    - vulnerabilities/other/microweber-xss.yaml
+APACHE-kylin:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-13937.yaml
+    # Apache Kylin 操作系统命令注入漏洞
+    - pocs/user/cves/2020/CVE-2020-1956.yaml
+    # 官方的Apache Kylin 操作系统命令注入漏洞
+    - http/cves/2020/CVE-2020-1956.yaml
+    # Apache Kylin 未授权配置泄露 /kylin/api/admin/config
+    - pocs/user/cves/2020/CVE-2020-13937.yaml
+    # 默认密码
+    - pocs/user/vulnerabilities/apache/apache-kylin-console-default-login.yaml
+    # Apache Kylin DiagnosisController 命令注入
+    - pocs/user/cves/2020/CVE-2020-13925.yaml
+APACHE-Unomi:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-13942.yaml
+Apache-APISIX:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-13945.yaml
+    - cves/2021/CVE-2021-45232.yaml
+    - cves/2022/CVE-2022-24112.yaml
+    - default-logins/apache/apisix-default-login.yaml
+    - exposed-panels/apache/apache-apisix-panel.yaml
+Suprema-BioStar:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-15050.yaml
+Yii-Framework:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-15148.yaml
+    - exposures/configs/yii-debugger.yaml
+nette-Framework:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-15227.yaml
+mobileiron-security-platform:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-15505.yaml
+    - vulnerabilities/mobileiron/mobileiron-log4j-jndi-rce.yaml
+TerraMaster-NAS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-15568.yaml
+    - cves/2020/CVE-2020-28188.yaml
+    - cves/2022/CVE-2022-24990.yaml
+TerraMaster-TOS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-15568.yaml
+    - cves/2020/CVE-2020-28188.yaml
+    - cves/2022/CVE-2022-24990.yaml
+Mida-eFramework:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-15920.yaml
+    - vulnerabilities/other/mida-eframework-xss.yaml
+SALTSTACK-产品:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-16846.yaml
+    - cves/2021/CVE-2021-25281.yaml
+Microsoft-SharePoint:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-16952.yaml
+    - exposures/configs/exposed-sharepoint-list.yaml
+WSO2-Carbon-Server:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-17453.yaml
+    - cves/2022/CVE-2022-29464.yaml
+Artica-Web-Proxy:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-13158.yaml
+    - cves/2020/CVE-2020-17505.yaml
+    - cves/2020/CVE-2020-17506.yaml
+    - cves/2020/CVE-2020-8497.yaml
+    - cves/2022/CVE-2022-37153.yaml
+Apache-Flink:
+  type:
+    - root
+  pocs:
+    # Apache Flink upload 远程命令执行
+    - cves/2020/CVE-2020-17518.yaml
+    # Apache Flink jobmanager 目录遍历漏洞
+    - cves/2020/CVE-2020-17519.yaml
+    - vulnerabilities/apache/apache-flink-unauth-rce.yaml
+FHEM:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-19360.yaml
+Inspur-ClusterEngine:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-21224.yaml
+    - default-logins/others/inspur-clusterengine-default-login.yaml
+    - vulnerabilities/other/inspur-clusterengine-rce.yaml
+骑士-74CMS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-22208.yaml
+    - cves/2020/CVE-2020-22209.yaml
+    - cves/2020/CVE-2020-22210.yaml
+    - cves/2020/CVE-2020-22211.yaml
+    - vulnerabilities/other/74cms-sqli.yaml
+    # 74CMS SQLi with Plus weixin
+    - pocs/user/vulnerabilities/74cms/74cms-wexin-sqli.yaml
+Kyocera-打印机:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-23575.yaml
+NexusDB:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-24571.yaml
+WSO2-API-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-24589.yaml
+PHP-Fusion:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-24949.yaml
+Sophos-UTM-Web-Protection:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-25223.yaml
+ThinkAdmin:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-25540.yaml
+Commvault-backup system:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-25780.yaml
+Alerta:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-26214.yaml
+PrestaShop:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-26248.yaml
+    - cves/2021/CVE-2021-3110.yaml
+    - cves/2021/CVE-2021-36748.yaml
+    - cves/2021/CVE-2021-37538.yaml
+    - misconfiguration/installer/prestashop-installer.yaml
+NETGEAR-Prosafe-Plus-Switch:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-26919.yaml
+Akkadian-Provisioning-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-27361.yaml
+    - cves/2021/CVE-2021-31581.yaml
+ProcessWire-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-27467.yaml
+    - exposed-panels/processwire-login.yaml
+    - misconfiguration/installer/processwire-installer.yaml
+NETGEAR-Product:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-1555.yaml
+    - cves/2016/CVE-2016-5649.yaml
+    - cves/2016/CVE-2016-6277.yaml
+    - cves/2017/CVE-2017-5521.yaml
+    - cves/2020/CVE-2020-26919.yaml
+    - cves/2020/CVE-2020-27866.yaml
+    - cves/2021/CVE-2021-20167.yaml
+    - cves/2022/CVE-2022-29383.yaml
+    - vulnerabilities/other/netgear-router-auth-bypass.yaml
+    - vulnerabilities/other/netgear-router-exposure.yaml
+    - vulnerabilities/other/netgear-wac124-router-auth-bypass.yaml
+sonarQube-代码管理:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-27986.yaml
+    - exposures/tokens/sonarqube/sonarqube-token.yaml
+    - misconfiguration/sonarqube-public-projects.yaml
+RocketChat:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-28208.yaml
+    - cves/2021/CVE-2021-22911.yaml
+    - vulnerabilities/rocketchat/unauth-message-read.yaml
+Monitorr:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-28871.yaml
+OpenTSDB:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-35476.yaml
+Klog-Server:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-35729.yaml
+GateOne:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-35736.yaml
+Agentejo-Cockpit:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-14408.yaml
+    - cves/2020/CVE-2020-35846.yaml
+    - cves/2020/CVE-2020-35847.yaml
+    - cves/2020/CVE-2020-35848.yaml
+SysAid-Help-Desk:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-2996.yaml
+    - cves/2021/CVE-2021-31862.yaml
+LanProxy:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-3019.yaml
+Laravel-Framework:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-3129.yaml
+    # Laravel Filemanager插件 download 任意文件读取漏洞
+    - cves/2022/CVE-2022-40734.yaml
+    - exposed-panels/laravel-filemanager.yaml
+    - exposures/configs/laravel-env.yaml
+    - exposures/logs/laravel-log-file.yaml
+    - exposures/logs/laravel-telescope.yaml
+    - misconfiguration/laravel-debug-enabled.yaml
+    - misconfiguration/laravel-debug-error.yaml
+    - vulnerabilities/laravel/laravel-ignition-xss.yaml
+    - vulnerabilities/other/laravel-filemanager-lfi.yaml
+    # Laravel .env 配置文件泄露 CVE-2017-16894
+    - pocs/user/cves/2017/CVE-2017-16894.yaml
+    - misconfiguration/laravel-debug-infoleak.yaml
+Node-RED-Admin:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-3223.yaml
+    - cves/2021/CVE-2021-25864.yaml
+EMLOG:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-3293.yaml
+ZyXEL-NBG2105:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-3297.yaml
+FortiLogger:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-3378.yaml
+GraphQL:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-26413.yaml
+    - cves/2021/CVE-2021-4191.yaml
+    - misconfiguration/graphql/graphql-alias-batching.yaml
+    - misconfiguration/graphql/graphql-array-batching.yaml
+    - misconfiguration/graphql/graphql-field-suggestion.yaml
+    - misconfiguration/graphql/graphql-get-method.yaml
+    - misconfiguration/graphql/graphql-playground.yaml
+    - technologies/apollo-server-detect.yaml
+    - technologies/graphiql-detect.yaml
+    - technologies/graphql-detect.yaml
+    - vulnerabilities/other/hasura-graphql-psql-exec.yaml
+    - vulnerabilities/other/hasura-graphql-ssrf.yaml
+SonicWall-SMA:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-20038.yaml
+TCExam:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-20114.yaml
+Draytek-VigorConnect:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-20123.yaml
+    - cves/2021/CVE-2021-20124.yaml
+TRENDnet-TEW-827DRU:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-20150.yaml
+    - cves/2021/CVE-2021-20158.yaml
+NETGEAR-RAX43:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-20167.yaml
+MovableType- product:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-20837.yaml
+    - exposed-panels/movable-type-login.yaml
+Movable-Default-Page:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-20837.yaml
+    - exposed-panels/movable-type-login.yaml
+MINIO-Browser:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21287.yaml
+    - cves/2021/CVE-2021-41266.yaml
+    - default-logins/minio/minio-default-login.yaml
+MINIO-Console:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21287.yaml
+    - cves/2021/CVE-2021-41266.yaml
+    - default-logins/minio/minio-default-login.yaml
+    - cves/2023/CVE-2023-28432.yaml
+Lucee-Server:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21307.yaml
+    - exposures/logs/lucee-stack-trace.yaml
+    - vulnerabilities/other/lucee-xss.yaml
+Lucee-Default-Page:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21307.yaml
+    - exposures/logs/lucee-stack-trace.yaml
+    - vulnerabilities/other/lucee-xss.yaml
+Adminer:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21311.yaml
+    - cves/2021/CVE-2021-29625.yaml
+Jellyfin:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-26948.yaml
+    - cves/2021/CVE-2021-21402.yaml
+    - cves/2021/CVE-2021-29490.yaml
+Advantech-R-SeeNet:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21799.yaml
+    - cves/2021/CVE-2021-21800.yaml
+    - cves/2021/CVE-2021-21801.yaml
+    - cves/2021/CVE-2021-21802.yaml
+    - cves/2021/CVE-2021-21803.yaml
+    - cves/2021/CVE-2021-21805.yaml
+    - default-logins/rseenet/rseenet-default-login.yaml
+Lantronix companies products:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21881.yaml
+VMware-VirtualCenter:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21972.yaml
+    - cves/2021/CVE-2021-21973.yaml
+    - cves/2021/CVE-2021-21985.yaml
+    - cves/2021/CVE-2021-22005.yaml
+    - exposed-panels/vmware-vcenter-converter-standalone.yaml
+    - technologies/vmware/vmware-detect.yaml
+    - vulnerabilities/vmware/vmware-vcenter-lfi-linux.yaml
+    - vulnerabilities/vmware/vmware-vcenter-lfi.yaml
+    - vulnerabilities/vmware/vmware-vcenter-log4j-jndi-rce.yaml
+    - vulnerabilities/vmware/vmware-vcenter-ssrf.yaml
+VMware-vRealize-Automation-Appliance:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21975.yaml
+    - cves/2022/CVE-2022-22972.yaml
+    - exposed-panels/vrealize-loginsight-panel.yaml
+    - technologies/vmware/vmware-vrealize-detect.yaml
+    - vulnerabilities/vmware/vrealize-operations-log4j-rce.yaml
+    - cves/2022/CVE-2022-31656.yaml
+vmware-vRealize:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-21975.yaml
+    - exposed-panels/vrealize-loginsight-panel.yaml
+    - technologies/vmware/vmware-vrealize-detect.yaml
+    - vulnerabilities/vmware/vrealize-operations-log4j-rce.yaml
+    - cves/2022/CVE-2022-31656.yaml
+    - vulnerabilities/vmware/vmware-operation-manager-log4j.yaml
+Spring-Cloud-Netflix:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-22053.yaml
+vmware-Workspace-ONE-Access:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-22054.yaml
+    - cves/2022/CVE-2022-22954.yaml
+    - cves/2022/CVE-2022-22972.yaml
+    - cves/2022/CVE-2022-31656.yaml
+Mercury-router:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-23241.yamdal
+APACHE-Druid:
+  type:
+    - root
+  pocs:
+    # Apache Druid sampler 远程代码执行
+    - cves/2021/CVE-2021-25646.yaml
+    # Apache Druid LoadData 任意文件读取漏洞
+    - cves/2021/CVE-2021-36749.yaml
+    - default-logins/druid/druid-default-login.yaml
+    - exposed-panels/druid-console-exposure.yaml
+    - misconfiguration/apache-druid-unauth.yaml
+    - pocs/user/vulnerabilities/apache/apache-druid-log4shell.yaml
+    - apache-druid-kafka-connect-rce.yaml
+Void-Aural-Rec-Monitor:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-25899.yaml
+ImpressCMS:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-26598.yaml
+Microsoft-Exchange:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-26855.yaml
+    - cves/2021/CVE-2021-31195.yaml
+    - cves/2021/CVE-2021-34473.yaml
+    - cves/2021/CVE-2021-41349.yaml
+    - exposed-panels/microsoft-exchange-panel.yaml
+APACHE-Tapestry:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-27850.yaml
+LumisXP:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-27931.yaml
+Ntopng:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-28073.yaml
+    - misconfiguration/ntopng-traffic-dashboard.yaml
+VICIdial:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-28854.yaml
+OpenAM:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-29156.yaml
+    - cves/2021/CVE-2021-35464.yaml
+    - exposed-panels/openam-panel.yaml
+Alibaba-Nacos:
+  type:
+    - root
+    - dir
+  pocs:
+    - cves/2021/CVE-2021-29441.yaml
+    - cves/2021/CVE-2021-29442.yaml
+    - misconfiguration/unauthenticated-nacos-access.yaml
+    - pocs/user/vulnerabilities/alibaba/alibaba-nacos-default-password.yaml
+    - pocs/user/vulnerabilities/alibaba/alibaba-nacos-default-identity.yaml
+    - pocs/user/vulnerabilities/alibaba/alibaba-nacos-default-token.yaml
+    - misconfiguration/nacos-authentication-bypass.yaml
+    - technologies/nacos-version.yaml
+    - nacos-jraftserver-deserialization-rce.yaml
+VoIPmonitor:
+  type:
+    - root
+  pocs:
+    # VoIPmonitor 远程命令执行漏洞
+    - cves/2021/CVE-2021-30461.yaml
+    - cves/2022/CVE-2022-24260.yaml
+Pentaho:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-31602.yaml
+    - default-logins/pentaho/pentaho-default-login.yaml
+TENDA-router:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-31755.yaml
+    - cves/2022/CVE-2022-42233.yaml
+    - exposed-panels/tenda-11n-wireless-router-login.yaml
+    - exposed-panels/tenda-web-master.yaml
+ASUS-GT-AC2900:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-32030.yaml
+Maian-Cart:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-32172.yaml
+WebSVN:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-32305.yaml
+elFinder:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-32682.yaml
+    - cves/2021/CVE-2021-43421.yaml
+    - cves/2022/CVE-2022-26960.yaml
+    - vulnerabilities/other/elFinder-path-traversal.yaml
+wordpress-woocommerce:
+  type:
+    - root
+  pocs:
+    - cves/2014/CVE-2014-4558.yaml
+    - cves/2018/CVE-2018-5316.yaml
+    - cves/2021/CVE-2021-32789.yaml
+    - cves/2022/CVE-2022-0149.yaml
+    - cves/2022/CVE-2022-0412.yaml
+    - cves/2022/CVE-2022-33901.yaml
+    - vulnerabilities/wordpress/checkout-fields-manager-xss.yaml
+    - vulnerabilities/wordpress/elex-woocommerce-xss.yaml
+    - vulnerabilities/wordpress/woocommerce-pdf-invoices-xss.yaml
+    - vulnerabilities/wordpress/wordpress-woocommerce-listing.yaml
+    - vulnerabilities/wordpress/wp-woocommerce-email-verification.yaml
+    - vulnerabilities/wordpress/wp-woocommerce-file-download.yaml
+    - vulnerabilities/wordpress/wp-woocommerce-pdf-invoice-listing.yaml
+dahua-视频监控:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-33044.yaml
+RaspAP:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-33357.yaml
+Geutebruck:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-33544.yaml
+Cartadis-Gespage:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-33807.yaml
+FAUST-iServer:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-34805.yaml
+Oracle-Access-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-35587.yaml
+HikVision-Company Products:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-7921.yaml
+    - cves/2021/CVE-2021-36260.yaml
+    - exposures/configs/hikvision-info-leak.yaml
+Apache-Shenyu:
+  type:
+    - root
+  pocs:
+    # Apache ShenYu dashboardUser 账号密码泄漏漏洞
+    - cves/2021/CVE-2021-37580.yaml
+    - cves/2022/CVE-2022-23944.yaml
+Virtua-Software:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-37589.yaml
+GLPI-Status-Page:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-10232.yaml
+    - cves/2020/CVE-2020-11034.yaml
+    - cves/2021/CVE-2021-39211.yaml
+    - cves/2021/CVE-2021-43778.yaml
+    - cves/2022/CVE-2022-35914.yaml
+    - default-logins/glpi/glpi-default-login.yaml
+    - exposures/files/glpi-status-ldap-domain-disclosure.yaml
+    - misconfiguration/glpi-directory-listing.yaml
+eyoucms:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-39501.yaml
+Reolink:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-40149.yaml
+    - cves/2021/CVE-2021-40150.yaml
+Apache-Web-Server:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-40438.yaml
+    # Apache HTTPd 路径穿越漏洞
+    - cves/2021/CVE-2021-41773.yaml
+    # Apache HTTPd 路径穿越漏洞
+    - cves/2021/CVE-2021-42013.yaml
+IND780:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-40661.yaml
+GeoServer:
+  type:
+    - root
+    - dir
+  pocs:
+    - cves/2021/CVE-2021-40822.yaml
+    - cves/2022/CVE-2022-24816.yaml
+    - default-logins/geoserver/geoserver-default-login.yaml
+    # GeoServer OGC Filter - SQL Injection
+    - CVE-2023-25157.yaml
+GeoWebServer:
+  type:
+    - root
+    - dir
+  pocs:
+    - geowebserver-lfi.yaml
+    - geowebserver-xss.yaml
+Auerswald:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-40856.yaml
+    - cves/2021/CVE-2021-40859.yaml
+Aviatrix-Controller:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-40870.yaml
+Gurock-TestRail:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-40875.yaml
+    - misconfiguration/installer/testrail-install.yaml
+MkDocs:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-40978.yaml
+Redash-Setup-Configuration:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-41192.yaml
+    - misconfiguration/installer/redash-installer.yaml
+Metabase:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-41277.yaml
+    - vulnerabilities/other/metabase-log4j.yaml
+    - CVE-2023-38646.yaml
+Pfsense- product:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-41282.yaml
+    - cves/2022/CVE-2022-31814.yaml
+paYara-Server:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-41381.yaml
+Payara-Micro:
+  type:
+    - root
+  pocs:
+    # PayaraMicro microprofile-config.properties 信息泄漏漏洞
+    - cves/2021/CVE-2021-41381.yaml
+PuneethReddyHC:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-41648.yaml
+    - cves/2021/CVE-2021-41649.yaml
+Konga:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-42192.yaml
+Sitecore:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-42237.yaml
+    - misconfiguration/sitecore-debug-page.yaml
+    - technologies/default-sitecore-page.yaml
+    - technologies/sitecore-version.yaml
+D-Link-DIR-615:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-42627.yaml
+kkFileView:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-43734.yaml
+    - cves/2022/CVE-2022-29349.yaml
+    - cves/2022/CVE-2022-35151.yaml
+    - cves/2022/CVE-2022-40879.yaml
+    - kkfileview-ssrf.yaml
+Reprise-License-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-44152.yaml
+    - cves/2022/CVE-2022-28363.yaml
+    - cves/2022/CVE-2022-28365.yaml
+Rosario-Student-Information-System:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-44427.yaml
+Rosariosis:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-44427.yaml
+APACHE-Superset:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-44451.yaml
+    - CVE-2023-27524.yaml
+Ivanti-Landesk Cloud Service:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-44529.yaml
+Thinfinity-VirtualUI:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-44848.yaml
+    - cves/2021/CVE-2021-45092.yaml
+HD-Network-Real-time-Monitoring-System:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-45043.yaml
+TELESQUARE-TLR-2005KSH:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-45428.yaml
+    - cves/2021/CVE-2021-46424.yaml
+Franklin-Fueling:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-46417.yaml
+SDT-CW3B1:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-46422.yaml
+Sophos-Safety Products:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-25223.yaml
+    - cves/2022/CVE-2022-1040.yaml
+    - exposed-panels/sophos-fw-version-detect.yaml
+    - exposed-panels/sophos-mobile-panel.yaml
+    - CVE-2022-3980.yaml
+Drawio:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-1713.yaml
+    - cves/2022/CVE-2022-1815.yaml
+October-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-21705.yaml
+    - default-logins/octobercms/octobercms-default-login.yaml
+SAP-Memory-Pipes:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-22536.yaml
+vmware-SpringBoot-Framework:
+  type:
+    - root
+    - dir
+  pocs:
+    - springboot-env-all-check.yaml
+    - swagger-api.yaml
+    - cves/2016/CVE-2016-4977.yaml
+    - cves/2018/CVE-2018-1271.yaml
+    - cves/2018/CVE-2018-1273.yaml
+    - cves/2019/CVE-2019-3799.yaml
+    - cves/2020/CVE-2020-5405.yaml
+    - cves/2020/CVE-2020-5410.yaml
+    - cves/2020/CVE-2020-5412.yaml
+    - cves/2022/CVE-2022-22963.yaml
+    - cves/2021/CVE-2021-21234.yaml
+    - cves/2021/CVE-2021-22053.yaml
+    - cves/2021/CVE-2021-31602.yaml
+    - cves/2022/CVE-2022-22947.yaml
+    - cves/2022/CVE-2022-22965.yaml
+    - exposures/files/exposed-alps-spring.yaml
+    - misconfiguration/jolokia/jolokia-info-disclosure.yaml
+    - misconfiguration/jolokia/jolokia-list.yaml
+    - misconfiguration/jolokia/jolokia-mbean-search.yaml
+    - misconfiguration/jolokia/jolokia-unauthenticated-lfi.yaml
+    - misconfiguration/springboot/spring-eureka.yaml
+    - misconfiguration/springboot/springboot-auditevents.yaml
+    - misconfiguration/springboot/springboot-autoconfig.yaml
+    - misconfiguration/springboot/springboot-beans.yaml
+    - misconfiguration/springboot/springboot-caches.yaml
+    - misconfiguration/springboot/springboot-conditions.yaml
+    - misconfiguration/springboot/springboot-configprops.yaml
+    - misconfiguration/springboot/springboot-dump.yaml
+    - misconfiguration/springboot/springboot-env.yaml
+    - misconfiguration/springboot/springboot-features.yaml
+    - misconfiguration/springboot/springboot-flyway.yaml
+    - misconfiguration/springboot/springboot-gateway.yaml
+    - misconfiguration/springboot/springboot-health.yaml
+    - misconfiguration/springboot/springboot-heapdump.yaml
+    - misconfiguration/springboot/springboot-httptrace.yaml
+    - misconfiguration/springboot/springboot-info.yaml
+    - misconfiguration/springboot/springboot-jolokia.yaml
+    - misconfiguration/springboot/springboot-liquidbase.yaml
+    - misconfiguration/springboot/springboot-logfile.yaml
+    - misconfiguration/springboot/springboot-loggerconfig.yaml
+    - misconfiguration/springboot/springboot-loggers.yaml
+    - misconfiguration/springboot/springboot-mappings.yaml
+    - misconfiguration/springboot/springboot-metrics.yaml
+    - misconfiguration/springboot/springboot-scheduledtasks.yaml
+    - misconfiguration/springboot/springboot-status.yaml
+    - misconfiguration/springboot/springboot-threaddump.yaml
+    - misconfiguration/springboot/springboot-trace.yaml
+    - vulnerabilities/springboot/springboot-actuators-jolokia-xxe.yaml
+    - vulnerabilities/springboot/springboot-h2-db-rce.yaml
+    - vulnerabilities/springboot/springboot-log4j-rce.yaml
+VMware-Identity-Manager:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-22972.yaml
+    - cves/2022/CVE-2022-31656.yaml
+Crestron-HD-MD4x2-4K-E:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-23178.yaml
+BigAnt-Server:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-23347.yaml
+    - cves/2022/CVE-2022-23348.yaml
+AVEVA-InTouch-Access-Anywhere-Secure-Gateway:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-23854.yaml
+Casdoor:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-24124.yaml
+Shibboleth-Identity-Provider:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-24129.yaml
+Flyte-Console:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-24856.yaml
+Piano-LED-Visualizer:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-24900.yaml
+Alt-N-MDaemon-Security-Gateway:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-25356.yaml
+Dynamicweb:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-25369.yaml
+ThinkPHP:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-25481.yaml
+    - cves/2022/CVE-2022-47945.yaml
+    - vulnerabilities/thinkphp/thinkphp-2-rce.yaml
+    - vulnerabilities/thinkphp/thinkphp-501-rce.yaml
+    - vulnerabilities/thinkphp/thinkphp-5022-rce.yaml
+    - vulnerabilities/thinkphp/thinkphp-5023-rce.yaml
+    - vulnerabilities/thinkphp/thinkphp-509-information-disclosure.yaml
+    - pocs/user/vulnerabilities/thinkphp/thinkphp6-lang-lfi.yaml
+Ametys-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-26159.yaml
+3CX-Phone-System-Management-Console:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/3cx-management-console.yaml
+QNAP-NAS:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-27593.yaml
+QNAP-PhotoStation:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-27593.yaml
+Royal-Event-Management:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-28080.yaml
+    - vulnerabilities/royalevent/royalevent-management-xss.yaml
+    - vulnerabilities/royalevent/royalevent-stored-xss.yaml
+D-LINK-DIR-816L:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-28955.yaml
+Consul-HashiCorp:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-29153.yaml
+    - misconfiguration/nomad-jobs.yaml
+    - technologies/hashicorp-boundary-detect.yaml
+    - technologies/hashicorp-vault-detect.yaml
+    - vulnerabilities/other/hashicorp-consul-rce.yaml
+    # 自己定义的
+    - pocs/user/vulnerabilities/others/consul-rexec-rce.yaml
+    - pocs/user/vulnerabilities/others/consul-service-rce.yaml
+SolarView-Compact:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-29298.yaml
+    - cves/2022/CVE-2022-29299.yaml
+    - cves/2022/CVE-2022-29301.yaml
+    - cves/2022/CVE-2022-29303.yaml
+    - cves/2022/CVE-2022-31373.yaml
+    - cves/2022/CVE-2022-40881.yaml
+    - cves/2023/CVE-2023-29919.yaml
+    - vulnerabilities/other/solarview-compact-xss.yaml
+    # SolarView Compact 6.00 - OS Command Injection
+    - CVE-2023-23333.yaml
+NETGEAR-SSL-VPN:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-29383.yaml
+NETGEAR-公司产品:
+  type:
+    - root
+  pocs:
+    - cves/2016/CVE-2016-1555.yaml
+    - cves/2016/CVE-2016-5649.yaml
+    - cves/2016/CVE-2016-6277.yaml
+    - cves/2017/CVE-2017-5521.yaml
+    - cves/2020/CVE-2020-26919.yaml
+    - cves/2020/CVE-2020-27866.yaml
+    - cves/2021/CVE-2021-20167.yaml
+    - cves/2022/CVE-2022-29383.yaml
+    - exposed-panels/netgear-version-detect.yaml
+    - vulnerabilities/other/netgear-router-auth-bypass.yaml
+    - vulnerabilities/other/netgear-router-exposure.yaml
+    - vulnerabilities/other/netgear-wac124-router-auth-bypass.yaml
+WSO2-Management-Console:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-29464.yaml
+    - wso2-default-login.yaml
+iSpy-Server:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-29775.yaml
+Zyxel-USG-FLEX-100:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+    - CVE-2020-29583.yaml
+Zyxel-USG-FLEX-100w:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-USG-FLEX-200:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-USG-FLEX-500:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-USG-FLEX-700:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-USG-FLEX-50:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-USG-FLEX-50w:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-ATP100:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-ATP200:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-ATP500:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Zyxel-ATP700:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-30525.yaml
+Roxy-WI:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-20526.yaml
+    - cves/2022/CVE-2022-31126.yaml
+    - exposed-panels/roxy-fileman.yaml
+    - misconfiguration/roxyfileman-fileupload.yaml
+Gitblit:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-31268.yaml
+muhttpd:
+  type:
+    - root
+  pocs:
+    # muhttpd 任意文件读取漏洞
+    - cves/2022/CVE-2022-31793.yaml
+Wavlink:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-10973.yaml
+    - cves/2020/CVE-2020-12127.yaml
+    - cves/2020/CVE-2020-13117.yaml
+    - cves/2022/CVE-2022-2486.yaml
+    - cves/2022/CVE-2022-2487.yaml
+    - cves/2022/CVE-2022-2488.yaml
+    - cves/2022/CVE-2022-30489.yaml
+    - cves/2022/CVE-2022-31845.yaml
+    - cves/2022/CVE-2022-31846.yaml
+    - cves/2022/CVE-2022-31847.yaml
+    - cves/2022/CVE-2022-34045.yaml
+    - cves/2022/CVE-2022-34046.yaml
+    - cves/2022/CVE-2022-34047.yaml
+    - cves/2022/CVE-2022-34048.yaml
+    - cves/2022/CVE-2022-34049.yaml
+    - cves/2022/CVE-2022-34576.yaml
+    - misconfiguration/unauth-wavink-panel.yaml
+Car-Rental-Management-System:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-32022.yaml
+    - cves/2022/CVE-2022-32024.yaml
+    - cves/2022/CVE-2022-32025.yaml
+    - cves/2022/CVE-2022-32026.yaml
+    - cves/2022/CVE-2022-32028.yaml
+Hospital-Management-System:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-5191.yaml
+    - cves/2020/CVE-2020-5192.yaml
+    - cves/2022/CVE-2022-32094.yaml
+    - cves/2022/CVE-2022-34590.yaml
+    - cves/2022/CVE-2022-38637.yaml
+    - vulnerabilities/other/hospital-management-xss.yaml
+    - vulnerabilities/other/hospital-management-xss2.yaml
+Portal-do-Software-Publico-Brasileiro-i3geo:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-32409.yaml
+MSNSwitch-Firmware:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-32429.yaml
+Powertek-Firmware:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-33174.yaml
+APACHE-Spark:
+  type:
+    - root
+  pocs:
+    # Apache Spark doAs 远程命令执行漏洞
+    - cves/2022/CVE-2022-33891.yaml
+    # Apache Spark 未授权访问漏洞
+    - vulnerabilities/other/spark-webui-unauth.yaml
+    - vulnerabilities/other/unauth-spark-api.yaml
+SpaceLogic-C-Bus:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-34753.yaml
+ManageEngine:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-35405.yaml
+    - cves/2012/CVE-2012-4889.yaml
+    - cves/2015/CVE-2015-7780.yaml
+    - cves/2017/CVE-2017-11512.yaml
+    - cves/2018/CVE-2018-12998.yaml
+    - cves/2020/CVE-2020-12116.yaml
+    - cves/2021/CVE-2021-40539.yaml
+    - cves/2021/CVE-2021-44077.yaml
+    - cves/2021/CVE-2021-44515.yaml
+    - cves/2022/CVE-2022-24681.yaml
+    - cves/2022/CVE-2022-28219.yaml
+    - cves/2022/CVE-2022-47966.yaml
+    - exposed-panels/zoho/manageengine-adaudit.yaml
+    - exposed-panels/zoho/manageengine-adselfservice.yaml
+    - exposed-panels/zoho/manageengine-analytics.yaml
+    - exposed-panels/zoho/manageengine-apex-helpdesk.yaml
+    - exposed-panels/zoho/manageengine-applications-manager.yaml
+    - exposed-panels/zoho/manageengine-assetexplorer.yaml
+    - exposed-panels/zoho/manageengine-desktop.yaml
+    - exposed-panels/zoho/manageengine-keymanagerplus.yaml
+    - exposed-panels/zoho/manageengine-network-config.yaml
+    - exposed-panels/zoho/manageengine-opmanager.yaml
+    - exposed-panels/zoho/manageengine-servicedesk.yaml
+    - exposed-panels/zoho/manageengine-supportcenter.yaml
+Intelligent-WAPPLES:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-35413.yaml
+    - vulnerabilities/other/wapples-firewall-lfi.yaml
+ZK-Framework:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-36537.yaml
+Telos-Alliance-Omnia-MPX-Node:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-36642.yaml
+ATLASSIAN-Bitbucket:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-36804.yaml
+    - exposures/files/bitbucket-pipelines.yaml
+    - misconfiguration/bitbucket-public-repository.yaml
+Dapr-Dashboard:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-38817.yaml
+Free5GC-Web-Console:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-38870.yaml
+Laravel-Filemanager:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-40734.yaml
+    - vulnerabilities/other/laravel-filemanager-lfi.yaml
+Tenda-11N-Wireless-AP:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-42233.yaml
+KubeView:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-45933.yaml
+Aspera-Faspex:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-47986.yaml
+GoAnywhere-Web-Client:
+  type:
+    - root
+  pocs:
+    - cves/2023/CVE-2023-0669.yaml
+    - exposed-panels/go-anywhere-client.yaml
+    - exposed-panels/goanywhere-mft-login.yaml
+    - vulnerabilities/other/goanywhere-mft-log4j-rce.yaml
+Plesk-Obsidian:
+  type:
+    - root
+  pocs:
+    - cves/2023/CVE-2023-24044.yaml
+3Com-NJ2000:
+  type:
+    - root
+  pocs:
+    - default-logins/3com/3com-nj2000-default-login.yaml
+UPS-Adapter-CS141-SNMP-Module:
+  type:
+    - root
+  pocs:
+    - cs141-default-login.yaml
+Alibaba-Canal:
+  type:
+    - root
+  pocs:
+    - canal-default-login.yaml
+Fastjson:
+  type:
+    - root
+    - base
+    - dir
+  pocs:
+    - technologies/fastjson-version.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-24-rce.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-41-rce.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-42-rce.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-43-rce.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-47-rce.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-62-rce.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-67-rce.yaml
+    - vulnerabilities/fastjson/fastjson-1-2-68-rce.yaml
+AlphaWeb-XE:
+  type:
+    - root
+  pocs:
+    - default-logins/alphaweb/alphaweb-default-login.yaml
+Apache-Ambari:
+  type:
+    - root
+  pocs:
+    - default-logins/ambari/ambari-default-login.yaml
+DolphinScheduler:
+  type:
+    - root
+  pocs:
+    - default-logins/apache/dolphinscheduler-default-login.yaml
+APACHE-dubbo:
+  type:
+    - root
+  pocs:
+    - default-logins/apache/dubbo-admin-default-login.yaml
+Apache-Kafka-Center:
+  type:
+    - root
+  pocs:
+    - default-logins/apache/kafka-center-default-login.yaml
+    - misconfiguration/apache/kafka-manager-unauth.yaml
+    - misconfiguration/kafka-cruise-control.yam
+Apache-Karaf:
+  type:
+    - root
+  pocs:
+    - default-logins/apache/karaf-default-login.yaml
+Apache-Ranger:
+  type:
+    - root
+  pocs:
+    - default-logins/apache/ranger-default-login.yaml
+Apollo:
+  type:
+    - root
+  pocs:
+    - default-logins/apollo/apollo-default-login.yaml
+ARL-资产灯塔系统:
+  type:
+    - root
+  pocs:
+    - default-logins/arl/arl-default-login.yaml
+Azkaban-Web-Client:
+  type:
+    - root
+  pocs:
+    - default-logins/azkaban/azkaban-default-login.yaml
+CLOUDERA-Hadoop-Hue:
+  type:
+    - root
+  pocs:
+    - default-logins/cobbler/hue-default-credential.yaml
+Dataiku:
+  type:
+    - root
+  pocs:
+    - default-logins/dataiku/dataiku-default-login.yaml
+RackN-Digital-Rebar:
+  type:
+    - root
+  pocs:
+    - default-logins/digitalrebar/digitalrebar-default-login.yaml
+    - vulnerabilities/other/digitalrebar-traversal.yaml
+DVWA:
+  type:
+    - root
+  pocs:
+    - default-logins/dvwa/dvwa-default-login.yaml
+Emqx:
+  type:
+    - root
+  pocs:
+    - default-logins/emqx/emqx-default-login.yaml
+Google-Earth-Enterprise:
+  type:
+    - root
+  pocs:
+    - default-logins/google/google-earth-dlogin.yaml
+Gophish:
+  type:
+    - root
+  pocs:
+    - default-logins/gophish/gophish-default-login.yaml
+APACHE-Guacamole:
+  type:
+    - root
+  pocs:
+    - default-logins/guacamole/guacamole-default-login.yaml
+Hortonworks-SmartSense-Tool:
+  type:
+    - root
+  pocs:
+    - default-logins/hortonworks/smartsense-default-login.yaml
+HP-1820-8G-Switch-J9979A:
+  type:
+    - root
+  pocs:
+    - hp-switch-default-login.yaml
+HUAWEI-HG532e:
+  type:
+    - root
+  pocs:
+    - huawei-HG532e-default-router-login.yaml
+Hybris-Administration-Console:
+  type:
+    - root
+  pocs:
+    - default-logins/hybris/hybris-default-login.yaml
+ipTIME-Router:
+  type:
+    - root
+  pocs:
+    - default-logins/iptime/iptime-default-login.yaml
+金和网络-金和OA:
+  type:
+    - root
+  pocs:
+    - default-logins/jinher/jinher-oa-default-login.yaml
+    - pocs/user/vulnerabilities/jinhe/jinhe-oa-c6-download-arbitrary-file-read.yaml
+JupyterHub:
+  type:
+    - root
+  pocs:
+    - default-logins/jupyterhub/jupyterhub-default-login.yaml
+Kanboard:
+  type:
+    - root
+  pocs:
+    - default-logins/kanboard-default-login.yaml
+Kettle:
+  type:
+    - root
+  pocs:
+    - default-logins/kettle/kettle-default-login.yaml
+Lutron-Quantum:
+  type:
+    - root
+  pocs:
+    - default-logins/lutron/lutron-default-login.yaml
+Mobotix-Camera:
+  type:
+    - root
+  pocs:
+    - mobotix-default-login.yaml
+MOFI4500:
+  type:
+    - root
+  pocs:
+    - default-logins/mofi/mofi4500-default-login.yaml
+NAGIOS:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-25299.yaml
+    - cves/2021/CVE-2021-25298.yaml
+    - cves/2021/CVE-2021-25297.yaml
+    - cves/2021/CVE-2021-25296.yaml
+    - cves/2022/CVE-2022-29272.yaml
+    - default-logins/nagios/nagios-default-login.yaml
+    - default-logins/nagios/nagiosxi-default-login.yaml
+    - exposures/configs/nagios-status-page.yaml
+NetSUS-Server:
+  type:
+    - root
+  pocs:
+    - default-logins/netsus/netsus-default-login.yaml
+NPS:
+  type:
+    - root
+  pocs:
+    - default-logins/nps/nps-default-login.yaml
+    - vulnerabilities/nps/nps-auth-bypass.yaml
+netentsec Technology - Internet Control Gateway:
+  type:
+    - root
+  pocs:
+    - default-logins/nsicg/nsicg-default-login.yaml
+OpenWrt:
+  type:
+    - root
+  pocs:
+    - default-logins/openwrt/openwrt-default-login.yaml
+Oracle-PeopleSoft:
+  type:
+    - root
+  pocs:
+    - default-logins/oracle/peoplesoft-default-login.yaml
+OpenCATS:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-43014.yaml
+    - cves/2022/CVE-2022-43015.yaml
+    - cves/2022/CVE-2022-43016.yaml
+    - cves/2022/CVE-2022-43017.yaml
+    - cves/2022/CVE-2022-43018.yaml
+    - default-logins/others/opencats-default-login.yaml
+Secnet - Smart Routing System:
+  type:
+    - root
+  pocs:
+    - default-logins/others/secnet-ac-default-login.yaml
+Panabit-智能网关:
+  type:
+    - root
+  pocs:
+    - default-logins/panabit/panabit-default-login.yaml
+RabbitMQ:
+  type:
+    - root
+  pocs:
+    - default-logins/rabbitmq/rabbitmq-default-login.yaml
+    - misconfiguration/rabbitmq-exporter-metrics.yaml
+    - network/detection/rabbitmq-detect.yaml
+RAINLOOP-WebMail:
+  type:
+    - root
+  pocs:
+    - default-logins/rainloop/rainloop-default-login.yaml
+RANCHER-容器管理:
+  type:
+    - root
+  pocs:
+    - default-logins/rancher/rancher-default-login.yaml
+RockMongo:
+  type:
+    - root
+  pocs:
+    - default-logins/rockmongo/rockmongo-default-login.yaml
+    - vulnerabilities/other/rockmongo-xss.yaml
+Ruckus-Wireless:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-33221.yaml
+    - default-logins/ruckus/ruckus-wireless-default-login.yaml
+    - exposed-panels/ruckus-unleashed-panel.yaml
+    - CVE-2023-25717.yaml
+Samsung-Printer:
+  type:
+    - root
+  pocs:
+    - samsung-printer-default-login.yaml
+Samsung-AP-WEA453e:
+  type:
+    - root
+  pocs:
+    - samsung-wlan-default-login.yaml
+SeedDMS:
+  type:
+    - root
+  pocs:
+    - default-logins/seeddms/seeddms-default-login.yaml
+SequoiaDB-True Database:
+  type:
+    - root
+  pocs:
+    - default-logins/sequoiadb/sequoiadb-default-login.yaml
+ShowDoc:
+  type:
+    - root
+  pocs:
+    - default-logins/showdoc/showdoc-default-login.yaml
+    - vulnerabilities/other/showdoc-file-upload-rce.yaml
+SolarWinds - Traffic Management:
+  type:
+    - root
+  pocs:
+    - cves/2018/CVE-2018-19386.yaml
+    - cves/2020/CVE-2020-10148.yaml
+    - default-logins/solarwinds/solarwinds-default-login.yaml
+    - exposed-panels/solarwinds-servuftp-detect.yaml
+StackStorm:
+  type:
+    - root
+  pocs:
+    - default-logins/stackstorm/stackstorm-default-login.yaml
+SteVe:
+  type:
+    - root
+  pocs:
+    - default-logins/steve/steve-default-login.yaml
+    - vulnerabilities/other/steve-xss.yaml
+Tiny-File-Manager:
+  type:
+    - root
+  pocs:
+    - tiny-file-manager-default-login.yaml
+ToolJet:
+  type:
+    - root
+  pocs:
+    - default-logins/tooljet/tooljet-default-login.yaml
+Vidyo-video conferencing system:
+  type:
+    - root
+  pocs:
+    - default-logins/vidyo/vidyo-default-login.yaml
+WiFisky-7 layer flow control router:
+  type:
+    - root
+  pocs:
+    - default-logins/wifisky/wifisky-default-login.yaml
+Xerox-Workcentre:
+  type:
+    - root
+  pocs:
+    - default-logins/xerox/xerox7-default-login.yaml
+    - vulnerabilities/other/xerox-efi-lfi.yaml
+XNAT:
+  type:
+    - root
+  pocs:
+    - default-logins/xnat/xnat-default-login.yaml
+X-UI:
+  type:
+    - root
+  pocs:
+    - default-logins/xui-weak-login.yaml
+XXL-JOB:
+  type:
+    - root
+  pocs:
+    - default-logins/xxljob/xxljob-default-login.yaml
+CouchBase-database:
+  type:
+    - root
+  pocs:
+    - exposures/apis/couchbase-buckets-api.yaml
+Akamai-CDN:
+  type:
+    - root
+  pocs:
+    - exposed-panels/akamai-cloudtest.yaml
+    - misconfiguration/akamai/akamai-arl-xss.yaml
+    - misconfiguration/akamai/akamai-s3-cache-poisoning.yaml
+    - technologies/akamai-cache-detect.yaml
+    - technologies/akamai-detect.yaml
+Ampache:
+  type:
+    - root
+  pocs:
+    - exposed-panels/ampache-panel.yaml
+    - misconfiguration/ampache-update-exposure.yaml
+    - misconfiguration/debug/ampache-debug.yaml
+    - misconfiguration/installer/ampache-music-installer.yaml
+HBase:
+  type:
+    - root
+  pocs:
+    - apache-hbase-unauth.yaml
+APACHE-Storm:
+  type:
+    - root
+  pocs:
+    - apache-storm-unauth.yaml
+Apache-Drill:
+  type:
+    - root
+  pocs:
+    - misconfiguration/apache-drill-exposure.yaml
+Struts2-Showcase:
+  type:
+    - root
+  pocs:
+    - apache-struts-showcase.yaml
+Alibaba-Druid:
+  type:
+    - root
+    - dir
+  pocs:
+    - misconfiguration/druid-monitor.yaml
+Elastic-HD-Dashboard:
+  type:
+    - root
+  pocs:
+    - elastic-hd-dashboard.yaml
+Envoy-Admin:
+  type:
+    - root
+  pocs:
+    - envoy-admin-exposure.yaml
+Kafdrop:
+  type:
+    - root
+  pocs:
+    - misconfiguration/exposed-kafdrop.yaml
+    - vulnerabilities/other/kafdrop-xss.yaml
+SQLiteManager:
+  type:
+    - root
+  pocs:
+    - exposed-sqlite-manager.yaml
+Docker-product:
+  type:
+    - root
+  pocs:
+    - exposed-docker-api.yaml
+APACHE-hadoop-YARN:
+  type:
+    - root
+  pocs:
+    - misconfiguration/hadoop-unauth-rce.yaml
+Amazon-EC2:
+  type:
+    - root
+  pocs:
+    - amazon-ec2-ssrf.yaml
+JamF-Pro:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/apache/log4j/jamf-pro-log4j-rce.yaml
+    - vulnerabilities/jamf/jamf-blind-xxe.yaml
+    - vulnerabilities/jamf/jamf-log4j-jndi-rce.yaml
+Avaya-Aura-Utility-Server:
+  type:
+    - root
+  pocs:
+    - avaya-aura-rce.yaml
+    - avaya-aura-xss.yaml
+Cisco-Unified-Communications:
+  type:
+    - root
+  pocs:
+    - cisco-unified-communications-log4j.yaml
+    - cucm-username-enumeration.yaml
+CISCO-vManage:
+  type:
+    - root
+  pocs:
+    - cisco-vmanage-log4j.yaml
+Apache-Code42:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/code42/code42-log4j-rce.yaml
+Linkerd:
+  type:
+    - root
+  pocs:
+    - misconfiguration/linkerd-ssrf-detect.yaml
+    - vulnerabilities/linkerd/linkerd-ssrf.yaml
+FIT2CLOUD-MeterSphere:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/metersphere/metersphere-plugin-rce.yaml
+    - CVE-2022-23544.yaml
+Moodle:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-26812.yaml
+    - miscellaneous/moodle-changelog.yaml
+    - misconfiguration/installer/moodle-installer.yaml
+    - vulnerabilities/moodle/moodle-filter-jmol-lfi.yaml
+    - vulnerabilities/moodle/moodle-filter-jmol-xss.yaml
+    - vulnerabilities/moodle/moodle-xss.yaml
+OpenCPU:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/opencpu/opencpu-rce.yaml
+oscommerce:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/oscommerce/oscommerce-rce.yaml
+AeroCMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/aerocms-sqli.yaml
+Alumni-Management-System:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/alumni-management-sqli.yaml
+Beward- camera:
+  type:
+    - root
+  pocs:
+    - beward-ipcamera-disclosure.yaml
+蓝海卓越计费管理系统:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/blue-ocean-excellence-lfi.yaml
+    - vulnerabilities/other/natshell-path-traversal.yaml
+    - vulnerabilities/other/natshell-rce.yaml
+BULLWARK-Momentum:
+  type:
+    - root
+  pocs:
+    - bullwark-momentum-lfi.yaml
+Resin:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/caucho-resin-info-disclosure.yaml
+    - vulnerabilities/other/resin-cnnvd-200705-315.yaml
+    - vulnerabilities/other/resin-inputfile-fileread.yaml
+    - vulnerabilities/other/resin-viewfile-lfr.yaml
+    - CVE-2021-44138.yaml
+Chamilo:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/chamilo-lms-sqli.yaml
+    - vulnerabilities/other/chamilo-lms-xss.yaml
+    # Chamilo model.ajax.php SQLi
+    - pocs/user/cves/2021/CVE-2021-34187.yaml
+    # Chamilo Command Injection
+    - CVE-2023-34960.yaml
+和信创天云桌面:
+  type:
+    - root
+  pocs:
+    - core-chuangtian-cloud-rce.yaml
+D-link-850L:
+  type:
+    - root
+  pocs:
+    - dlink-850L-info-leak.yaml
+dotNETCMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/dicoogle-pacs-lfi.yaml
+DuomiCms:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/duomicms-sql-injection.yaml
+ECShop:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/ecshop-sqli.yaml
+    - ecshop-cnvd-2020-58823-sqli.yaml
+新软科技-极通EWEBS:
+  type:
+    - root
+  pocs:
+    - ewebs-arbitrary-file-reading.yaml
+帆软-FineReport:
+  type:
+    - root
+  pocs:
+    - technologies/fanruanoa2012-detect.yaml
+    - vulnerabilities/other/fanruanoa2012-disclosure.yaml
+    - vulnerabilities/other/finereport-path-traversal.yaml
+    - pocs/user/vulnerabilities/finecms/finereport-v8-arbitrary-file-read.yaml
+    - pocs/user/vulnerabilities/finecms/fine-report-v9-arbitrary-file-overwrite.yaml
+FatPipe-WARP:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/fatpipe-auth-bypass.yaml
+    - vulnerabilities/other/fatpipe-backdoor.yaml
+FatPipe-MPVPN:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/fatpipe-backdoor.yaml
+feifeicms:
+  type:
+    - root
+  pocs:
+    - feifeicms-lfr.yaml
+GoAnywhere-Managed-File-Transfer:
+  type:
+    - root
+  pocs:
+    - cves/2023/CVE-2023-0669.yaml
+    - exposed-panels/go-anywhere-client.yaml
+    - exposed-panels/goanywhere-mft-login.yaml
+    - vulnerabilities/other/goanywhere-mft-log4j-rce.yaml
+Graylog:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/graylog-log4j.yaml
+Group_Office-公司产品:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/groupoffice-lfi.yaml
+gSOAP:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/gsoap-lfi.yaml
+H3C-iMC:
+  type:
+    - root
+  pocs:
+    # H3C IMC dynamiccontent.properties.xhtm 远程命令执行 CNVD-2021-39067
+    - vulnerabilities/other/h3c-imc-rce.yaml
+好视通-视频会议:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/hanming-lfr.yaml
+HUAWEI-HG659:
+  type:
+    - root
+  pocs:
+    - huawei-hg659-lfi.yaml
+HuaWei-Router:
+  type:
+    - root
+  pocs:
+    - huawei-router-auth-bypass.yaml
+Huijietong:
+  type:
+    - root
+  pocs:
+    - huijietong-cloud-fileread.yaml
+IceWarp-WebClient:
+  type:
+    - root
+  pocs:
+    - icewarp-webclient-rce.yaml
+图创软件-图书馆站群管理系统:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/interlib-fileread.yaml
+jeewms:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/jeewms-lfi.yaml
+kingdee-EAS:
+  type:
+    - root
+  pocs:
+    - kingdee-eas-directory-traversal.yaml
+Kiwi-TCMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/kiwitcms-json-rpc.yaml
+Loan-Management-System:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/loancms-sqli.yaml
+McAfee-ePolicy-Orchestrator:
+  type:
+    - root
+  pocs:
+    - mcafee-epo-rce.yaml
+Nginx:
+  type:
+    - root
+  pocs:
+    - exposures/configs/git-config-nginxoffbyslash.yaml
+    - exposures/configs/nginx-config.yaml
+    - misconfiguration/installer/nginx-auto-installer.yaml
+    - misconfiguration/nginx/nginx-vhost-traffic-status.yaml
+    - misconfiguration/unauthenticated-nginx-dashboard.yaml
+    - vulnerabilities/other/nginx-merge-slashes-path-traversal.yaml
+    - vulnerabilities/other/nginx-module-vts-xss
+netentsec Technology - NS-ASG Safety Gateway:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/ns-asg-file-read.yaml
+NUUO-NVR:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/nuuo-file-inclusion.yaml
+    - vulnerabilities/other/nuuo-nvrmini2-rce.yaml
+Oliver-Server:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/oliver-library-lfi.yaml
+OpenCTI:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/opencti-lfi.yaml
+OpenNMS-product:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/opennms-log4j-jndi-rce.yaml
+OpenSNS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/opensns-rce.yaml
+FatWire-Content-Server:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/oracle-fatwire-lfi.yaml
+PBOOTCMS:
+  type:
+    - root
+  pocs:
+    - pbootcms-database-file-download.yaml
+PHP:
+  type:
+    - root
+  pocs:
+    - cves/2012/CVE-2012-1823.yaml
+    # 这发的包太多了，屏蔽掉
+    # - exposures/backups/php-backup-files.yaml
+    # - exposures/backups/settings-php-files.yaml
+    - vulnerabilities/php/php-xdebug-rce.yaml
+PHP-810-dev:
+  type:
+    - root
+  pocs:
+    - php-zerodium-backdoor-rce.yaml
+PHPOK:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/phpok-sqli.yaml
+PowerCreator-CMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/powercreator-cms-rce.yaml
+pyspider:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/pyspider-unauthorized-access.yaml
+网康科技-下一代防火墙:
+  type:
+    - root
+  pocs:
+    - qi-anxin-netkang-next-generation-firewall-rce.yaml
+齐治科技-堡垒机:
+  type:
+    - root
+  pocs:
+    - qizhi-fortressaircraft-unauth.yaml
+Rundeck:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/rundeck-log4j.yaml
+SeaCMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/seacms-rce.yaml
+    - vulnerabilities/other/seacms-sqli.yaml
+SonicWALL-SSL-VPN:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/sonicwall-sslvpn-shellshock.yaml
+    - CVE-2023-0126.yaml
+Symantec-Messaging-Gateway:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/symantec-messaging-gateway.yaml
+Tamronos-IPTV system:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/tamronos-rce.yaml
+奇安信-天擎:
+  type:
+    - root
+  pocs:
+    # 天擎信息泄露
+    - vulnerabilities/other/tianqing-info-leak.yaml
+    # 天擎ccid注入 可使用sqlmap堆叠注入写shell
+    - pocs/user/vulnerabilities/360/360-tianqing-ccid-sqli-to-rce.yaml
+TPSHOP:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/tpshop-directory-traversal.yaml
+百度-UEditor:
+  type:
+    - root
+    - dir
+  pocs:
+    - vulnerabilities/other/ueditor-file-upload.yaml
+    - vulnerabilities/ueditor/ueditor-ssrf.yaml
+    - vulnerabilities/ueditor/ueditor-xss.yaml
+UniFi-Network:
+  type:
+    - root
+  pocs:
+    - unifi-network-log4j-rce.yaml
+VMware-Site-Recovery-Manager:
+  type:
+    - root
+  pocs:
+    - vmware-siterecovery-log4j-rce.yaml
+WatchGuard-Firewall:
+  type:
+    - root
+  pocs:
+    - watchguard-credentials-disclosure.yaml
+WebPageTest:
+  type:
+    - root
+  pocs:
+    - webpagetest-ssrf.yaml
+WUZHICMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/wuzhicms-sqli.yaml
+xdcms:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/xdcms-sqli.yaml
+YAPI:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/yapi-rce.yaml
+APACHE-hadoop-ResourceManager:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/yarn-resourcemanager-rce.yaml
+YesWiki:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/yeswiki-sql.yaml
+    - vulnerabilities/other/yeswiki-stored-xss.yaml
+    - vulnerabilities/other/yeswiki-xss.yaml
+YiShaAdmin-快速开发框架:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/yishaadmin-lfi.yaml
+ZCMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/zcms-v3-sqli.yaml
+portainer:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/portainer-init-deploy.yaml
+齐博-CMS:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/qibocms-file-download.yaml
+Ruijie-EG易网关:
+  type:
+    - root
+  pocs:
+    # 锐捷 EG易网关 cli.php 远程命令执行漏洞
+    - vulnerabilities/ruijie/ruijie-eg-rce.yaml
+Samsung-WLAN-AP:
+  type:
+    - root
+  pocs:
+    - default-logins/samsung/samsung-wlan-default-login.yaml
+    - vulnerabilities/samsung/samsung-wlan-ap-lfi.yaml
+    - vulnerabilities/samsung/samsung-wlan-ap-rce.yaml
+    - vulnerabilities/samsung/samsung-wlan-ap-xss.yaml
+SangFor- Behavioral Management or Identity Authentication System:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/sangfor/sangfor-ba-rce.yaml
+Squirrelmail- Mail System:
+  type:
+    - root
+  pocs:
+    - cves/2002/CVE-2002-1131.yaml
+    - cves/2004/CVE-2004-0519.yaml
+    - cves/2006/CVE-2006-2842.yaml
+    - vulnerabilities/squirrelmail/squirrelmail-add-xss.yaml
+    - vulnerabilities/squirrelmail/squirrelmail-lfi.yaml
+    - vulnerabilities/squirrelmail/squirrelmail-vkeyboard-xss.yaml
+ThinkCMF:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/thinkcmf/thinkcmf-arbitrary-code-execution.yaml
+    - vulnerabilities/thinkcmf/thinkcmf-lfi.yaml
+    - vulnerabilities/thinkcmf/thinkcmf-rce.yaml
+TDXK-通达OA:
+  type:
+    - root
+  pocs:
+    # 通达OA v11.8 getway.php 远程文件包含漏洞
+    - vulnerabilities/tongda/tongda-path-traversal.yaml
+    # /general/userinfo.php?UID=1 会话泄露
+    - vulnerabilities/tongda/tongda-session-disclosure.yaml
+    # 通达OA v11.8 api.ali.php 任意文件上传
+    - pocs/user/vulnerabilities/tongda/tongda-oa-api-ali-arbitrary-file-upload.yaml
+    # 通达OA v11.9 getdata 任意命令执行漏洞
+    - pocs/user/vulnerabilities/tongda/tongda-oa-getdata-rce.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-getway-remote-file-include-mysql.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-getway-remote-file-include.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-header-inc-arbitrary-login.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-insert-sqli.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-login-code-arbitrary-login.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-meeting-unauth.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-report-bi-func-sqli.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-swfupload-sqli.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-v2014-get-contactlist-info-leak.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-v2017-action-upload-arbitrary-file-upload.yaml
+    - pocs/user/vulnerabilities/tongda/tongda-oa-v2017-video-file-arbitrary-file-read.yaml
+VMware-HCX:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/vmware/vmware-hcx-log4j.yaml
+VMware-Horizon:
+  type:
+    - root
+  pocs:
+    - exposed-panels/vmware-horizon-daas.yaml
+    - exposed-panels/vmware-horizon-panel.yaml
+    - technologies/vmware/vmware-horizon-version.yaml
+    - vulnerabilities/vmware/vmware-horizon-log4j-jndi-rce.yaml
+vmware-NSX:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/vmware/vmware-nsx-log4j.yaml
+    - vulnerabilities/vmware/vmware-nsx-stream-rce.yaml
+VMware-vCenter:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/vmware/vmware-vcenter-lfi-linux.yaml
+    - vulnerabilities/vmware/vmware-vcenter-lfi.yaml
+    - vulnerabilities/vmware/vmware-vcenter-log4j-jndi-rce.yaml
+    - vulnerabilities/vmware/vmware-vcenter-ssrf.yaml
+vRealize-Operations-Tenant-App:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/vmware/vrealize-operations-log4j-rce.yaml
+用友-U8:
+  type:
+    - root
+  pocs:
+    # 社区的会漏一部分带waf的
+    - pocs/user/cnvd/2021/CNVD-2021-30167.yaml
+    # 用友 ERP-NC NCFindWeb 目录遍历漏洞
+    - vulnerabilities/seeyon/wooyun-2015-148227.yaml
+    - yonyou-nc-accept-arbitrary-file-upload.yaml
+    - yonyou-nc-baseapp-uploadservlet-deserialization-rce.yaml
+    # ServiceDispatcherServlet反序列化文件上传
+    - yonyou-nc-dispatcher-servlet-arbitrary-file-upload.yaml
+    # FileReceiveServlet 反序列化任意文件上传
+    - yonyou-nc-filereceiveservlet-arbitrary-file-upload.yaml
+    # 全命令执行端点检查
+    - yonyou-nc-bshservlet-full-check.yaml
+    - yonyou-nc-ncmessageservlet-rce.yaml
+    - yonyou-nc-uapjs-jsinvoke-fileupload.yaml
+    - vulnerabilities/yonyou/yonyou-u8-oa-sqli.yaml
+LODOP-cloud printing:
+  type:
+    - root
+  pocs:
+    - pocs/user/cnvd/2019/CNVD-2019-43826.yaml
+畅捷通-畅捷CRM:
+  type:
+    - root
+  pocs:
+    - pocs/user/cnvd/2021/CNVD-2021-12845.yaml
+    - chanjetcrm-createsite-sqli.yaml
+万户网络-ezOFFICE:
+  type:
+    - root
+  pocs:
+    # 万户OA DownloadServlet 任意文件读取漏洞
+    - pocs/user/cnvd/2021/CNVD-2021-34273.yaml
+    # 万户OA DocumentEdit.jsp SQL注入漏洞
+    - pocs/user/vulnerabilities/wanhu/wanhu-oa-documentedit-sqli.yaml
+    # 万户OA download_ftp.jsp 任意文件下载漏洞
+    - pocs/user/vulnerabilities/wanhu/wanhu-oa-download-ftp-arbitrary-file-read.yaml
+    # 万户OA download_old.jsp 任意文件下载漏洞
+    - pocs/user/vulnerabilities/wanhu/wanhu-oa-download-old-arbitrary-file-read.yaml
+    # 万户OA fileUpload.controller 任意文件上传漏洞
+    - pocs/user/vulnerabilities/wanhu/wanhu-oa-fileupload-controller-arbitrary-file-upload.yaml
+    # 万户OA OfficeServer.jsp 任意文件上传漏洞
+    - pocs/user/vulnerabilities/wanhu/wanhu-oa-officeserverservlet-arbitrary-file-upload.yaml
+    # 万户OA smartUpload.jsp 任意文件上传漏洞
+    - pocs/user/vulnerabilities/wanhu/wanhu-oa-smartupload-arbitrary-file-upload.yaml
+    # 万户OA TeleConferenceService XXE注入漏洞
+    - pocs/user/vulnerabilities/wanhu/wanhu-oa-teleconferenceservice-xxe-inject.yaml
+AMCREST-camera:
+  type:
+    - root
+  pocs:
+    # Amcrest Dahua Unauthenticated-Audio-Streaming
+    - pocs/user/cves/2019/CVE-2019-3948.yaml
+AntD-Admin:
+  type:
+    - root
+  pocs:
+    # AntD Admin 敏感信息泄露
+    - pocs/user/cves/2021/CVE-2021-46371.yaml
+D-Link-AC-集中管理平台:
+  type:
+    - root
+  pocs:
+    # D-Link AC集中管理平台默认密码
+    - pocs/user/default-logins/d-link/d-link-ac-centralized-management-system-default-login.yaml
+兰德网络-O2OA:
+  type:
+    - root
+  pocs:
+    # O2OA 默认密码
+    - pocs/user/default-logins/o2oa/o2oa-default-login.yaml
+中新金盾-信息安全管理系统:
+  type:
+    - root
+  pocs:
+    # 中新金盾-信息安全管理系统 默认密码
+    - pocs/user/default-logins/others/cnzxsoft-information-security-management-system-default-account.yaml
+飞鱼星企业级智能上网行为管理系统:
+  type:
+    - root
+  pocs:
+    # 飞鱼星 企业级智能上网行为管理系统 权限绕过信息泄露漏洞
+    - pocs/user/vulnerabilities/adslr/adslr-router-wifi-info-leak.yaml
+    - pocs/user/vulnerabilities/adslr/adslr-router-default-password.yaml
+ASPCMS:
+  type:
+    - root
+  pocs:
+    # aspcms后台地址泄露
+    - pocs/user/vulnerabilities/aspcms/aspcms-backend-leak.yaml
+    # commentList.asp id 注入
+    - pocs/user/vulnerabilities/aspcms/aspcms-commentlist-sqli.yaml
+宝塔-Linux控制面板:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/baota/baota-phpmyadmin-unauth.yaml
+ClickHouse:
+  type:
+    - root
+    - dir
+    - base
+  pocs:
+    - pocs/user/vulnerabilities/clickhouse/clickhouse-web-unauth.yaml
+H3C-CVM-虚拟化管理平台:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/h3c/h3c-cvm-arbitrary-file-upload.yaml
+红帆-ioffice:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/hongfan/hongfan-ioffice-udfmr-sqli.yaml
+    - pocs/user/vulnerabilities/hongfan/hongfan-ioffice-iofileexport-arbitrary-file-read.yaml
+    - pocs/user/vulnerabilities/hongfan/hongfan-ioffice-ioassistance-sqli.yaml
+Ace-AceReporter:
+  type:
+    - root
+  pocs:
+    - acenet-acereporter-report-component-arbitrary-file-download.yaml
+AIC智能校园系统:
+  type:
+    - root
+  pocs:
+    - aic-intelligent-campus-system-password-leak.yaml
+HP-Aruba-Instant:
+  type:
+    - root
+  pocs:
+    - aruba-instant-default-login.yaml
+AVCON6:
+  type:
+    - root
+  pocs:
+    - avcon6-org-execl-download-arbitrary-file-download.yaml
+Ciphertrust:
+  type:
+    - root
+  pocs:
+    - ciphertrust-default-password-vulnerability.yaml
+CmsEasy:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/others/cmseasy-crossall-act-sqli.yaml
+H2-Console:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/others/h2console-unauth.yaml
+APUSIC-Company Products:
+  type:
+    - root
+  pocs:
+    # 金蝶OA Apusic应用服务器(中间件) server_file 目录遍历漏洞
+    - pocs/user/vulnerabilities/others/kingdee-apusic-directory-traversal.yaml
+致翔软件-致翔OA:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/others/zhixiang-oa-msglog-sqli.yaml
+狮子鱼CMS:
+  type:
+    - root
+  pocs:
+    # 狮子鱼CMS ApiController.class.php sql注入漏洞
+    - pocs/user/vulnerabilities/shiziyu-cms/shiziyu-cms-apicontroller-sqli.yaml
+天融信-上网行为管理系统:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/topsec/topsec-topacm-rce.yaml
+TopApp-LB-负载均衡系统:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/topsec/topsec-topapplb-arbitrary-user-login.yaml
+WAYOS-AC集中管理平台:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/wayos-ac/wayos-ac-weak-login.yaml
+用友-FE协作办公平台:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/yonyou/yonyou-fe-directory-traversal.yaml
+mojoPortal:
+  type:
+    - root
+  pocs:
+    - cves/2023/CVE-2023-24322.yaml
+FORTINET-FortiNAC:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-39952.yaml
+apilayer-Caddy:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-28923.yaml
+TYPO3:
+  type:
+    - root
+  pocs:
+    - misconfiguration/typo3-composer.yaml
+    - misconfiguration/typo3-debug-mode.yaml
+GoCD:
+  type:
+    - root
+  pocs:
+    # GoCD plugin 任意文件读取漏洞
+    - cves/2021/CVE-2021-43287.yaml
+    - misconfiguration/gocd/gocd-cruise-configuration.yaml
+    - misconfiguration/gocd/gocd-encryption-key.yaml
+    - misconfiguration/gocd/gocd-unauth-dashboard.yaml
+motionEye:
+  type:
+    - root
+  pocs:
+    # MotionEye 视频监控组件 list 信息泄漏洞
+    - pocs/user/cves/2022/CVE-2022-25568.yaml
+NexusPHP:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-46888.yaml
+FUDforum:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-27520.yaml
+Revive-Adserver:
+  type:
+    - root
+  pocs:
+    - cves/2019/CVE-2019-5434.yaml
+CISCO-CloudCenter-Suite:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/cisco/cisco-cloudcenter-suite-rce.yaml
+Discuz:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/discuz-downremoteimg-ssrf.yaml
+Kube-State-Metrics:
+  type:
+    - root
+  pocs:
+    - misconfiguration/kubernetes/kube-state-metrics.yaml
+Mailman:
+  type:
+    - root
+  pocs:
+    - exposed-panels/gnu-mailman.yaml
+H3C-SecPath-运维审计系统:
+  type:
+    - root
+  pocs:
+    # H3C SecParh堡垒机 任意用户登录漏洞
+    - misconfiguration/unauthorized-h3csecparh-login.yaml
+Jupyter-Notebook:
+  type:
+    - root
+  pocs:
+    # 可直接拿shell
+    - misconfiguration/jupyter-notebooks-exposed.yaml
+    - jupyter-notebook-rce.yaml
+IPython-Notebook:
+  type:
+    - root
+  pocs:
+    - misconfiguration/jupyter-ipython-unauth.yaml
+三汇SMG-网关管理软件:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/others/sanhui-smg-file-read.yaml
+畅捷通-TPlus:
+  type:
+    - root
+  pocs:
+    # 用友 畅捷通T+ DownloadProxy.aspx 任意文件读取漏洞
+    - pocs/user/vulnerabilities/yonyou/yonyou-chanjet-tplus-downloadproxy-file-read.yaml
+    # 用友 畅捷通T+ RecoverPassword.aspx 管理员密码修改漏洞 不进行测试。
+    # 用友 畅捷通T+ Upload.aspx 任意文件上传漏洞
+    - pocs/user/vulnerabilities/yonyou/yonyou-chanjet-tplus-file-upload.yaml
+    # 畅捷通 T+ Ufida.T.SM.Login.UIP SQL注入漏洞
+    - pocs/user/vulnerabilities/yonyou/yonyou-chanjet-tplus-ufida-sqli.yaml
+    - chanjet-tplus-getstorewarehousebystore_rce.yaml
+    - chanjet-tplus-checkmutex-sqli.yaml
+畅捷通-远程通:
+  type:
+    - root
+  pocs:
+    # 用友 畅捷通远程通 GNRemote.dll SQL注入漏洞
+    - pocs/user/vulnerabilities/yonyou/yonyou-chanjet-remote-gnfunction-sqli.yaml
+汇文软件-书目检索系统:
+  type:
+    - root
+  pocs:
+    - pocs/user/vulnerabilities/others/huiwen-bibliographic-search-system-info-leak.yaml
+科迈-RAS系统:
+  type:
+    - root
+  pocs:
+    # 科迈 RAS系统 Cookie验证越权漏洞
+    - pocs/user/vulnerabilities/others/kemai-ras-ultra-vires-access.yaml
+NSFOCUS-UTS综合威胁探针:
+  type:
+    - root
+  pocs:
+    # 绿盟 UTS综合威胁探针 信息泄露登陆绕过漏洞
+    - exposures/configs/lvmeng-uts-disclosure.yaml
+Masa-CMS:
+  type:
+    - root
+  pocs:
+    - cves/2022/CVE-2022-47002.yaml
+    - cves/2022/CVE-2022-47003.yaml
+BrightSign-Digital-Signage-Diagnostic-Web-Server:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/other/brightsign-dsdws-ssrf.yaml
+Everything:
+  type:
+    - root
+  pocs:
+    - misconfiguration/everything-listing.yaml
+Magnolia-CMS:
+  type:
+    - root
+  pocs:
+    - misconfiguration/installer/magnolia-installer.yaml
+    - default-logins/magnolia-default-login.yaml
+Altenergy-Power-Control-Software:
+  type:
+    - root
+  pocs:
+    # Altenergy Power Control Software - Command Injection
+    - cves/2023/CVE-2023-28343.yaml
+Seo-Panel:
+  type:
+    - root
+  pocs:
+    - cves/2021/CVE-2021-28419.yaml
+Gitea:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-14144.yaml
+    - vulnerabilities/gitea/gitea-rce.yaml
+Splash-JS-Render-Service:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/splash/splash-render-ssrf.yaml
+Apache-Kafka:
+  type:
+    - root
+  pocs:
+    - misconfiguration/unauth-apache-kafka-ui.yaml
+SSH:
+  type:
+    - root
+  pocs:
+    - cves/2001/CVE-2001-1473.yaml
+ProFTPD:
+  type:
+    - root
+  pocs:
+    - cves/2015/CVE-2015-3306.yaml
+Cisco-IOS-12.2:
+  type:
+    - root
+  pocs:
+    - cves/2017/CVE-2017-3881.yaml
+Apache-JServ-Protocol:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-1938.yaml
+OpenSMTPD:
+  type:
+    - root
+  pocs:
+    - cves/2020/CVE-2020-7247.yaml
+Hikvision-iVMS:
+  type:
+    - root
+  pocs:
+    - hikvision-ivms-token-bypass-arbitrary-file-upload.yaml
+    - hikvision-ivms-file-upload-rce.yaml
+Repetier-Server:
+  type:
+    - root
+  pocs:
+    - CVE-2023-31059.yaml
+PowerJob:
+  type:
+    - root
+  pocs:
+    - CVE-2023-29922.yaml
+    - powerjob-default-login.yaml
+    - CVE-2023-29923.yaml
+PaperCut:
+  type:
+    - root
+  pocs:
+    - CVE-2023-27350.yaml
+vRealize-Log-Insight:
+  type:
+    - root
+  pocs:
+    - CVE-2023-20864.yaml
+Sophos-Web-Appliance:
+  type:
+    - root
+  pocs:
+    - CVE-2023-1671.yaml
+Icinga-Web-2:
+  type:
+    - root
+  pocs:
+    - CVE-2022-24716.yaml
+APACHE-Zeppelin:
+  type:
+    - root
+  pocs:
+    - apache-zeppelin-unauth.yaml
+全程云OA:
+  type:
+    - root
+  pocs:
+    - others/cloud-oa-system-sqli.yaml
+Zyxel:
+  type:
+    - root
+  pocs:
+    - zyxel/CVE-2022-0342.yaml
+HJSoft-HCM:
+  type:
+    - root
+  pocs:
+    - hjsoft-hcm-codesettree-serlvet-categories-sqli.yaml
+REALOR-天翼应用虚拟化系统:
+  type:
+    - root
+  pocs:
+    - realor-gwt-system-sql-injection.yaml
+大华智慧园区管理系统:
+  type:
+    - root
+  pocs:
+    - dahua-smart-park-fastjson-rce.yaml
+    - dahua-smart-park-detect.yaml
+    # CVE-2023-3836
+    - dahua-smart-park-addimgico-upload.yaml
+Home-Assistant:
+  type:
+    - root
+  pocs:
+    # Home Assistant Supervisor - Authentication Bypass
+    - cves/2023/CVE-2023-27482.yaml
+ShardingSphere ElasticJob:
+  type:
+    - root
+  pocs:
+    - CVE-2022-22733.yaml
+Jeecg-Boot:
+  type:
+    - root
+  pocs:
+    - CVE-2021-37305.yaml
+    - CVE-2021-37304.yaml
+    - exposures/apis/jeecg-boot-swagger.yaml
+    # JeecgBoot 3.5.0 - SQL Injection
+    - CVE-2023-34659.yaml
+    - CVE-2023-33510.yaml
+    # Jeecg-boot 3.5.0 qurestSql - SQL Injection
+    - CVE-2023-1454.yaml
+AVTECH-Video Monitoring:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/avtech/avtech-auth-bypass.yaml
+    - vulnerabilities/avtech/avtech-dvr-ssrf.yaml
+    - avtech-unauth-file-download.yaml
+    - avtech-verification-bypass.yaml
+USG FLEX:
+  type:
+    - root
+  pocs:
+    - vulnerabilities/zyxel/unauth-ztp-ping.yaml
+TeslaMate:
+  type:
+    - root
+  pocs:
+    - misconfiguration/teslamate-unauth-access.yaml
+ChatGPT-Web:
+  type:
+    - root
+  pocs:
+    - chatgpt-web-unauth.yaml
+Lightdash:
+  type:
+    - root
+  pocs:
+    - CVE-2023-35844.yaml
+NocoDB:
+  type:
+    - root
+  pocs:
+    - CVE-2023-35843.yaml
+Traggo-Server:
+  type:
+    - root
+  pocs:
+    - CVE-2023-34843.yaml
+Gibbon:
+  type:
+    - root
+  pocs:
+    - CVE-2023-34598.yaml
+    - CVE-2023-34599.yaml
+Imgproxy:
+  type:
+    - root
+  pocs:
+    - CVE-2023-30019.yaml
+    - CVE-2023-1496.yaml
+VMware-Aria-Operations:
+  type:
+    - root
+  pocs:
+    - CVE-2023-20889.yaml
+    # 需要账号密码的后台攻击。
+    - CVE-2023-20888.yaml
+Symmetricom-SyncServer:
+  type:
+    - root
+  pocs:
+    - CVE-2022-40022.yaml
+GenieACS:
+  type:
+    - root
+  pocs:
+    - CVE-2021-46704.yaml
+    - genieacs-default-jwt.yaml
+华夏-ERP:
+  type:
+    - root
+  pocs:
+    - CNVD-2020-63964.yaml
+Moveit-File-Transfer:
+  type:
+    - root
+  pocs:
+    # MOVEit Transfer - Remote Code Execution
+    - CVE-2023-34362.yaml
+VMware-VRealize-Network-Insight:
+  type:
+    - root
+  pocs:
+    - CVE-2023-20887.yaml
+RocketMQ:
+  type:
+    - root
+  pocs:
+    # RocketMQ <= 5.1.0 - Remote Code Execution
+    - CVE-2023-33246.yaml
+    # RocketMQ Broker - Remote Code Execution
+    - CVE-2023-37582.yaml
+NuxtJS:
+  type:
+    - root
+  pocs:
+    - nuxt-js-lfi.yaml
+    - nuxt-js-semi-lfi.yaml
+    - nuxt-js-xss.yaml
+Riello companies products:
+  type:
+    - root
+  pocs:
+    - netman-default-login.yaml
+Openfire:
+  type:
+    - root
+  pocs:
+    # Authentication Bypass Openfire Console
+    - CVE-2023-32315.yaml
+亿赛通-电子文档安全管理系统:
+  type:
+    - root
+  pocs:
+    # 默认密码
+    - esafenet-cdg-default-login.yaml
+HIKVISION-综合安防管理平台:
+  type:
+    - root
+  pocs:
+    # 出网检测
+    - hikvision-isecure-center-fastjson-rce.yaml
+    # org.apache.tomcat.dbcp.dbcp2.BasicDataSource 不出网fastjson rce
+    - hikvision-isecure-center-fastjson-basicdatasource-rce.yaml
+    - hikvision-isecure-center-upload.yaml
+    - hikvision-isecure-center-springboot-env.yaml
+    - hikvision-isecure-center-report-upload.yaml
+TP_LINK-Enterprise Wireless Router:
+  type:
+    - root
+  pocs:
+    - tp-link-tl-r470gp-ac-default-login.yaml
+列目录:
+  type:
+    - root
+    - dir
+  pocs:
+    - dir-listing.yaml
+kingdee-K3-cloud:
+  type:
+    - root
+  pocs:
+    - kingdee-erp-deserialization.yaml
+金蝶云星空:
+  type:
+    - root
+  pocs:
+    - kingdee-erp-deserialization.yaml
+nginxWebUI:
+  type:
+    - root
+  pocs:
+    - nginxwebui-runcmd-rce.yaml
+奇安信-VPN:
+  type:
+    - root
+  pocs:
+    - unauthenticated-qax-vpn-access.yaml
+SMARTBI:
+  type:
+    - root
+  pocs:
+    - smartbi-default-user.yaml
+    - smartbi-windowunloading-deserialization.yaml
+CasaOS:
+  type:
+    - root
+  pocs:
+    - CVE-2023-37265.yaml
+    - CVE-2023-37266.yaml
+CloudPanel:
+  type:
+    - root
+  pocs:
+    - CVE-2023-35885.yaml
+XWiki:
+  type:
+    - root
+  pocs:
+    - CVE-2023-37462.yaml
+MLflow:
+  type:
+    - root
+  pocs:
+    - CVE-2023-3765.yaml
+Alibaba-Sentinel:
+  type:
+    - root
+  pocs:
+    - CVE-2021-44139.yaml
+Appspace:
+  type:
+    - root
+  pocs:
+    - CVE-2021-27670.yaml
+Imcat:
+  type:
+    - root
+  pocs:
+    - CVE-2018-20608.yaml
+Microsoft-Skype-for-Business:
+  type:
+    - root
+  pocs:
+    - skype-blind-ssrf.yaml
+泛微-云桥e-Bridge:
+  type:
+    - root
+  pocs:
+    - weaver-e-bridge-linux-saveyzjfile-file-read.yaml
+    - weaver-e-bridge-windows-saveyzjfile-file-read.yaml
+网神SecGate防火墙:
+  type:
+    - root
+  pocs:
+    - secworld-secgate-3600-firewall-upload.yaml
+SANGFOR-应用交付管理系统:
+  type:
+    - root
+  pocs:
+    - sangfor-ad-rce.yaml
+华天动力OA:
+  type:
+    - root
+  pocs:
+    - huatian-oa8000-buffalo-rce.yaml
+安恒信息-明御运维审计与风险控制系统:
+  type:
+    - root
+  pocs:
+    - das-usm-arbitrary-user-add.yaml
+Tencent-企业微信:
+  type:
+    - root
+  pocs:
+    - wechat-info-leak.yaml
+用友-U8-CRM:
+  type:
+    - root
+  pocs:
+    - yonyou-u8-crm-getemaildata-file-upload.yaml
+    - yonyou-u8-crm-getemaildata-file-read.yaml
+Supershell:
+  type:
+    - root
+  pocs:
+    - supershell-default-login.yaml

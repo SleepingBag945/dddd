@@ -1,0 +1,34 @@
+id: shiro-default-key-gcm
+
+info:
+  name: Detect Shiro Default Key
+  author: SleepingBag945
+  severity: critical
+  description: Shiro框架默认key kPH+bIxk5D2deZiIxcaaaA== ,可尝试寻找利用链进行命令执行。
+  tags: tech,shiro
+
+http:
+  - raw:
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=123;
+
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=qBZmWEy3Ntlhc/8eqVVDWwWS6lgbZFL5i2+D19c30jp8XIH9VG3eIbYJD5KviNXSUxzhTFa+yeTdoE1S+VfTWSBb3PH17Ajtp7HAX8hYydTFNXsc4F7QYBP+oHDwvdxrtRF8Uj7eJ3FiB3Kh0agEk+u46NZnD2W29iW1YE6WbFEb1JIvfXq/gZ/4mRilzjVm;
+
+
+
+    # host-redirects: true
+    max-redirects: 2
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - 'contains(header_1, "Set-Cookie") && (contains(header_1, "rememberMe=") || contains(header_1, "=deleteMe"))'
+          - '!contains(header_2, "rememberMe=") && !contains(header_2, "=deleteMe")'
+        condition: and
+
+#kPH+bIxk5D2deZiIxcaaaA==

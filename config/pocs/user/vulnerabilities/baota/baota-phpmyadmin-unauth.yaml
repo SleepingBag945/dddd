@@ -1,0 +1,23 @@
+id: baota-phpmyadmin-unauth
+
+info:
+  name: Baota phpmyadmin unauth
+  author: SleepingBag945
+  severity: critical
+  description: |
+    安装 phpmyadmin的宝塔 linux 面板 7.4.2和宝塔 windows 面板 6.8版本的宝塔面板，攻击者可利用此漏洞越权访问数据库，甚至获取服务器权限。
+  tags: unauthorized
+
+http:
+  - raw:
+      - |
+        GET /pma  HTTP/1.1
+        Host: {{Hostname}}
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200 && contains(body_1,"二进制日志") && contains(body_1,"数据库服务器")'
+        condition: and

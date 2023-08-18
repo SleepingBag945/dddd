@@ -1,0 +1,20 @@
+scanme.sh {{binary}} -silent 
+scanme.sh {{binary}} -silent -l test-data/request.txt
+scanme.sh {{binary}} -silent -request test-data/raw-request.txt
+scanme.sh {{binary}} -silent -title
+scanme.sh {{binary}} -silent -sc
+scanme.sh {{binary}} -silent -td
+scanme.sh {{binary}} -silent -probe
+scanme.sh {{binary}} -silent -no-fallback
+scanme.sh {{binary}} -silent -cl
+scanme.sh {{binary}} -silent -server
+scanme.sh {{binary}} -silent -ip
+scanme.sh {{binary}} -silent -tls-grab
+scanme.sh {{binary}} -silent -unsafe
+scanme.sh {{binary}} -silent -x all
+scanme.sh {{binary}} -silent -body 'a=b'
+scanme.sh {{binary}} -silent -exclude-cdn
+scanme.sh {{binary}} -silent -ports https:443
+scanme.sh {{binary}} -silent -ztls
+https://scanme.sh?a=1*1 {{binary}} -silent
+https://scanme.sh:443 {{binary}} -asn

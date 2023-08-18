@@ -1,0 +1,36 @@
+id: ruoyi-shiro-default-key-gcm
+
+info:
+  name: Detect RuoYi CMS Shiro Default Key
+  author: SleepingBag945
+  severity: critical
+  description: Ruoyi-shiro框架默认key fCq+/xW488hMTCD+cmJ3aQ== ,可尝试寻找利用链进行命令执行。
+  tags: shiro,ruoyi
+
+http:
+  - raw:
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=123;
+
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=r5R1vjRtaXaaHbMnnO01hjOvZqrdk0KpdvoiI35zqOII1fQ/Iv5osD/ucTagj2uptg9IjZffTO3eGka9/EKWY8+YjwD2O4MaNsfs9R9245QM7TPo2TvVAl8nduVZZ8ygRGqxv1iWFLxC1Sl74EJrlGErq1/Ykgb3i/zcmk26MS/R7VKpFA9Qulb+n5o/GiYN;
+
+
+
+    # host-redirects: true
+    # max-redirects: 2
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - 'contains(header_1, "Set-Cookie") && (contains(header_1, "rememberMe=") || contains(header_1, "=deleteMe"))'
+          - '!contains(header_2, "rememberMe=") && !contains(header_2, "=deleteMe")'
+        condition: and
+
+
+# fingerprinthub-web-fingerprints:ruoyi-system
+#kPH+bIxk5D2deZiIxcaaaA==

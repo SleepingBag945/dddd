@@ -1,0 +1,11 @@
+cmd/dnsx/dnsx
+.DS_Store
+dist/
+integration_tests/dnsx
+integration_tests/integration-test
+cmd/functional-test/dnsx_dev
+cmd/functional-test/functional-test
+cmd/functional-test/dnsx
+cmd/functional-test/log.txt
+cmd/functional-test/*.cfg
+.vscode/

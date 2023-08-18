@@ -1,0 +1,25 @@
+id: apache-couchdb-unauth
+
+info:
+  name: Apache CouchDB Unauth
+  author: SleepingBag945
+  severity: critical
+  description: |
+    Allows remote attackers to execute arbitrary code.
+  metadata:
+    fofa-query: app="APACHE-CouchDB"
+  tags: unauth
+
+http:
+  - raw:
+      - |
+        GET /_config  HTTP/1.1
+        Host: {{Hostname}}
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200 && contains(body_1,"httpd_design_handlers") && contains(body_1,"external_manager") && contains(body_1,"replicator_manager")'
+        condition: and

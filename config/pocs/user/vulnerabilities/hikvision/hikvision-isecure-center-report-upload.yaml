@@ -1,0 +1,24 @@
+id: hikvision-isecure-center-report-upload
+
+info:
+  name: hikvision-isecure-center-report-upload
+  author: SleepingBag945
+  severity: critical
+  description: 海康威视综合安防管理平台任意文件上传
+  reference:
+    - https://github.com/zan8in/afrog/commit/641785d38b84ff3ea4c554e1c0620b3670358591
+  tags: hikvision,ivms
+
+http:
+  - raw:
+      - |
+        GET /svm/api/external/report HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_1 == 500 && contains(body_1,'code')"
+          - contains(body_1,"0x26e11001")
+        condition: and

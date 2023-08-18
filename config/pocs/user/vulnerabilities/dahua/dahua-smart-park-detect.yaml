@@ -1,0 +1,31 @@
+id: dahua-smart-park-detect
+
+info:
+  name: 大华智慧园区综合管理系统检测
+  author: SleepingBag945
+  severity: high
+  description: |
+    大华智慧园区综合管理系统检测，可尝试打最新1day
+  metadata:
+  tags: chatgpt
+
+http:
+  - raw:
+      - |
+        POST /WPMS/getPublicKey HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36
+        Accept: */*
+        Content-Type: application/json
+        Accept-Encoding: gzip
+
+        {"loginName":"{{randstr}}"}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "\"success\":\"true\""
+          - "publicKey"
+        condition: and

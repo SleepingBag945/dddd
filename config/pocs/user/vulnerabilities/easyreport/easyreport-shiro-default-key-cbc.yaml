@@ -1,0 +1,33 @@
+id: easyreport-shiro-default-key-cbc
+
+info:
+  name: Detect EasyReport Shiro Default Key
+  author: SleepingBag945
+  severity: critical
+  description: EasyReport shiro默认key ZUdsaGJuSmxibVI2ZHc9PQ== ,可尝试寻找利用链进行命令执行。
+  tags: shiro,ruoyi
+
+http:
+  - raw:
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=123;
+
+      - |
+        GET / HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: JSESSIONID={{randstr}};rememberMe=BpgZTXwPzJfjLYLghGKxNT2S6nQcmLsfRBDRC6Ln2SsAT0JiU6P2TSt1glsZ9u6g+4z++aGDE3R5OQiMKXd2FymgZKo5W4DNUJ3oBYHG8ylkyZhz1yPztLSrp7HVjb7syJ2Czc2CsYaVkdmPiYD5WNvD35qbaCAnmiq8yNRid5WDs12nbpY0VyiElCSQPgZV;
+
+
+
+    # host-redirects: true
+    # max-redirects: 2
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - 'contains(header_1, "Set-Cookie") && (contains(header_1, "rememberMe=") || contains(header_1, "=deleteMe"))'
+          - '!contains(header_2, "rememberMe=") && !contains(header_2, "=deleteMe")'
+        condition: and
+

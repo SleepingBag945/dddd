@@ -1,0 +1,27 @@
+id: apache-kylin-console-default-login
+
+info:
+  name: Apache Kylin Console Default password
+  author: SleepingBag945
+  severity: medium
+  description: |
+    The attacker will log into the background as an administrator to further attack
+  metadata:
+    fofa-query: app="APACHE-kylin"
+  tags: default
+
+http:
+  - raw:
+      - |
+        GET /kylin/api/user/authentication  HTTP/1.1
+        Host: {{Hostname}}
+        Authorization: Basic YWRtaW46S1lMSU4=
+        Cookie: project=null
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200 && contains(body_1,"userDetails") && contains(body_1,"username")'
+        condition: and

