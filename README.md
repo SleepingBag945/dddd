@@ -56,7 +56,7 @@ HTML漏洞报表
 
 
 # 使用说明
-下载config目录，与对应的dddd二进制文件。保存在一个目录下。
+下载config目录或从releases中下载config.zip解压，与对应的dddd二进制文件。保存在一个目录下。
 
 
 简单用法
