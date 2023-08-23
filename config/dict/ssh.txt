@@ -175,6 +175,7 @@ root : adminHW
 root : Huawei12#$
 root : Changeme@321
 root : Changeme123
+root : edr@sangfor
 admin : admin123
 admin : root
 admin : pass123
