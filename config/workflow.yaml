@@ -5416,6 +5416,8 @@ REALOR-天翼应用虚拟化系统:
     - dahua-smart-park-detect.yaml
     # CVE-2023-3836
     - dahua-smart-park-addimgico-upload.yaml
+    - dahua-smart-park-getUserInfo.yaml
+    - dahua-smart-park-searchJson-sql.yaml
 Home-Assistant:
   type:
     - root
@@ -5686,3 +5688,8 @@ Supershell:
     - root
   pocs:
     - supershell-default-login.yaml
+Let me-CRM:
+  type:
+    - root
+  pocs:
+    - renwoxing-crm-SmsDataList-sqli.yaml
