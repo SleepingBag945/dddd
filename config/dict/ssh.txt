@@ -247,6 +247,7 @@ mysql : mysql
 postgres : postgres
 kali : kali
 defaultUsername : defaultPassword
+root : edr@sangfor
 admin : Admin@huawei
 admin : admin@huawei.com
 admin : Changeme_123

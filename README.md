@@ -1,15 +1,15 @@
 # 工具简介
 
-工具名称dddd（带带弟弟），是一款支持多种输入格式，基于Fofa语法的主/被动指纹探测，基于nuclei的可拓展的供应链漏洞探测工具。协助红队人员快速的信息收集，测绘目标资产，寻找薄弱点。
+工具名称dddd（带带弟弟），是一款支持多种输入格式，主/被动指纹识别且使用简单的供应链漏洞探测工具。协助红队人员快速收集信息，测绘目标资产，寻找薄弱点。支持从Hunter、Fofa批量拉取目标。
 
 
 
 ##### 本工具有如下特点:
 
 1. 自动识别多种输入。支持域名、IP段、IP、URL、IP:Port、Domain:Port等多种格式。得到目标之后直接一股脑塞入即可，**无需分类**。
-2. 指纹识别采用fofa语法，数据库存于人类阅读友好的Yaml格式文件内，可以很方便的自己拓展新指纹。并且拥有主动探测路径库，便于探测如nacos,druid等需要主动访问的资产。
-3. 拥有指纹漏洞库，**只针对识别出指纹的目标打对应的Poc**。尽量避免无效识别，极大提升扫描速度，同时降低误报率。指纹漏洞库基于人类友好的Yaml可以很方便的自己拓展需要添加的漏洞。
-4. 支持多种方式枚举子域名。子域名暴力破解,fofa,chaos,chinaz,hunter,quake,virustotal等等。
+2. 指纹识别采用人类阅读友好的类FOFA语法(支持任意与或非与括号组合)。并且拥有主动探测路径库，便于探测如nacos,druid等需要主动访问的资产。
+3. 拥有指纹漏洞库，**只针对识别出指纹的目标打对应的Poc**。尽量避免无效识别，极大提升扫描速度，同时降低误报率。
+4. 支持多种方式枚举子域名。子域名暴力破解,fofa,chaos,chinaz,hunter,quake,virustotal等。
 5. 具有TCP指纹识别功能，避免错过非标准端口漏洞。如可正确识别33060端口的Mysql。
 6. 可直接从Hunter中批量获取目标资产。如icp.name="xxxx"，批量获取此单位备案资产，方便攻防演练快速筛选目标（快速占坑）。
 7. 漏洞探测基于**nuclei**，与nuclei社区的强大抛瓦贴贴。
@@ -29,7 +29,7 @@ ICMP/Ping存活探测
 
 端口扫描
 
-hunter/fofa导入资产
+Hunter/Fofa导入资产
 
 域名绑定资产枚举
 
@@ -56,48 +56,152 @@ HTML漏洞报表
 
 
 # 使用说明
-下载config目录或从releases中下载config.zip解压，与对应的dddd二进制文件。保存在一个目录下。
+下载config目录或从releases中下载config.zip解压，与对应的dddd二进制文件。保存在一个目录下，打开终端，照着下边输入命令就可以愉快玩耍啦~
 
 
-简单用法
 
+### 简单用法
+
+##### 从IP开始扫描
+
+```shell
+# 当IP Ping通后扫描Top1000端口
+./dddd -t 192.168.0.1
+# 当IP Ping通后全端口扫描
+./dddd -t 172.16.100.1 -p 1-65535
+# 指定IP禁Ping全端口扫描指定端口
+./dddd -t 172.16.100.1 -p 80,53,1433-5000 -Pn
+# 调用Masscan进行全端口SYN扫描(需安装Masscan)
+./dddd -t 192.168.0.0/16 -p 1-65535 -Pn -st syn
 ```
-./dddd -t 172.16.100.0/24 （IP段扫描）
-# 默认漏洞报告名为 时间戳.html
-./dddd -t "10.10.10.10" -o 123.html(扫描单个IP,并指定漏洞报告名为123.html。)
-./dddd -t "172.16.100.1:80" (扫描特定IP特定端口)
-./dddd -t "http://baidu.com" (扫描url)
-./dddd -t "baidu.com" -sd (枚举子域名资产并进行扫描)
-./dddd -t target.txt (从文件中读取目标)
+
+
+
+##### 从IP段开始扫描
+
+```shell
+./dddd -t 172.16.100.0/24
+./dddd -t 192.168.0.0-192.168.0.12
 ```
 
-其他用法
 
+
+##### 从端口开始扫描
+
+```shell
+./dddd -t 192.168.44.12:80
 ```
-./dddd -t "baidu.com" -sd -nsf (只爆破枚举子域名资产,关闭被动枚举，并进行扫描)
-./dddd -t "baidu.com" -sd -nsbf (枚举子域名资产,但不进行子域名爆破，并进行扫描)
-./dddd -t "baidu.com" -sd -sbft 1000 (指定爆破子域名线程，默认150)
 
-./dddd -t "10.10.10.10" -p 1-65535 （扫描10.10.10.10所有端口）
-./dddd -t "10.10.10.10" -p 3306,3389 (只扫描3306，3389端口)
-./dddd -t "192.168.0.1" -p 1-65535 -tcpt 5000 (指定端口扫描速度为5000，并扫描全端口)
-# 默认TCP扫描
-./dddd -t 192.168.0.0/16 -p 1-65535 -st syn (调用masscan SYN扫描全端口并扫描)
-./dddd -t "172.16.100.0/24" -Pn （IP段扫描,禁Ping）
 
-./dddd -t "http://baidu.com" -proxy http://127.0.0.1:8080 (指定http代理扫描url)
 
-# 攻防演练速过一遍企业备案资产
-./dddd -t '"icp.name="百度"' -hunter (从hunter中获取备案机构为百度的目标，默认取1000个)
-./dddd -t '"domain="baidu.com"' -hunter -htpc 50 (指定查询页数为50，一个100个，共5000个)
+##### 从Web开始扫描
 
+```shell
+./dddd -t http://test.com
+```
+
+
+
+##### 从域名开始扫描
+
+探测(子)域名是否使用了CDN，若解析出真实IP则进入IP扫描
+
+```shell
+# 不枚举test.com子域名，只识别test.com
+./dddd -t test.com
+# 枚举子域名，识别所有获取到的子域名是否为CDN资产
+./dddd -t test.com -sd
+```
+
+
+
+##### 从Hunter开始扫描
+
+先配置./config/subfinder-config.yaml中的Hunter API。
+
+```yaml
+hunter: ["ffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
+```
+
+配置完成后打开命令行
+
+```shell
+# 从Hunter中获取备案机构为 带带弟弟 的目标进入扫描 默认最大1000条
+./dddd -t '"icp.name="带带弟弟"' -hunter
+# 最大查询1页，一页100个。避免积分过度消耗
+./dddd -t '"icp.name="带带弟弟"' -hunter -htpc 1
+```
+
+攻防演练中通过Hunter导入企业备案资产方便快速占坑。
+
+
+
+##### 从Fofa开始扫描
+
+先配置./config/subfinder-config.yaml中的FOFA 邮箱和KEY。
+
+```yaml
+fofa: ["xxxx@qq.com:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
+```
+
+配置完成后打开命令行
+
+```shell
 ./dddd -t "domain=\"baidu.com\"" -fofa (从fofa取100个baidu.com域名的目标)
 ./dddd -t "domain=\"baidu.com\"" -fofa -ffmc 10000 (指定最大数量为10000 默认100)
 ```
 
 
 
-详细参数
+##### 多目标扫描
+
+在target.txt中写入你的目标，如
+
+```
+172.16.100.0/24
+192.168.0.0-192.168.255.255
+http://test.com
+aaa.test.com
+10.12.14.88:9999
+```
+
+然后在命令行中敲下如下命令。dddd会自动识别资产类型并送入对应流程。
+
+```
+./dddd -t target.txt
+```
+
+
+
+当然dddd也支持多Hunter、Fofa语句，如在target.txt写下
+
+```
+ip="111.111.111.222"
+domain="bbbb.cc"
+icp.name="带带弟弟"
+```
+
+然后在命令行中敲下如下命令。dddd会批量从Hunter查询资产并送入对应流程。
+
+```
+./dddd -t target.txt -hunter
+```
+
+
+
+##### 说明
+
+默认漏洞输出结果文件名为  时间戳.html
+
+日志保存在 log.txt
+
+
+
+扫描可以随时停止，当有指纹识别、漏扫结果输出时，会立即保存在文件内。 
+
+
+
+### 详细参数
 
 ```shell
 SleepingBag@Mac dalaodddd % ./dddd -h
@@ -108,13 +212,13 @@ SleepingBag@Mac dalaodddd % ./dddd -h
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "`-0-0-'"`-0-0-'"`-0-0-`"`-0-0-'
-dddd.version: 1.0
+dddd.version: 1.1
 
 Usage of ./dddd:
   -Pn
     	禁用主机发现功能(icmp,arp)
   -ffmc int
-    	Hunter 查询资产条数 Max:10000 (default 100)
+    	Fofa 查询资产条数 Max:10000 (default 100)
   -fofa
     	从fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词
   -gopt int
@@ -245,7 +349,7 @@ banner="123" // TCP banner 包含123
 banner!="123" // TCP banner中不含123
 ```
 
-各类规则支持与(&&)或(||)非(!)任意组合。可使用括号。与fofa类似。
+各类规则支持与(&&)或(||)非(!)任意组合。可使用括号。与fofa搜索语法类似。
 
 ![image-20230817180845323](assets/image-20230817180845323.png)
 
@@ -286,26 +390,6 @@ root : admin123
 其中shirokeys.txt为shiro key字典
 
 
-
-支持服务如下:
-
-```
-FTP
-MSSQL
-MYSQL
-ORACLE
-POSTGRESQL
-RDP
-REDIS
-SMB
-SSH
-TELNET
-SHIRO
-MONGODB
-MEMCACHED
-MS17-010
-JDWP
-```
 
 
 
@@ -394,6 +478,28 @@ http://host:port/aaa/bbb/nacos/
 一般情况下，root就能用，若应用部署在二级目录下，但poc是一级目录的poc，就需要dir参数才能探测到二级目录下的洞。
 
 
+
+# GoPoc
+
+当前支持的GoPoc列表
+
+```
+FTP
+MSSQL
+MYSQL
+ORACLE
+POSTGRESQL
+RDP
+REDIS
+SMB
+SSH
+TELNET
+Shiro Key
+MONGODB
+MEMCACHED
+MS17-010
+JDWP RCE
+```
 
 
 
