@@ -6520,7 +6520,7 @@ ManageEngine-ServiceDesk:
   - 'title="ManageEngine ServiceDesk" || (body=",''ManageEngine ServiceDesk Plus''," && header!="couchdb" && header!="boa")'
 MyWebSQL:
   - 'title="MyWebSQL" || body="target=\"_blank\" href=\"http://mywebsql.net" || body="method=\"post\" action=\"\" name=\"dbform\" "'
-Bee network interconnection - interconnected enterprise-class router:
+蜂网互联企业级路由器:
   - '(body="/index.htm?page=" && body="images/login-logo.png" && body="www.ifw8.cn") || title="欢迎登录-蜂网互联"'
 Phicomm-Fortress:
   - 'title="斐讯Fortress防火墙"'
@@ -10067,7 +10067,7 @@ Emerson-RDU:
   - 'title="RDU-A Login"'
 Jboss:
   - '((title="Welcome to JBoss" && title!="Welcome to JBoss AS") && header!="JBoss-EAP" && header!="couchdb" && header!="drupal" && header!="ReeCam IP Camera") || (server="JBoss" && header!="couchdb" && header!="Routers" && header!="X-Generator: Drupal" && body!="28ze" && header!="ReeCam IP Camera") || (banner="server: JBoss" && banner!="server: JBoss-EAP" && banner!="couchdb")'
-Network Pioneer - Log Management System:
+NetMizer-日志管理系统:
   - '(body="var mywindows = Ext.create" && body="window.location.href=\"main.html\";") || title="NetMizer 日志管理系统"'
 OpenResty-product:
   - '(header="ngx_openresty" && header!="Drupal") || (header="Server: openresty" && header!="couchdb" && header!="drupal") || (body="<center>openresty/" && header!="couchdb" && header!="drupal") || (banner="server: openresty" && banner!="drupal" && banner!="couchdb")'
@@ -10204,6 +10204,7 @@ GESTETNER- printer:
 Lexmark companies products:
   - 'banner="Lexmark "'
   - title="Lexmark"
+  - server="Lexmark_Web_Server"
 SONY-PCS video conferencing system:
   - '(header="PCS-" && header=" Web Control") || (banner="PCS-" && banner=" Web Control")'
 TELINDUS-router:
@@ -15768,6 +15769,7 @@ PowerJob:
   - title="PowerJob"
 PaperCut:
   - title="PaperCut"
+  - body="content=\"PaperCut\""
 Icinga-Web-2:
   - title="Icinga Web 2 Login"
 全程云OA:
@@ -15939,3 +15941,45 @@ Tencent-企业微信:
 Supershell:
   - body="href=\"/supershell/login"
   - body="Supershell - 登录"
+POS-Codekop:
+  - title="POS Codekop"
+Leostream:
+  - title="Leostream"
+Temporal-Web-UI:
+  - icon_hash="557327884"
+Collibra:
+  - title="Collibra"
+Citrix-ShareFile-StorageZones-Controller:
+  - title="ShareFile Storage Server"
+Yealink-CTP18:
+  - title="Yealink CTP18"
+KubeOperator:
+  - title="KubeOperator"
+KubePi:
+  - body="KubePi"
+EVSE-Web-Interface:
+  - title="EVSE Web Interface"
+EAA益和应用接入系统:
+  - body="EAA益和应用接入系统"
+bloofoxCMS:
+  - body="Powered by bloofoxCMS"
+OpenMediaVault:
+  - title="OpenMediaVault"
+YzmCMS:
+  - title="YzmCMS"
+MobSF:
+  - title="MobSF"
+Aria2-WebUI:
+  - title="Aria2 WebUI"
+Ivanti-Sentry:
+  - 'body="Note: Requires a local Sentry administrative user"'
+ThinVNC:
+  - header="realm=\"ThinVNC\""
+  - title="ThinVNC"
+汉塔科技上网行为管理系统:
+  - title="Antasys - Network Access Control System"
+  - title="汉塔科技 - 上网行为管理系统"
+Maltrail:
+  - server="Maltrail"
+RedisInsight:
+  - title="RedisInsight"

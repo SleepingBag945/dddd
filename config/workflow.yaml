@@ -31,7 +31,7 @@ EasyReport:
     - root
   pocs:
     - pocs/user/vulnerabilities/easyreport/easyreport-shiro-default-key-cbc.yaml
-    - pocs/user/vulnerabilities/easyreport/easyreport-default-login.yaml
+    - easyreport-default-login.yaml
 泛微-EMobile:
   type:
     - root
@@ -147,7 +147,8 @@ catfishcms:
     # E-Cology V9 - SQL Injection
     - CNVD-2023-12632.yaml
     - ecology-oa-byxml-xxe.yaml
-    - ecology-oa-filedownloadforoutdoc-sqli.yaml
+    # E-cology FileDownloadForOutDocSQL - SQL Injection
+    - ecology-oa-file-sqli.yaml
 泛微-EOffice:
   type:
     - root
@@ -238,7 +239,7 @@ LandRay-OA system:
   pocs:
     - cnvd/2021/CNVD-2021-28277.yaml
     - pocs/user/vulnerabilities/landray/landray-oa-datajson-rce.yaml
-    - pocs/user/vulnerabilities/landray/landray-oa-erp-data-rce.yaml
+    - landray-oa-erp-data-rce.yaml
     - pocs/user/vulnerabilities/landray/landray-oa-sysSearchMain-editParam-rce.yaml
     - pocs/user/vulnerabilities/landray/landray-oa-treexml-rce.yaml
 用友-时空KSOA:
@@ -578,6 +579,7 @@ Joomla:
     - cves/2023/CVE-2023-23752.yaml
     - joomla-jvehicles-lfi.yaml
     - rusty-joomla.yaml
+    - joomla-department-sqli.yaml
 Parallels H-Sphere:
   type:
     - root
@@ -639,6 +641,8 @@ Adobe-ColdFusion:
     - vulnerabilities/other/coldfusion-debug-xss.yaml
     - CVE-2023-26360.yaml
     - CVE-2023-38205.yaml
+    - CVE-2023-29300.yaml
+    - CVE-2023-29298.yaml
 AWSTATS-Log Analysis:
   type:
     - root
@@ -1360,6 +1364,7 @@ APACHE-Solr:
     # 包含了自定义的poc
     - vulnerabilities/apache/apache-solr-file-read.yaml
     - apache-solr-log4j-rce.yaml
+    - apache-solr-rce.yaml
 APACHE-CouchDB:
   type:
     - root
@@ -1368,7 +1373,7 @@ APACHE-CouchDB:
     - exposed-panels/couchdb-exposure.yaml
     - exposed-panels/couchdb-fauxton.yaml
     - vulnerabilities/other/couchdb-adminparty.yaml
-    - pocs/user/vulnerabilities/apache/apache-couchdb-unauth.yaml
+    - apache-couchdb-unauth.yaml
     - CVE-2022-24706.yaml
 SAP-NetWeaver-Application-Server-Java:
   type:
@@ -1890,6 +1895,7 @@ FUEL-CMS:
     - root
   pocs:
     - cves/2018/CVE-2018-16763.yaml
+    - CVE-2020-17463.yaml
     - default-logins/fuelcms/fuelcms-default-login.yaml
     - exposed-panels/fuelcms-panel.yaml
 RubedoCMS:
@@ -2058,7 +2064,7 @@ Cisco-Router:
   pocs:
     - cves/2019/CVE-2019-1653.yaml
     - cves/2021/CVE-2021-1472.yaml
-    - cisco-rv110w-rv130w-rv215w-router-information-leakage.yaml
+    - CVE-2019-1898.yaml
 Cisco-Prime-Infrastructure:
   type:
     - root
@@ -2144,6 +2150,8 @@ ZZZCMS:
   pocs:
     - cves/2019/CVE-2019-9041.yaml
     - cves/2022/CVE-2022-23881.yaml
+    - zzzcms-info-disclosure.yaml
+    - zzzcms-ssrf.yaml
 jfrog-Artifactory:
   type:
     - root
@@ -2223,10 +2231,12 @@ Webmin:
   type:
     - root
   pocs:
+    - CVE-2019-15642.yaml
     - cves/2019/CVE-2019-15107.yaml
     - cves/2022/CVE-2022-0824.yaml
-    - exposed-panels/webmin-panel.
+    - exposed-panels/webmin-panel.yaml
     - cves/2022/CVE-2022-36446.yaml
+    - webmin-default-login.yaml
 LISTSERV:
   type:
     - root
@@ -2241,13 +2251,13 @@ HARBOR:
     - cves/2019/CVE-2019-16097.yaml
     - exposed-panels/harbor-panel.yaml
     - technologies/harbor-detect.yaml
+    - CVE-2022-46463.yaml
 nostromo:
   type:
     - root
   pocs:
     - cves/2019/CVE-2019-16278.yaml
-# 蜂网互联企业级路由器
-Bee network interconnection - interconnected enterprise-class router:
+蜂网互联企业级路由器:
   type:
     - root
   pocs:
@@ -2586,6 +2596,7 @@ APACHE-Airflow:
     - cves/2020/CVE-2020-17526.yaml
     - cves/2021/CVE-2021-38540.yaml
     - cves/2022/CVE-2022-24288.yaml
+    - CVE-2022-40127.yaml
     - default-logins/apache/airflow-default-login.yaml
     - exposed-panels/airflow-panel.yaml
     - exposures/configs/airflow-configuration-exposure.yaml
@@ -2653,7 +2664,7 @@ APACHE-kylin:
     # Apache Kylin 未授权配置泄露 /kylin/api/admin/config
     - pocs/user/cves/2020/CVE-2020-13937.yaml
     # 默认密码
-    - pocs/user/vulnerabilities/apache/apache-kylin-console-default-login.yaml
+    - kylin-default-login.yaml
     # Apache Kylin DiagnosisController 命令注入
     - pocs/user/cves/2020/CVE-2020-13925.yaml
 APACHE-Unomi:
@@ -2706,6 +2717,7 @@ TerraMaster-TOS:
     - cves/2020/CVE-2020-15568.yaml
     - cves/2020/CVE-2020-28188.yaml
     - cves/2022/CVE-2022-24990.yaml
+    - CVE-2020-28185.yaml
 Mida-eFramework:
   type:
     - root
@@ -2770,7 +2782,7 @@ Inspur-ClusterEngine:
     - cves/2020/CVE-2020-22211.yaml
     - vulnerabilities/other/74cms-sqli.yaml
     # 74CMS SQLi with Plus weixin
-    - pocs/user/vulnerabilities/74cms/74cms-wexin-sqli.yaml
+    - 74cms-weixin-sqli.yaml
 Kyocera-打印机:
   type:
     - root
@@ -2860,6 +2872,7 @@ sonarQube-代码管理:
     - cves/2020/CVE-2020-27986.yaml
     - exposures/tokens/sonarqube/sonarqube-token.yaml
     - misconfiguration/sonarqube-public-projects.yaml
+    - sonarqube-projects-disclosure.yaml
 RocketChat:
   type:
     - root
@@ -3121,7 +3134,7 @@ APACHE-Druid:
     - default-logins/druid/druid-default-login.yaml
     - exposed-panels/druid-console-exposure.yaml
     - misconfiguration/apache-druid-unauth.yaml
-    - pocs/user/vulnerabilities/apache/apache-druid-log4shell.yaml
+    - apache-druid-log4j.yaml
     - apache-druid-kafka-connect-rce.yaml
 Void-Aural-Rec-Monitor:
   type:
@@ -3178,7 +3191,7 @@ Alibaba-Nacos:
     - cves/2021/CVE-2021-29441.yaml
     - cves/2021/CVE-2021-29442.yaml
     - misconfiguration/unauthenticated-nacos-access.yaml
-    - pocs/user/vulnerabilities/alibaba/alibaba-nacos-default-password.yaml
+    - nacos-default-login.yaml
     - pocs/user/vulnerabilities/alibaba/alibaba-nacos-default-identity.yaml
     - pocs/user/vulnerabilities/alibaba/alibaba-nacos-default-token.yaml
     - misconfiguration/nacos-authentication-bypass.yaml
@@ -3205,6 +3218,7 @@ TENDA-router:
     - cves/2022/CVE-2022-42233.yaml
     - exposed-panels/tenda-11n-wireless-router-login.yaml
     - exposed-panels/tenda-web-master.yaml
+    - CVE-2022-40843.yaml
 ASUS-GT-AC2900:
   type:
     - root
@@ -3250,11 +3264,13 @@ dahua-视频监控:
     - root
   pocs:
     - cves/2021/CVE-2021-33044.yaml
+    - CVE-2017-7925.yaml
 RaspAP:
   type:
     - root
   pocs:
     - cves/2021/CVE-2021-33357.yaml
+    - CVE-2022-39986.yaml
 Geutebruck:
   type:
     - root
@@ -3596,6 +3612,7 @@ Casdoor:
     - root
   pocs:
     - cves/2022/CVE-2022-24124.yaml
+    - casdoor-users-password.yaml
 Shibboleth-Identity-Provider:
   type:
     - root
@@ -3633,6 +3650,7 @@ ThinkPHP:
     - vulnerabilities/thinkphp/thinkphp-5023-rce.yaml
     - vulnerabilities/thinkphp/thinkphp-509-information-disclosure.yaml
     - pocs/user/vulnerabilities/thinkphp/thinkphp6-lang-lfi.yaml
+    - CNVD-2022-86535.yaml
 Ametys-CMS:
   type:
     - root
@@ -3648,6 +3666,7 @@ QNAP-NAS:
     - root
   pocs:
     - cves/2022/CVE-2022-27593.yaml
+    - CVE-2019-7192.yaml
 QNAP-PhotoStation:
   type:
     - root
@@ -3919,6 +3938,7 @@ ATLASSIAN-Bitbucket:
     - cves/2022/CVE-2022-36804.yaml
     - exposures/files/bitbucket-pipelines.yaml
     - misconfiguration/bitbucket-public-repository.yaml
+    - bitbucket-auth-bypass.yaml
 Dapr-Dashboard:
   type:
     - root
@@ -4013,6 +4033,7 @@ APACHE-dubbo:
     - root
   pocs:
     - default-logins/apache/dubbo-admin-default-login.yaml
+    - apache-dubbo-unauth.yaml
 Apache-Kafka-Center:
   type:
     - root
@@ -4116,7 +4137,7 @@ ipTIME-Router:
     - root
   pocs:
     - default-logins/jinher/jinher-oa-default-login.yaml
-    - pocs/user/vulnerabilities/jinhe/jinhe-oa-c6-download-arbitrary-file-read.yaml
+    - jinhe-oa-c6-lfi.yaml
 JupyterHub:
   type:
     - root
@@ -4537,7 +4558,7 @@ ECShop:
   type:
     - root
   pocs:
-    - vulnerabilities/other/ecshop-sqli.yaml
+    - CVE-2021-41460.yaml
     - ecshop-cnvd-2020-58823-sqli.yaml
 新软科技-极通EWEBS:
   type:
@@ -4552,7 +4573,7 @@ ECShop:
     - vulnerabilities/other/fanruanoa2012-disclosure.yaml
     - vulnerabilities/other/finereport-path-traversal.yaml
     - pocs/user/vulnerabilities/finecms/finereport-v8-arbitrary-file-read.yaml
-    - pocs/user/vulnerabilities/finecms/fine-report-v9-arbitrary-file-overwrite.yaml
+    - fine-report-v9-file-upload.yaml
 FatPipe-WARP:
   type:
     - root
@@ -4771,6 +4792,7 @@ Tamronos-IPTV system:
     - root
   pocs:
     - vulnerabilities/other/tamronos-rce.yaml
+    - tamronos-user-creation.yaml
 奇安信-天擎:
   type:
     - root
@@ -4878,6 +4900,7 @@ SangFor- Behavioral Management or Identity Authentication System:
     - root
   pocs:
     - vulnerabilities/sangfor/sangfor-ba-rce.yaml
+    - sangfor-cphp-rce.yaml
 Squirrelmail- Mail System:
   type:
     - root
@@ -4899,6 +4922,7 @@ TDXK-通达OA:
   type:
     - root
   pocs:
+    - tongda-auth-bypass.yaml
     # 通达OA v11.8 getway.php 远程文件包含漏洞
     - vulnerabilities/tongda/tongda-path-traversal.yaml
     # /general/userinfo.php?UID=1 会话泄露
@@ -4973,7 +4997,7 @@ LODOP-cloud printing:
   type:
     - root
   pocs:
-    - pocs/user/cnvd/2019/CNVD-2019-43826.yaml
+    - clodop-printer-lfi.yaml
 畅捷通-畅捷CRM:
   type:
     - root
@@ -5006,6 +5030,7 @@ AMCREST-camera:
   pocs:
     # Amcrest Dahua Unauthenticated-Audio-Streaming
     - pocs/user/cves/2019/CVE-2019-3948.yaml
+    - CVE-2017-8229.yaml
 AntD-Admin:
   type:
     - root
@@ -5035,8 +5060,8 @@ D-Link-AC-集中管理平台:
     - root
   pocs:
     # 飞鱼星 企业级智能上网行为管理系统 权限绕过信息泄露漏洞
-    - pocs/user/vulnerabilities/adslr/adslr-router-wifi-info-leak.yaml
-    - pocs/user/vulnerabilities/adslr/adslr-router-default-password.yaml
+    - feiyuxing-info-leak.yaml
+    - feiyuxing-default-login.yaml
 ASPCMS:
   type:
     - root
@@ -5044,7 +5069,7 @@ ASPCMS:
     # aspcms后台地址泄露
     - pocs/user/vulnerabilities/aspcms/aspcms-backend-leak.yaml
     # commentList.asp id 注入
-    - pocs/user/vulnerabilities/aspcms/aspcms-commentlist-sqli.yaml
+    - aspcms-commentlist-sqli.yaml
 宝塔-Linux控制面板:
   type:
     - root
@@ -5057,23 +5082,24 @@ ClickHouse:
     - base
   pocs:
     - pocs/user/vulnerabilities/clickhouse/clickhouse-web-unauth.yaml
+    - clickhouse-unauth-api.yaml
 H3C-CVM-虚拟化管理平台:
   type:
     - root
   pocs:
-    - pocs/user/vulnerabilities/h3c/h3c-cvm-arbitrary-file-upload.yaml
+    - h3c-cvm-arbitrary-file-upload.yaml
 红帆-ioffice:
   type:
     - root
   pocs:
-    - pocs/user/vulnerabilities/hongfan/hongfan-ioffice-udfmr-sqli.yaml
-    - pocs/user/vulnerabilities/hongfan/hongfan-ioffice-iofileexport-arbitrary-file-read.yaml
-    - pocs/user/vulnerabilities/hongfan/hongfan-ioffice-ioassistance-sqli.yaml
+    - hongfan-ioffice-sqli.yaml
+    - hongfan-ioffice-lfi.yaml
+    - hongfan-ioffice-rce.yaml
 Ace-AceReporter:
   type:
     - root
   pocs:
-    - acenet-acereporter-report-component-arbitrary-file-download.yaml
+    - CNVD-2021-41972.yaml
 AIC智能校园系统:
   type:
     - root
@@ -5088,7 +5114,8 @@ AVCON6:
   type:
     - root
   pocs:
-    - avcon6-org-execl-download-arbitrary-file-download.yaml
+    - avcon6-execl-lfi.yaml
+    - avcon6-lfi.yaml
 Ciphertrust:
   type:
     - root
@@ -5202,6 +5229,7 @@ Discuz:
     - root
   pocs:
     - vulnerabilities/discuz-downremoteimg-ssrf.yaml
+    - discuz-api-pathinfo.yaml
 Kube-State-Metrics:
   type:
     - root
@@ -5368,6 +5396,7 @@ PaperCut:
     - root
   pocs:
     - CVE-2023-27350.yaml
+    - CVE-2023-39143.yaml
 vRealize-Log-Insight:
   type:
     - root
@@ -5402,7 +5431,7 @@ HJSoft-HCM:
   type:
     - root
   pocs:
-    - hjsoft-hcm-codesettree-serlvet-categories-sqli.yaml
+    - CNVD-2023-08743.yaml
 REALOR-天翼应用虚拟化系统:
   type:
     - root
@@ -5412,10 +5441,7 @@ REALOR-天翼应用虚拟化系统:
   type:
     - root
   pocs:
-    - dahua-smart-park-fastjson-rce.yaml
-    - dahua-smart-park-detect.yaml
-    # CVE-2023-3836
-    - dahua-smart-park-addimgico-upload.yaml
+    - CVE-2023-3836.yaml
 Home-Assistant:
   type:
     - root
@@ -5531,6 +5557,7 @@ RocketMQ:
     - CVE-2023-33246.yaml
     # RocketMQ Broker - Remote Code Execution
     - CVE-2023-37582.yaml
+    - apache-rocketmq-broker-unauth.yaml
 NuxtJS:
   type:
     - root
@@ -5564,7 +5591,7 @@ HIKVISION-综合安防管理平台:
     # org.apache.tomcat.dbcp.dbcp2.BasicDataSource 不出网fastjson rce
     - hikvision-isecure-center-fastjson-basicdatasource-rce.yaml
     - hikvision-isecure-center-upload.yaml
-    - hikvision-isecure-center-springboot-env.yaml
+    - hikivision-env.yaml
     - hikvision-isecure-center-report-upload.yaml
 TP_LINK-Enterprise Wireless Router:
   type:
@@ -5686,3 +5713,223 @@ Supershell:
     - root
   pocs:
     - supershell-default-login.yaml
+POS-Codekop:
+  type:
+    - root
+  pocs:
+    - CVE-2023-36346.yaml
+Leostream:
+  type:
+    - root
+  pocs:
+    - leostream-default-login.yaml
+pyLoad:
+  type:
+    - root
+  pocs:
+    - pyload-default-login.yaml
+Temporal-Web-UI:
+  type:
+    - root
+  pocs:
+    - unauth-temporal-web-ui.yaml
+Collibra:
+  type:
+    - root
+  pocs:
+    - collibra-properties.yaml
+Citrix-ShareFile-StorageZones-Controller:
+  type:
+    - root
+  pocs:
+    - CVE-2023-24489.yaml
+Piwigo:
+  type:
+    - root
+  pocs:
+    - CVE-2023-37270.yaml
+IntelBras-video surveillance:
+  type:
+    - root
+  pocs:
+    - CVE-2017-7925.yaml
+Yealink-CTP18:
+  type:
+    - root
+  pocs:
+    - yealink-default-login.yaml
+AnyProxy:
+  type:
+    - root
+  pocs:
+    - alibaba-anyproxy-lfi.yaml
+Lexmark companies products:
+  type:
+    - root
+  pocs:
+    - CVE-2023-26067.yaml
+KubeOperator:
+  type:
+    - root
+  pocs:
+    - CVE-2023-22480.yaml
+KubePi:
+  type:
+    - root
+  pocs:
+    - CVE-2023-22478.yaml
+Dogtag-PKI:
+  type:
+    - root
+  pocs:
+    - CVE-2022-2414.yaml
+EVSE-Web-Interface:
+  type:
+    - root
+  pocs:
+    - CVE-2021-22707.yaml
+TIBCO-Jaspersoft:
+  type:
+    - root
+  pocs:
+    - CVE-2018-18809.yaml
+Webgrind:
+  type:
+    - root
+  pocs:
+    - CVE-2018-12909.yaml
+MAIPU-ISG1000 security gateway:
+  type:
+    - root
+  pocs:
+    - CNVD-2021-43984.yaml
+BSPHP:
+  type:
+    - root
+  pocs:
+    - bsphp-info.yaml
+NetMizer-日志管理系统:
+  type:
+    - root
+  pocs:
+    - netmizer-cmd-rce.yaml
+    - netmizer-data-listing.yaml
+ACTi-视频监控:
+  type:
+    - root
+  pocs:
+    - acti-video-lfi.yaml
+Crawlab:
+  type:
+    - root
+  pocs:
+    - crawlab-lfi.yaml
+EAA益和应用接入系统:
+  type:
+    - root
+  pocs:
+    - eaa-app-lfi.yaml
+EasyImage-简单图床:
+  type:
+    - root
+  pocs:
+    - easyimage-downphp-lfi.yaml
+Kedacom-video surveillance:
+  type:
+    - root
+  pocs:
+    - kedacom-network-lfi.yaml
+iXCache:
+  type:
+    - root
+  pocs:
+    - panabit-ixcache-rce.yaml
+SANGFOR-应用交付报表系统:
+  type:
+    - root
+  pocs:
+    # Sangfor Application download.php - Arbitary File Read
+    - sangfor-download-lfi.yaml
+    # Sangfor Application sys_user.conf Account Password Leakage
+    - sangfor-sysuser-conf.yaml
+WISEGIGA:
+  type:
+    - root
+  pocs:
+    - wisegiga-nas-lfi.yaml
+bloofoxCMS:
+  type:
+    - root
+  pocs:
+    - bloofoxcms-default-login.yaml
+OpenMediaVault:
+  type:
+    - root
+  pocs:
+    - openmediavault-default-login.yaml
+Whitton - E-Dip VPN:
+  type:
+    - root
+  pocs:
+    - socks5-vpn-config.yaml
+YzmCMS:
+  type:
+    - root
+  pocs:
+    - yzmcms-installer.yaml
+MobSF:
+  type:
+    - root
+  pocs:
+    - mobsf-framework-exposure.yaml
+OpenStack:
+  type:
+    - root
+  pocs:
+    - openstack-config.yaml
+Aria2-WebUI:
+  type:
+    - root
+  pocs:
+    - CVE-2023-39141.yaml
+Ivanti-Sentry:
+  type:
+    - root
+  pocs:
+    - CVE-2023-38035.yaml
+ThinVNC:
+  type:
+    - root
+  pocs:
+    - CVE-2019-17662.yaml
+CaiMore-Gateway:
+  type:
+    - root
+  pocs:
+    - caimore-gateway-rce.yaml
+    - caimore-default-login.yaml
+FLIR-FLIR-AX8:
+  type:
+    - root
+  pocs:
+    - flir-ax8-rce.yaml
+汉塔科技上网行为管理系统:
+  type:
+    - root
+  pocs:
+    - hanta-rce.yaml
+Maltrail:
+  type:
+    - root
+  pocs:
+    - maltrail-rce.yaml
+Ruijie-下一代防火墙:
+  type:
+    - root
+  pocs:
+    - ruijie-excu-shell.yaml
+RedisInsight:
+  type:
+    - root
+  pocs:
+    - unauth-redis-insight.yaml

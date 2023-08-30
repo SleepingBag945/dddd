@@ -29,10 +29,14 @@ tcp:
     matchers:
       - type: word
         words:
-          - "serializeTypeCurrentRPC"
+          - serializeTypeCurrentRPC
+          - language
+          - opaque
+          - version
+        condition: and
 
       - type: word
-        part: raw
         words:
-          - "HTTP/1.1"
+          - "HTTP"
+          - "FTP"
         negative: true

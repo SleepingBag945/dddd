@@ -1,6 +1,6 @@
 # 工具简介
 
-工具名称dddd（带带弟弟），是一款支持多种输入格式，主/被动指纹识别且使用简单的供应链漏洞探测工具。协助红队人员快速收集信息，测绘目标资产，寻找薄弱点。支持从Hunter、Fofa批量拉取目标。
+dddd（带带弟弟），是一款支持多种输入格式，主/被动指纹识别且使用简单的供应链漏洞探测工具。协助红队人员快速收集信息，测绘目标资产，寻找薄弱点。支持从Hunter、Fofa批量拉取目标。
 
 
 
@@ -515,6 +515,12 @@ JDWP RCE
 
 
 
+# 更新历史
+
+[更新历史](Update.md)
+
+
+
 # 参考链接
 
 https://github.com/shadow1ng/fscan
@@ -534,3 +540,11 @@ https://github.com/projectdiscovery/naabu
 https://github.com/chainreactors/gogo
 
 https://github.com/zan8in/afrog
+
+
+
+## Star History Chart
+
+[![Star History Chart](https://api.star-history.com/svg?repos=SleepingBag945/dddd&type=Date)](https://star-history.com/#SleepingBag945/dddd&Date)
+
+<img align='right' src="https://profile-counter.glitch.me/neo-regeorg/count.svg" width="200">
