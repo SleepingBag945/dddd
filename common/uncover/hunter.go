@@ -122,13 +122,16 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) []string {
 
 		if responseJson.Code != 200 {
 			gologger.Error().Msgf("[Hunter] %s 搜索失败！Error:%s", keyword, responseJson.Message)
-			if responseJson.Message == "请求太多啦，稍后再试试" {
+
+			if strings.Contains(responseJson.Message, "今日免费积分已用") &&
+				strings.Contains(responseJson.Message, "导出数据将扣除权益积分") {
 				time.Sleep(time.Second * 3)
 				continue
 			}
-			if strings.Contains(responseJson.Message, "免费积分") && strings.Contains(responseJson.Message, "用完") {
-				gologger.Warning().Msgf(responseJson.Message)
+
+			if responseJson.Message == "请求太多啦，稍后再试试" {
 				time.Sleep(time.Second * 3)
+				continue
 			}
 			return results
 		}
