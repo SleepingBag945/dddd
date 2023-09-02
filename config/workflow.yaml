@@ -5442,6 +5442,9 @@ REALOR-天翼应用虚拟化系统:
     - root
   pocs:
     - CVE-2023-3836.yaml
+    - dahua-smart-park-getfacecapture-sqli.yaml
+    - dahua-smart-park-video-upload.yaml
+    - dahua-user-getuserinfobyusername-getpassword.yaml
 Home-Assistant:
   type:
     - root
@@ -5465,6 +5468,7 @@ Jeecg-Boot:
     - CVE-2023-33510.yaml
     # Jeecg-boot 3.5.0 qurestSql - SQL Injection
     - CVE-2023-1454.yaml
+    - jeecg-boot-ssti-rce.yaml
 AVTECH-Video Monitoring:
   type:
     - root
@@ -5582,6 +5586,7 @@ Openfire:
   pocs:
     # 默认密码
     - esafenet-cdg-default-login.yaml
+    - cdg-uploadfilefromclientserviceforclient-file-upload.yaml
 HIKVISION-综合安防管理平台:
   type:
     - root
@@ -5933,3 +5938,18 @@ RedisInsight:
     - root
   pocs:
     - unauth-redis-insight.yaml
+OfficeWeb365:
+  type:
+    - root
+  pocs:
+    - officeweb365-file-upload.yaml
+用友-TurboCRM:
+  type:
+    - root
+  pocs:
+    - yonyou-turbocrm-getemaildata-fileread.yaml
+Let me-CRM:
+  type:
+    - root
+  pocs:
+    - renwoxing-crm-smsdatalist-sqli.yaml

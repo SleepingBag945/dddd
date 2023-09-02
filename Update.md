@@ -1,10 +1,30 @@
 # 更新日志
 
+## 2023.9.2
+
+部分2023 hvv漏洞更新
+
+renwoxing-crm-smsdatalist-sqli (感谢h0nayuzu)
+
+jeecg-boot-ssti-rce
+
+dahua-smart-park-getfacecapture-sqli(感谢h0nayuzu)
+
+dahua-smart-park-video-upload
+
+dahua-user-getuserinfobyusername-getpassword(感谢h0nayuzu)
+
+cdg-uploadfilefromclientserviceforclient-file-upload (亿赛通文件上传)
+
+officeweb365-file-upload
+
+yonyou-turbocrm-getemaildata-fileread
+
+
+
 ## 2023.8.30
 
 同步Nuclei模板至v9.6.2.将部分user目录下的Poc指向Nuclei官方Poc
-
-并更新指纹库与漏洞库
 
 CVE-2023-36346
 

