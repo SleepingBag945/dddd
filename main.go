@@ -14,6 +14,7 @@ import (
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/httpx"
 	"github.com/projectdiscovery/nuclei/v2/pkg/output"
+	"os"
 )
 
 func main() {
@@ -188,4 +189,14 @@ func workflow() {
 
 	// GoPoc引擎
 	gopocs.GoPocsDispatcher(nucleiResults)
+
+	// 没有漏洞结果，删除生成的HTML
+	fileInfo, err := os.Stat(structs.GlobalConfig.ReportName)
+	if err == nil {
+		fileSize := fileInfo.Size()
+		// 简单粗暴判断文件大小
+		if fileSize < 99360 {
+			_ = os.Remove(structs.GlobalConfig.ReportName)
+		}
+	}
 }
