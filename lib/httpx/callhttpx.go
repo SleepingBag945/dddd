@@ -38,7 +38,7 @@ func RemoveUsedUrl(urls []string) []string {
 
 var GlobalUsedUrl []string
 
-func CallHTTPx(urls []string, callBack func(resp runner.Result), proxy string) {
+func CallHTTPx(urls []string, callBack func(resp runner.Result), proxy string, threads int, timeout int) {
 	gologger.Info().Msg("获取Web响应中")
 
 	nextUrls := RemoveDuplicateElement(urls)
@@ -56,11 +56,12 @@ func CallHTTPx(urls []string, callBack func(resp runner.Result), proxy string) {
 			FollowHostRedirects:       true,
 			MaxRedirects:              5,
 			ExtractTitle:              true,
-			Timeout:                   20,
+			Timeout:                   timeout,
 			Retries:                   2,
 			HTTPProxy:                 proxy,
 			NoFallbackScheme:          true,
 			RandomAgent:               true,
+			Threads:                   threads,
 		}
 
 		if err := options.ValidateOptions(); err != nil {
@@ -93,7 +94,7 @@ func init() {
 	}
 }
 
-func DirBrute(urls []string, callBack func(resp runner.Result), proxy string) {
+func DirBrute(urls []string, callBack func(resp runner.Result), proxy string, threads int, timeout int) {
 	urls = RemoveDuplicateElement(urls)
 
 	options := runner.Options{
@@ -106,12 +107,13 @@ func DirBrute(urls []string, callBack func(resp runner.Result), proxy string) {
 		FollowHostRedirects:       true,
 		MaxRedirects:              5,
 		ExtractTitle:              true,
-		Timeout:                   20,
+		Timeout:                   timeout,
 		IsBrute:                   true,
 		Retries:                   2,
 		HTTPProxy:                 proxy,
 		NoFallbackScheme:          true,
 		RandomAgent:               true,
+		Threads:                   threads,
 	}
 
 	if err := options.ValidateOptions(); err != nil {

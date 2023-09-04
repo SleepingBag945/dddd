@@ -41,8 +41,11 @@ type Config struct {
 	Fofa                       bool
 	FofaMaxCount               int
 	NoDirSearch                bool
+	NoGolangPoc                bool
 	ReportName                 string
 	GoPocThreads               int
+	WebThreads                 int
+	WebTimeout                 int
 }
 
 type CDNResult struct {

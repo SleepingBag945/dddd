@@ -50,6 +50,9 @@ func HostBindCheck() {
 	}
 	urls = utils.RemoveDuplicateElement(urls)
 
-	httpx.DirBrute(urls, http.HostBindHTTPxCallBack, structs.GlobalConfig.HTTPProxy)
+	httpx.DirBrute(urls, http.HostBindHTTPxCallBack,
+		structs.GlobalConfig.HTTPProxy,
+		structs.GlobalConfig.WebThreads,
+		structs.GlobalConfig.WebTimeout)
 
 }

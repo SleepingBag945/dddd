@@ -143,7 +143,10 @@ func workflow() {
 	}
 	urls = utils.RemoveDuplicateElement(urls)
 
-	httpx.CallHTTPx(urls, http.UrlCallBack, structs.GlobalConfig.HTTPProxy)
+	httpx.CallHTTPx(urls, http.UrlCallBack,
+		structs.GlobalConfig.HTTPProxy,
+		structs.GlobalConfig.WebThreads,
+		structs.GlobalConfig.WebTimeout)
 
 	// 非CDN域名 探测域名绑定资产
 	// 把只允许域名访问的资产扒拉出来
@@ -170,7 +173,11 @@ func workflow() {
 		}
 		checkURLs = utils.RemoveDuplicateElement(checkURLs)
 		gologger.Info().Msg("开始主动指纹探测")
-		httpx.DirBrute(checkURLs, http.DirBruteCallBack, structs.GlobalConfig.HTTPProxy)
+		httpx.DirBrute(checkURLs,
+			http.DirBruteCallBack,
+			structs.GlobalConfig.HTTPProxy,
+			structs.GlobalConfig.WebThreads,
+			structs.GlobalConfig.WebTimeout)
 	}
 
 	ddfinger.FingerprintIdentification()
@@ -188,7 +195,9 @@ func workflow() {
 	}
 
 	// GoPoc引擎
-	gopocs.GoPocsDispatcher(nucleiResults)
+	if !structs.GlobalConfig.NoGolangPoc {
+		gopocs.GoPocsDispatcher(nucleiResults)
+	}
 
 	// 没有漏洞结果，删除生成的HTML
 	fileInfo, err := os.Stat(structs.GlobalConfig.ReportName)

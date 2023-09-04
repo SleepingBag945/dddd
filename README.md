@@ -197,14 +197,14 @@ icp.name="带带弟弟"
 
 
 
-扫描可以随时停止，当有指纹识别、漏扫结果输出时，会立即保存在文件内。 
+扫描可以随时停止，当有指纹识别、漏扫结果输出时，会实时保存在文件内。 
 
 
 
 ### 详细参数
 
 ```shell
-SleepingBag@Mac dalaodddd % ./dddd -h
+coco@Mac dalaodddd % ./dddd -h
 
      _       _       _       _   
   __| |   __| |   __| |   __| |  
@@ -220,7 +220,7 @@ Usage of ./dddd:
   -ffmc int
     	Fofa 查询资产条数 Max:10000 (default 100)
   -fofa
-    	从fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词
+    	从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词
   -gopt int
     	GoPoc运行线程 (default 50)
   -htpc int
@@ -235,6 +235,8 @@ Usage of ./dddd:
     	指定masscan路径 (default "masscan")
   -nd
     	关闭主动指纹探测
+  -ngp
+    	关闭Golang Poc探测
   -nsbf
     	关闭子域名爆破
   -nsf
@@ -265,6 +267,10 @@ Usage of ./dddd:
     	TCP全连接获取Banner的线程数量 (default 30)
   -tcpt int
     	TCP扫描线程 (default 600)
+  -wt int
+    	Web探针线程,根据网络环境调整 (default 100)
+  -wto int
+    	Web探针超时时间,根据网络环境调整 (default 12)
 
 ```
 
