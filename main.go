@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dddd/api"
 	"dddd/common"
 	"dddd/common/callnuclei"
 	"dddd/common/http"
@@ -29,6 +30,12 @@ func workflow() {
 	var domainPort []string
 	var ipPort []string
 	var ips []string
+
+	//dddd -t http://127.0.0.1 -poc seeyon
+	if structs.GlobalConfig.CheckPoc != "" {
+		api.PocCheck(common.TargetString, structs.GlobalConfig.CheckPoc)
+		return
+	}
 
 	// 从Hunter中获取资产
 	if structs.GlobalConfig.Hunter && !structs.GlobalConfig.Fofa {

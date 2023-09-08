@@ -249,10 +249,6 @@ func Flag() {
 	flag.IntVar(&structs.GlobalConfig.TCPPortScanTimeout, "psto", 6, "TCP扫描超时时间(秒)")
 	flag.StringVar(&structs.GlobalConfig.MasscanPath, "mp", "masscan", "指定masscan路径")
 
-	// Web探活设置
-	flag.IntVar(&structs.GlobalConfig.WebThreads, "wt", 100, "Web探针线程,根据网络环境调整")
-	flag.IntVar(&structs.GlobalConfig.WebTimeout, "wto", 12, "Web探针超时时间,根据网络环境调整")
-
 	// 代理设置 只支持HTTP代理 方便用云函数
 	flag.StringVar(&structs.GlobalConfig.HTTPProxy, "proxy", "", "HTTP代理，在外网可利用云函数/代理池的多出口特性恶心防守 例: http://127.0.0.1:8080")
 
@@ -273,7 +269,9 @@ func Flag() {
 
 	// Go Poc
 	flag.IntVar(&structs.GlobalConfig.GoPocThreads, "gopt", 50, "GoPoc运行线程")
-	flag.BoolVar(&structs.GlobalConfig.NoGolangPoc, "ngp", false, "关闭Golang Poc探测")
+
+	//指定poc主动检查
+	flag.StringVar(&structs.GlobalConfig.CheckPoc, "poc", "", "模糊查询输入的poc名称,然后主动检查。示例：dddd -t http://127.0.0.1 -poc seeyon")
 
 	flag.Parse()
 	prepare()
