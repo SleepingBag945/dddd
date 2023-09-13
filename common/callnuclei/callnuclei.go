@@ -27,14 +27,17 @@ var (
 	options    = &types.Options{}
 )
 
-func CallNuclei(TargetAndPocsName map[string][]string, proxy string, callBack func(result output.ResultEvent)) []output.ResultEvent {
+func CallNuclei(TargetAndPocsName map[string][]string,
+	proxy string,
+	callBack func(result output.ResultEvent),
+	nameForSearch string) []output.ResultEvent {
 	// 设置结果回调
 	output.AddResultCallback = callBack
 	if err := exportrunner.ExportRunnerConfigureOptions(); err != nil {
 		gologger.Fatal().Msgf("Could not initialize options: %s\n", err)
 	}
 
-	readConfig(TargetAndPocsName, proxy)
+	readConfig(TargetAndPocsName, proxy, nameForSearch)
 	// configPath, _ := flagSet.GetConfigFilePath()
 
 	if options.ListDslSignatures {
@@ -111,7 +114,7 @@ func CallNuclei(TargetAndPocsName map[string][]string, proxy string, callBack fu
 	return output.Results
 }
 
-func readConfig(TargetAndPocsName map[string][]string, proxy string) {
+func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSearch string) {
 
 	pwd, _ := os.Getwd()
 
@@ -563,6 +566,8 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string) {
 	options.NoTables = false
 	// limit the number of output to display
 	options.OutputLimit = 100
+
+	options.PocNameForSearch = nameForSearch
 
 	gologger.DefaultLogger.SetTimestamp(options.Timestamp, levels.LevelDebug)
 

@@ -46,6 +46,7 @@ type Config struct {
 	GoPocThreads               int
 	WebThreads                 int
 	WebTimeout                 int
+	PocNameForSearch           string
 }
 
 type CDNResult struct {

@@ -360,6 +360,8 @@ type Options struct {
 	FuzzingType string
 	// Fuzzing Mode overrides template level fuzzing-mode configuration
 	FuzzingMode string
+	// 提供模糊搜索的Poc名称
+	PocNameForSearch string
 }
 
 // ShouldLoadResume resume file

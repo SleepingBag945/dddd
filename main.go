@@ -18,7 +18,6 @@ import (
 )
 
 func main() {
-
 	common.Flag()
 	workflow()
 }
@@ -157,6 +156,19 @@ func workflow() {
 		aliveURLs = append(aliveURLs, rootURL)
 	}
 
+	// 模糊搜索Yaml Poc直接打
+	if structs.GlobalConfig.PocNameForSearch != "" {
+		TargetAndPocsName := make(map[string][]string)
+		for _, url := range aliveURLs {
+			TargetAndPocsName[url] = []string{}
+		}
+		callnuclei.CallNuclei(TargetAndPocsName,
+			structs.GlobalConfig.HTTPProxy,
+			report.AddResultByResultEvent,
+			structs.GlobalConfig.PocNameForSearch)
+		return
+	}
+
 	// 目录爆破
 	if !structs.GlobalConfig.NoDirSearch {
 		var checkURLs []string
@@ -191,7 +203,8 @@ func workflow() {
 	if count > 0 {
 		nucleiResults = callnuclei.CallNuclei(TargetAndPocsName,
 			structs.GlobalConfig.HTTPProxy,
-			report.AddResultByResultEvent)
+			report.AddResultByResultEvent,
+			"")
 	}
 
 	// GoPoc引擎

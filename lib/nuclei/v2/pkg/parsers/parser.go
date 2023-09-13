@@ -149,9 +149,9 @@ const (
 func init() {
 	parsedTemplatesCache = cache.New()
 
-	stats.NewEntry(SyntaxWarningStats, "Found %d templates with syntax warning (use -validate flag for further examination)")
-	stats.NewEntry(SyntaxErrorStats, "Found %d templates with syntax error (use -validate flag for further examination)")
-	stats.NewEntry(RuntimeWarningsStats, "Found %d templates with runtime error (use -validate flag for further examination)")
+	stats.NewEntry(SyntaxWarningStats, "Found %d templates with syntax warning")
+	stats.NewEntry(SyntaxErrorStats, "Found %d templates with syntax error")
+	stats.NewEntry(RuntimeWarningsStats, "Found %d templates with runtime error")
 }
 
 // ParseTemplate parses a template and returns a *templates.Template structure

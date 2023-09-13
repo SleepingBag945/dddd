@@ -295,6 +295,39 @@ func (store *Store) LoadWorkflows(workflowsList []string) []*templates.Template 
 	return loadedWorkflows
 }
 
+func (store *Store) LoadTemplatesWithName(templatesList []string, pocName string) []*templates.Template {
+	includedTemplates, errs := store.config.Catalog.GetTemplatesPath(templatesList)
+	store.logErroredTemplates(errs)
+	templatePathMap := store.pathFilter.Match(includedTemplates)
+
+	loadedTemplates := make([]*templates.Template, 0, len(templatePathMap))
+	for templatePath := range templatePathMap {
+		flag := false
+		changePocName := strings.ToLower(strings.ReplaceAll(pocName, "\\", "/"))
+		if strings.Contains(strings.ToLower(templatePath), strings.ToLower(pocName)) {
+			flag = true
+		}
+		if strings.Contains(strings.ToLower(templatePath), changePocName) {
+			flag = true
+		}
+
+		if flag {
+			parsed, err := templates.Parse(templatePath, store.preprocessor, store.config.ExecutorOptions)
+			if err != nil {
+				stats.Increment(parsers.RuntimeWarningsStats)
+				gologger.Warning().Msgf("Could not parse template %s: %s\n", templatePath, err)
+			} else if parsed != nil {
+				if len(parsed.RequestsHeadless) > 0 && !store.config.ExecutorOptions.Options.Headless {
+					gologger.Warning().Msgf("Headless flag is required for headless template %s\n", templatePath)
+				} else {
+					loadedTemplates = append(loadedTemplates, parsed)
+				}
+			}
+		}
+	}
+	return loadedTemplates
+}
+
 func (store *Store) LoadTemplatesWithNames(templatesList, pocNames []string) []*templates.Template {
 	includedTemplates, errs := store.config.Catalog.GetTemplatesPath(templatesList)
 	store.logErroredTemplates(errs)

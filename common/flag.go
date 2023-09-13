@@ -275,6 +275,9 @@ func Flag() {
 	flag.IntVar(&structs.GlobalConfig.GoPocThreads, "gopt", 50, "GoPoc运行线程")
 	flag.BoolVar(&structs.GlobalConfig.NoGolangPoc, "ngp", false, "关闭Golang Poc探测")
 
+	// 模糊搜索Poc
+	flag.StringVar(&structs.GlobalConfig.PocNameForSearch, "poc", "", "模糊匹配Poc名称")
+
 	flag.Parse()
 	prepare()
 }

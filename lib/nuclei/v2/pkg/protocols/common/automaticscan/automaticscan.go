@@ -145,13 +145,19 @@ func (s *Service) executeWappalyzerTechDetection() error {
 }
 
 func (s *Service) processWappalyzerInputPair(input *contextargs.MetaInput) {
-	pocs, ok := s.opts.TargetAndPocsName[input.Input]
-	if !ok || len(pocs) == 0 {
-		return
-	}
-	uniquePocs := sliceutil.Dedupe(pocs)
 
-	templatesList := s.store.LoadTemplatesWithNames(s.allTemplates, uniquePocs)
+	var templatesList []*templates.Template
+	if s.opts.Options.PocNameForSearch != "" {
+		templatesList = s.store.LoadTemplatesWithName(s.allTemplates, s.opts.Options.PocNameForSearch)
+	} else {
+		pocs, ok := s.opts.TargetAndPocsName[input.Input]
+		if !ok || len(pocs) == 0 {
+			return
+		}
+		uniquePocs := sliceutil.Dedupe(pocs)
+		templatesList = s.store.LoadTemplatesWithNames(s.allTemplates, uniquePocs)
+	}
+
 	// gologger.Info().Msgf("Executing tags (%v) for host %s (%d templates)", strings.Join(uniquePocs, ","), input, len(templatesList))
 	for _, t := range templatesList {
 		s.opts.Progress.AddToTotal(int64(t.Executer.Requests()))
