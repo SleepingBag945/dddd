@@ -4,6 +4,8 @@
 
 根据 **hanbufei**大哥的pr，添加模糊搜索poc，并跳过指纹识别、路径爆破直接打poc的功能。
 
+同步nuclei引擎 v2.9.14的yaml poc结构。准备同步最新官方nuclei poc
+
 
 
 ## 2023.9.4
