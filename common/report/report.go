@@ -71,7 +71,8 @@ func AddResultByResultEvent(result output.ResultEvent) {
 	if len(result.Info.Description) > 0 {
 		info += "<br/><b>description:</b> " + result.Info.Description
 	}
-	if len(result.Info.Reference.ToSlice()) > 0 {
+
+	if result.Info.Reference != nil && len(result.Info.Reference.ToSlice()) > 0 {
 		info += "<br/><b>reference:</b> "
 		for _, rv := range result.Info.Reference.ToSlice() {
 			info += "<br/>&nbsp;&nbsp;- <a href='" + rv + "' target='_blank'>" + rv + "</a>"
