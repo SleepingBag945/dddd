@@ -15985,3 +15985,17 @@ RedisInsight:
   - title="RedisInsight"
 OfficeWeb365:
   - header="OfficeWeb365"
+SonicWall-GMS:
+  - title="Global Management System" && header="/sgms"
+SonicWall-Analytics:
+  - title="SonicWall Analytics Login"
+Jorani:
+  - title="Jorani"
+Ligeo:
+  - title="Ligeo"
+MiCollab:
+  - body="MiCollab"
+Mitel:
+  - body="Mitel"
+PHPDebugBar:
+  - body="phpdebugbar"

@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httputil"
-	"path"
 	"strings"
 	"sync"
 	"time"
@@ -18,24 +17,26 @@ import (
 	"go.uber.org/multierr"
 	"moul.io/http2curl"
 
+	"github.com/projectdiscovery/fastdialer/fastdialer"
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/nuclei/v2/pkg/operators"
 	"github.com/projectdiscovery/nuclei/v2/pkg/output"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/contextargs"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/expressions"
+	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/fuzz"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/generators"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/helpers/eventcreator"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/helpers/responsehighlighter"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/interactsh"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/tostring"
-	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/http/fuzz"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/http/httpclientpool"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/http/signer"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/http/signerpool"
 	templateTypes "github.com/projectdiscovery/nuclei/v2/pkg/templates/types"
 	"github.com/projectdiscovery/nuclei/v2/pkg/types"
 	"github.com/projectdiscovery/rawhttp"
+	sliceutil "github.com/projectdiscovery/utils/slice"
 	stringsutil "github.com/projectdiscovery/utils/strings"
 	urlutil "github.com/projectdiscovery/utils/url"
 )
@@ -135,7 +136,7 @@ func (request *Request) executeParallelHTTP(input *contextargs.Context, dynamicV
 		ctx := request.newContext(input)
 		generatedHttpRequest, err := generator.Make(ctx, input, inputData, payloads, dynamicValues)
 		if err != nil {
-			if err == io.EOF {
+			if err == types.ErrNoMoreRequests {
 				break
 			}
 			request.options.Progress.IncrementFailedRequestsBy(int64(generator.Total()))
@@ -229,8 +230,7 @@ func (request *Request) executeTurboHTTP(input *contextargs.Context, dynamicValu
 
 // executeFuzzingRule executes fuzzing request for a URL
 func (request *Request) executeFuzzingRule(input *contextargs.Context, previous output.InternalEvent, callback protocols.OutputEventCallback) error {
-	parsed, err := urlutil.Parse(input.MetaInput.Input)
-	if err != nil {
+	if _, err := urlutil.Parse(input.MetaInput.Input); err != nil {
 		return errors.Wrap(err, "could not parse url")
 	}
 	fuzzRequestCallback := func(gr fuzz.GeneratedRequest) bool {
@@ -298,12 +298,12 @@ func (request *Request) executeFuzzingRule(input *contextargs.Context, previous 
 		}
 		for _, rule := range request.Fuzzing {
 			err = rule.Execute(&fuzz.ExecuteRuleInput{
-				URL:         parsed,
+				Input:       input,
 				Callback:    fuzzRequestCallback,
 				Values:      generated.dynamicValues,
 				BaseRequest: generated.request,
 			})
-			if err == io.EOF {
+			if err == types.ErrNoMoreRequests {
 				return nil
 			}
 			if err != nil {
@@ -318,7 +318,7 @@ func (request *Request) executeFuzzingRule(input *contextargs.Context, previous 
 func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicValues, previous output.InternalEvent, callback protocols.OutputEventCallback) error {
 	if request.Pipeline || request.Race && request.RaceNumberRequests > 0 || request.Threads > 0 {
 		variablesMap := request.options.Variables.Evaluate(generators.MergeMaps(dynamicValues, previous))
-		dynamicValues = generators.MergeMaps(variablesMap, dynamicValues)
+		dynamicValues = generators.MergeMaps(variablesMap, dynamicValues, request.options.Constants)
 	}
 	// verify if pipeline was requested
 	if request.Pipeline {
@@ -344,6 +344,7 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicVa
 
 	var gotDynamicValues map[string][]string
 	var requestErr error
+
 	for {
 		// returns two values, error and skip, which skips the execution for the request instance.
 		executeFunc := func(data string, payloads, dynamicValue map[string]interface{}) (bool, error) {
@@ -356,7 +357,7 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicVa
 			defer cancel()
 			generatedHttpRequest, err := generator.Make(ctxWithTimeout, input, data, payloads, dynamicValue)
 			if err != nil {
-				if err == io.EOF {
+				if err == types.ErrNoMoreRequests {
 					return true, nil
 				}
 				request.options.Progress.IncrementFailedRequestsBy(int64(generator.Total()))
@@ -377,7 +378,10 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicVa
 			}
 			var gotMatches bool
 			err = request.executeRequest(input, generatedHttpRequest, previous, hasInteractMatchers, func(event *output.InternalWrappedEvent) {
-				if hasInteractMarkers && hasInteractMatchers && request.options.Interactsh != nil {
+				// a special case where operators has interactsh matchers and multiple request are made
+				// ex: status_code_2 , interactsh_protocol (from 1st request) etc
+				needsRequestEvent := interactsh.HasMatchers(request.CompiledOperators) && request.NeedsRequestCondition()
+				if (hasInteractMarkers || needsRequestEvent) && request.options.Interactsh != nil {
 					requestData := &interactsh.RequestData{
 						MakeResultFunc: request.MakeResultEvent,
 						Event:          event,
@@ -385,7 +389,9 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicVa
 						MatchFunc:      request.Match,
 						ExtractFunc:    request.Extract,
 					}
-					request.options.Interactsh.RequestEvent(generatedHttpRequest.interactshURLs, requestData)
+					allOASTUrls := getInteractshURLsFromEvent(event.InternalEvent)
+					allOASTUrls = append(allOASTUrls, generatedHttpRequest.interactshURLs...)
+					request.options.Interactsh.RequestEvent(sliceutil.Dedupe(allOASTUrls), requestData)
 					gotMatches = request.options.Interactsh.AlreadyMatched(requestData)
 				}
 				// Add the extracts to the dynamic values if any.
@@ -523,10 +529,10 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
 		if formedURL == "" {
 			urlx, err := urlutil.Parse(input.MetaInput.Input)
 			if err != nil {
-				formedURL = fmt.Sprintf("%s%s", formedURL, generatedRequest.rawRequest.Path)
+				formedURL = fmt.Sprintf("%s%s", input.MetaInput.Input, generatedRequest.rawRequest.Path)
 			} else {
-				urlx.Path = generatedRequest.rawRequest.Path
-				formedURL = fmt.Sprintf("%v://%v", urlx.Scheme, path.Join(urlx.Host, generatedRequest.rawRequest.Path))
+				_ = urlx.MergePath(generatedRequest.rawRequest.Path, true)
+				formedURL = urlx.String()
 			}
 		}
 		if parsed, parseErr := urlutil.ParseURL(formedURL, true); parseErr == nil {
@@ -537,7 +543,12 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
 		options.CustomRawBytes = generatedRequest.rawRequest.UnsafeRawBytes
 		options.ForceReadAllBody = request.ForceReadAllBody
 		options.SNI = request.options.Options.SNI
-		resp, err = generatedRequest.original.rawhttpClient.DoRawWithOptions(generatedRequest.rawRequest.Method, input.MetaInput.Input, generatedRequest.rawRequest.Path, generators.ExpandMapValues(generatedRequest.rawRequest.Headers), io.NopCloser(strings.NewReader(generatedRequest.rawRequest.Data)), &options)
+		inputUrl := input.MetaInput.Input
+		if url, err := urlutil.ParseURL(inputUrl, false); err == nil {
+			inputUrl = fmt.Sprintf("%s://%s", url.Scheme, url.Host)
+		}
+		formedURL = fmt.Sprintf("%s%s", inputUrl, generatedRequest.rawRequest.Path)
+		resp, err = generatedRequest.original.rawhttpClient.DoRawWithOptions(generatedRequest.rawRequest.Method, inputUrl, generatedRequest.rawRequest.Path, generators.ExpandMapValues(generatedRequest.rawRequest.Headers), io.NopCloser(strings.NewReader(generatedRequest.rawRequest.Data)), &options)
 	} else {
 		hostname = generatedRequest.request.URL.Host
 		formedURL = generatedRequest.request.URL.String()
@@ -638,7 +649,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
 	if !request.Unsafe && resp != nil && generatedRequest.request != nil && resp.Request != nil && !request.Race {
 		bodyBytes, _ := generatedRequest.request.BodyBytes()
 		resp.Request.Body = io.NopCloser(bytes.NewReader(bodyBytes))
-		command, _ := http2curl.GetCurlCommand(resp.Request)
+		command, err := http2curl.GetCurlCommand(generatedRequest.request.Request)
 		if err == nil && command != nil {
 			curlCommand = command.String()
 		}
@@ -868,7 +879,7 @@ func (request *Request) pruneSignatureInternalValues(maps ...map[string]interfac
 
 func (request *Request) newContext(input *contextargs.Context) context.Context {
 	if input.MetaInput.CustomIP != "" {
-		return context.WithValue(context.Background(), "ip", input.MetaInput.CustomIP) //nolint
+		return context.WithValue(context.Background(), fastdialer.IP, input.MetaInput.CustomIP)
 	}
 	return context.Background()
 }

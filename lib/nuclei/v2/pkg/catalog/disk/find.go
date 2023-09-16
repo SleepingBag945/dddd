@@ -48,7 +48,7 @@ func (c *DiskCatalog) GetTemplatesPath(definitions []string) ([]string, map[stri
 			}
 		}
 	}
-	// purge all falsepositivies
+	// purge all false positives
 	filteredTemplates := []string{}
 	for _, v := range allTemplates {
 		// TODO: this is a temporary fix to avoid treating these files as templates
@@ -129,7 +129,7 @@ func (c *DiskCatalog) convertPathToAbsolute(t string) (string, error) {
 
 // findGlobPathMatches returns the matched files from a glob path
 func (c *DiskCatalog) findGlobPathMatches(absPath string, processed map[string]struct{}) ([]string, error) {
-	// to support globbing on old paths we use bruteforce to find matches with exit on first match
+	// to support globbing on old paths we use brute force to find matches with exit on first match
 	// trim templateDir if any
 	relPath := strings.TrimPrefix(absPath, c.templatesDirectory)
 	// trim leading slash if any
@@ -215,6 +215,6 @@ func PrintDeprecatedPathsMsgIfApplicable(isSilent bool) {
 		return
 	}
 	if deprecatedPathsCounter > 0 && !isSilent {
-		gologger.Print().Msgf("[%v] Found %v template[s] loaded with deprecated paths, update before v2.9.5 for continued support.\n", aurora.Yellow("WRN").String(), deprecatedPathsCounter)
+		gologger.Print().Msgf("[%v] Found %v template[s] loaded with deprecated paths, update before v3 for continued support.\n", aurora.Yellow("WRN").String(), deprecatedPathsCounter)
 	}
 }

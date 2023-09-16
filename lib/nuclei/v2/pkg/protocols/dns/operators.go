@@ -42,6 +42,8 @@ func (request *Request) Match(data map[string]interface{}, matcher *matchers.Mat
 		return matcher.ResultWithMatchedSnippet(matcher.MatchBinary(types.ToString(item)))
 	case matchers.DSLMatcher:
 		return matcher.Result(matcher.MatchDSL(data)), []string{}
+	case matchers.XPathMatcher:
+		return matcher.Result(matcher.MatchXPath(types.ToString(item))), []string{}
 	}
 	return false, []string{}
 }
@@ -96,7 +98,10 @@ func (request *Request) responseToDSLMap(req, resp *dns.Msg, host, matched strin
 		"type":          request.Type().String(),
 		"trace":         traceToString(traceData, false),
 	}
-	return generators.MergeMaps(ret, recordsKeyValue(resp.Answer))
+	if len(resp.Answer) > 0 {
+		ret = generators.MergeMaps(ret, recordsKeyValue(resp.Answer))
+	}
+	return ret
 }
 
 // MakeResultEvent creates a result event from internal wrapped event
@@ -156,12 +161,14 @@ func recordsKeyValue(resourceRecords []dns.RR) output.InternalEvent {
 		key := strings.ToLower(dns.TypeToString[resourceRecord.Header().Rrtype])
 		value := strings.ReplaceAll(resourceRecord.String(), resourceRecord.Header().String(), "")
 
-		if preVal, ok := oe[key]; ok {
-			switch v := oe[key].(type) {
+		// if the key is already present, we need to convert the value to a slice
+		// if the key has slice, then append the value to the slice
+		if previous, ok := oe[key]; ok {
+			switch v := previous.(type) {
 			case string:
-				oe[key] = []string{value, preVal.(string)}
+				oe[key] = []string{v, value}
 			case []string:
-				oe[key] = append(v, preVal.([]string)...)
+				oe[key] = append(v, value)
 			}
 			continue
 		}

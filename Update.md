@@ -1,5 +1,60 @@
 # 更新日志
 
+## 2023.9.16
+
+同步nuclei引擎 **v2.9.14**
+
+现在workflow中填写可以添加.yaml后缀也可以不填了
+
+添加整个程序结束后的提示
+
+
+
+更新poc
+
+同步nuclei poc至v9.6.3
+
+
+
+添加Poc
+
+```
+CVE-2023-39600 (IceWarp 11.4.6.0 - Cross-Site Scripting)
+CVE-2023-39598 (IceWarp Email Client - Cross Site Scripting)
+CVE-2023-39361 (Cacti 1.2.24 - SQL Injection)
+CVE-2023-36844 (Juniper Devices - Remote Code Execution)
+CVE-2023-34192 (Zimbra Collaboration Suite (ZCS) v.8.8.15 - Cross-Site Scripting)
+CVE-2023-34124 (SonicWall GMS and Analytics Web Services - Shell Injection)
+CVE-2023-30150 (PrestaShop leocustomajax 1.0 & 1.0.0 - SQL Injection)
+CVE-2023-27034 (Blind SQL injection vulnerability in Jms Blog)
+CVE-2023-2648 (Weaver E-Office 9.5 - Remote Code Execution)
+CVE-2023-26469 (Jorani 1.0.0 - Remote Code Execution)
+CVE-2023-20073 (Cisco VPN Routers - Unauthenticated Arbitrary File Upload)
+CVE-2022-22897 (PrestaShop Ap Pagebuilder <= 2.4.4 SQL Injection)
+CVE-2021-46107 (Ligeo Archives Ligeo Basics - Server Side Request Forgery)
+CVE-2020-11798 (Mitel MiCollab AWV 8.1.2.4 and 9.1.3 - Directory Traversal)
+CVE-2020-10220 (rConfig 3.9 - SQL injection)
+CVE-2018-17153 (Western Digital MyCloud NAS - Authentication Bypass)
+CVE-2016-10108 (Western Digital MyCloud NAS - Command Injection)
+jorani-benjamin-xss (Jorani v1.0.3-2014-2023 Benjamin BALET - Cross-Site Scripting)
+prestashop-apmarketplace-sqli (PrestaShop Ap Marketplace SQL Injection)
+ecology-info-leak (Ecology  - Information Exposure)
+php-debugbar-exposure (Php Debug Bar - Exposure)
+```
+
+
+
+部分Poc移动至Nuclei官方模版
+
+```
+CNVD-2021-32799 (360 Xintianqing - SQL Injection)
+hikvision-fastjson-rce (HIKVISION applyCT Fastjson - Remote Command Execution)
+```
+
+
+
+
+
 ## 2023.9.15
 
 9月13号的更新报告写入有问题，现在修了。

@@ -212,68 +212,67 @@ coco@Mac dalaodddd % ./dddd -h
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "`-0-0-'"`-0-0-'"`-0-0-`"`-0-0-'
-dddd.version: 1.1
+dddd.version: 1.2
 
 Usage of ./dddd:
   -Pn
-        禁用主机发现功能(icmp,arp)
+    	禁用主机发现功能(icmp,arp)
   -ffmc int
-        Fofa 查询资产条数 Max:10000 (default 100)
+    	Fofa 查询资产条数 Max:10000 (default 100)
   -fofa
-        从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词
+    	从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词
   -gopt int
-        GoPoc运行线程 (default 50)
+    	GoPoc运行线程 (default 50)
   -htpc int
-        Hunter 最大查询页数 (default 10)
+    	Hunter 最大查询页数 (default 10)
   -htps int
-        Hunter 每页资产条数 (default 100)
+    	Hunter 每页资产条数 (default 100)
   -hunter
-        从hunter中获取资产,开启此选项后-t参数变更为需要在hunter中搜索的关键词
+    	从hunter中获取资产,开启此选项后-t参数变更为需要在hunter中搜索的关键词
   -ld
-        允许域名解析到局域网
+    	允许域名解析到局域网
   -mp string
-        指定masscan路径 (default "masscan")
+    	指定masscan路径 (default "masscan")
   -nd
-        关闭主动指纹探测
+    	关闭主动指纹探测
   -ngp
-        关闭Golang Poc探测
+    	关闭Golang Poc探测
   -nsbf
-        关闭子域名爆破
+    	关闭子域名爆破
   -nsf
-        关闭被动子域名枚举
+    	关闭被动子域名枚举
   -o string
-        html格式输出报告
+    	html格式输出报告
   -p string
-        目标IP扫描的端口。 默认扫描Top1000
+    	目标IP扫描的端口。 默认扫描Top1000
   -pc int
-        一个IP的端口数量阈值,当一个端口的IP数量超过此数量，此IP将会被抛弃 (default 300)
+    	一个IP的端口数量阈值,当一个端口的IP数量超过此数量，此IP将会被抛弃 (default 300)
   -poc string
-        模糊匹配Poc名称
+    	模糊匹配Poc名称
   -proxy string
-        HTTP代理，在外网可利用云函数/代理池的多出口特性恶心防守 例: http://127.0.0.1:8080
+    	HTTP代理，在外网可利用云函数/代理池的多出口特性恶心防守 例: http://127.0.0.1:8080
   -psto int
-        TCP扫描超时时间(秒) (default 6)
+    	TCP扫描超时时间(秒) (default 6)
   -rod string
-        Set the default value of options used by rod.
+    	Set the default value of options used by rod.
   -sbft int
-        爆破子域名协程数量 (default 150)
+    	爆破子域名协程数量 (default 150)
   -sd
-        开启子域名枚举
+    	开启子域名枚举
   -st string
-        端口扫描方式 tcp使用TCP扫描(慢),syn为调用masscan进行扫描(需要masscan依赖) (default "tcp")
+    	端口扫描方式 tcp使用TCP扫描(慢),syn为调用masscan进行扫描(需要masscan依赖) (default "tcp")
   -synt int
-        SYN扫描线程(masscan) (default 10000)
+    	SYN扫描线程(masscan) (default 10000)
   -t string
-        被扫描的目标。 192.168.0.1 192.168.0.0/16 192.168.0.1:80 baidu.com:80 target.txt
+    	被扫描的目标。 192.168.0.1 192.168.0.0/16 192.168.0.1:80 baidu.com:80 target.txt
   -tc int
-        TCP全连接获取Banner的线程数量 (default 30)
+    	TCP全连接获取Banner的线程数量 (default 30)
   -tcpt int
-        TCP扫描线程 (default 600)
+    	TCP扫描线程 (default 600)
   -wt int
-        Web探针线程,根据网络环境调整 (default 100)
+    	Web探针线程,根据网络环境调整 (default 100)
   -wto int
-        Web探针超时时间,根据网络环境调整 (default 12)
-
+    	Web探针超时时间,根据网络环境调整 (default 12)
 ```
 
 
@@ -461,7 +460,7 @@ apache-solr-log4j-rce.yaml
 
 
 
-如果我写好一个名为solr-rce.yaml的nuclei poc，则应该在workflow.yaml的对应指纹的pocs下添加一行solr-rce.yaml。这样才能在识别到solr时调用到此poc。
+如果我写好一个名为solr-rce.yaml的nuclei poc，则应该在workflow.yaml的对应指纹的pocs下添加一行solr-rce.yaml或者solr-rce。这样才能在识别到solr时调用到此poc。
 
 
 

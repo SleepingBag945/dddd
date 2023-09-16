@@ -78,7 +78,7 @@ type Request struct {
 	// cache any variables that may be needed for operation.
 	dialer  *fastdialer.Dialer
 	tlsx    *tlsx.Service
-	options *protocols.ExecuterOptions
+	options *protocols.ExecutorOptions
 }
 
 // CanCluster returns true if the request can be clustered.
@@ -93,7 +93,7 @@ func (request *Request) CanCluster(other *Request) bool {
 }
 
 // Compile compiles the request generators preparing any requests possible.
-func (request *Request) Compile(options *protocols.ExecuterOptions) error {
+func (request *Request) Compile(options *protocols.ExecutorOptions) error {
 	request.options = options
 
 	client, err := networkclientpool.Get(options.Options, &networkclientpool.Configuration{})
@@ -112,10 +112,6 @@ func (request *Request) Compile(options *protocols.ExecuterOptions) error {
 	case request.ScanMode == "openssl" && !openssl.IsAvailable():
 		// if openssl is not installed instead of failing "auto" scanmode is used
 		request.ScanMode = "auto"
-
-	case options.Options.ZTLS && request.ScanMode == "ctls":
-		// only override if scanmode in template is "ctls" since auto internally uses ztls as fallback
-		request.ScanMode = "ztls"
 	}
 
 	tlsxOptions := &clients.Options{
@@ -155,7 +151,7 @@ func (request *Request) Compile(options *protocols.ExecuterOptions) error {
 }
 
 // Options returns executer options for http request
-func (r *Request) Options() *protocols.ExecuterOptions {
+func (r *Request) Options() *protocols.ExecutorOptions {
 	return r.options
 }
 
@@ -190,7 +186,7 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicVa
 	hostnameVariables := protocolutils.GenerateDNSVariables(hostname)
 	values := generators.MergeMaps(payloadValues, hostnameVariables)
 	variablesMap := request.options.Variables.Evaluate(values)
-	payloadValues = generators.MergeMaps(variablesMap, payloadValues)
+	payloadValues = generators.MergeMaps(variablesMap, payloadValues, request.options.Constants)
 
 	if vardump.EnableVarDump {
 		gologger.Debug().Msgf("Protocol request variables: \n%s\n", vardump.DumpVariables(payloadValues))

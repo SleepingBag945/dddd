@@ -3,6 +3,7 @@ package executer
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"sync/atomic"
 
 	"github.com/pkg/errors"
@@ -18,13 +19,13 @@ import (
 // Executer executes a group of requests for a protocol
 type Executer struct {
 	requests []protocols.Request
-	options  *protocols.ExecuterOptions
+	options  *protocols.ExecutorOptions
 }
 
 var _ protocols.Executer = &Executer{}
 
 // NewExecuter creates a new request executer for list of requests
-func NewExecuter(requests []protocols.Request, options *protocols.ExecuterOptions) *Executer {
+func NewExecuter(requests []protocols.Request, options *protocols.ExecutorOptions) *Executer {
 	return &Executer{requests: requests, options: options}
 }
 
@@ -70,6 +71,18 @@ func (e *Executer) Execute(input *contextargs.Context) (bool, error) {
 		})
 	}
 	previous := make(map[string]interface{})
+
+	mtx := &sync.Mutex{}
+	var lastMatcherEvent *output.InternalWrappedEvent
+	writeFailureCallback := func(event *output.InternalWrappedEvent, matcherStatus bool) {
+		if !results.Load() && matcherStatus {
+			if err := e.options.Output.WriteFailure(event); err != nil {
+				gologger.Warning().Msgf("Could not write failure event to output: %s\n", err)
+			}
+			results.Store(true)
+		}
+	}
+
 	for _, req := range e.requests {
 		inputItem := input.Clone()
 		if e.options.InputHelper != nil && input.MetaInput.Input != "" {
@@ -94,16 +107,19 @@ func (e *Executer) Execute(input *contextargs.Context) (bool, error) {
 			// in that case we can skip it, otherwise we've to show failure in
 			// case of matcher-status flag.
 			if !event.HasOperatorResult() && !event.UsesInteractsh {
-				if err := e.options.Output.WriteFailure(event.InternalEvent); err != nil {
-					gologger.Warning().Msgf("Could not write failure event to output: %s\n", err)
-				}
+				mtx.Lock()
+				lastMatcherEvent = event
+				mtx.Unlock()
 			} else {
-				if writer.WriteResult(event, e.options.Output, e.options.Progress, e.options.IssuesClient) {
-					results.CompareAndSwap(false, true)
-				} else {
-					if err := e.options.Output.WriteFailure(event.InternalEvent); err != nil {
-						gologger.Warning().Msgf("Could not write failure event to output: %s\n", err)
+				if !(event.UsesInteractsh && event.InteractshMatched.Load()) && writer.WriteResult(event, e.options.Output, e.options.Progress, e.options.IssuesClient) {
+					if event.UsesInteractsh {
+						results.Store(true)
 					}
+					results.Store(true)
+				} else {
+					mtx.Lock()
+					lastMatcherEvent = event
+					mtx.Unlock()
 				}
 			}
 		})
@@ -118,10 +134,14 @@ func (e *Executer) Execute(input *contextargs.Context) (bool, error) {
 			break
 		}
 	}
+	if lastMatcherEvent != nil {
+		writeFailureCallback(lastMatcherEvent, e.options.Options.MatcherStatus)
+	}
 	return results.Load(), nil
 }
 
-// ExecuteWithResults executes the protocol requests and returns results instead of writing them.
+// Deprecated: Use Execute instead along with outputWriter.callback https://github.com/projectdiscovery/nuclei/issues/4054 will include
+// abstraction for this in future.
 func (e *Executer) ExecuteWithResults(input *contextargs.Context, callback protocols.OutputEventCallback) error {
 	dynamicValues := make(map[string]interface{})
 	if input.HasArgs() {
@@ -157,7 +177,7 @@ func (e *Executer) ExecuteWithResults(input *contextargs.Context, callback proto
 			if event.OperatorsResult == nil {
 				return
 			}
-			results.CompareAndSwap(false, true)
+			results.Store(true)
 			callback(event)
 		})
 		if err != nil {

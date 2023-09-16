@@ -11,10 +11,10 @@ import (
 	"dddd/structs"
 	"dddd/utils"
 	"dddd/utils/cdn"
+	"github.com/logrusorgru/aurora"
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/httpx"
 	"github.com/projectdiscovery/nuclei/v2/pkg/output"
-	"os"
 )
 
 func main() {
@@ -28,6 +28,8 @@ func workflow() {
 	var domainPort []string
 	var ipPort []string
 	var ips []string
+
+	defer gologger.Info().Msg(aurora.BrightGreen("Done!").String())
 
 	// 从Hunter中获取资产
 	if structs.GlobalConfig.Hunter && !structs.GlobalConfig.Fofa {
@@ -162,10 +164,12 @@ func workflow() {
 		for _, url := range aliveURLs {
 			TargetAndPocsName[url] = []string{}
 		}
+		report.GenerateHTMLReportHeader()
 		callnuclei.CallNuclei(TargetAndPocsName,
 			structs.GlobalConfig.HTTPProxy,
 			report.AddResultByResultEvent,
 			structs.GlobalConfig.PocNameForSearch)
+		utils.DeleteReportWithNoResult()
 		return
 	}
 
@@ -213,12 +217,6 @@ func workflow() {
 	}
 
 	// 没有漏洞结果，删除生成的HTML
-	fileInfo, err := os.Stat(structs.GlobalConfig.ReportName)
-	if err == nil {
-		fileSize := fileInfo.Size()
-		// 简单粗暴判断文件大小
-		if fileSize < 99360 {
-			_ = os.Remove(structs.GlobalConfig.ReportName)
-		}
-	}
+	utils.DeleteReportWithNoResult()
+
 }

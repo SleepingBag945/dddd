@@ -133,17 +133,29 @@ func URLParse(URLRaw string) *url.URL {
 	return URL
 }
 
+func AddYamlSuffix(s string) string {
+	s = strings.TrimSpace(s)
+	if strings.HasSuffix(s, ".yaml") {
+		return s
+	} else {
+		return s + ".yaml"
+	}
+}
+
 func addPocs(target string, result *map[string][]string, workflowEntity structs.WorkFlowEntity) {
 	// 判断有没有加入过
 	_, ok := (*result)[target]
 	if !ok { // 没有添加过这个目标
-		(*result)[target] = workflowEntity.PocsName
+		(*result)[target] = []string{}
+		for _, pocName := range workflowEntity.PocsName {
+			(*result)[target] = append((*result)[target], AddYamlSuffix(pocName))
+		}
 	} else { // 添加过就逐个比较
 		existPocNames, _ := (*result)[target]
 		for _, pocName := range workflowEntity.PocsName {
 			// 没有就添加
 			if utils.GetItemInArray(existPocNames, pocName) == -1 {
-				(*result)[target] = append((*result)[target], pocName)
+				(*result)[target] = append((*result)[target], AddYamlSuffix(pocName))
 			}
 		}
 	}

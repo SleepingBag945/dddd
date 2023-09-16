@@ -29,7 +29,7 @@ import (
 // to the first individual request is compared for equality.
 // The equality check is performed as described below -
 //
-// Cases where clustering is not perfomed (request is considered different)
+// Cases where clustering is not performed (request is considered different)
 //   - If request contains payloads,raw,body,unsafe,req-condition,name attributes
 //   - If request methods,max-redirects,cookie-reuse,redirects are not equal
 //   - If request paths aren't identical.
@@ -113,7 +113,7 @@ func ClusterID(templates []*Template) string {
 	return cryptoutil.SHA256Sum(ids)
 }
 
-func ClusterTemplates(templatesList []*Template, options protocols.ExecuterOptions) ([]*Template, int) {
+func ClusterTemplates(templatesList []*Template, options protocols.ExecutorOptions) ([]*Template, int) {
 	if options.Options.OfflineHTTP || options.Options.DisableClustering {
 		return templatesList, 0
 	}
@@ -164,7 +164,7 @@ type ClusterExecuter struct {
 	requests     protocols.Request
 	operators    []*clusteredOperator
 	templateType types.ProtocolType
-	options      *protocols.ExecuterOptions
+	options      *protocols.ExecutorOptions
 }
 
 type clusteredOperator struct {
@@ -177,7 +177,7 @@ type clusteredOperator struct {
 var _ protocols.Executer = &ClusterExecuter{}
 
 // NewClusterExecuter creates a new request executer for list of requests
-func NewClusterExecuter(requests []*Template, options *protocols.ExecuterOptions) *ClusterExecuter {
+func NewClusterExecuter(requests []*Template, options *protocols.ExecutorOptions) *ClusterExecuter {
 	executer := &ClusterExecuter{options: options}
 	if len(requests[0].RequestsDNS) == 1 {
 		executer.templateType = types.DNSProtocol
@@ -250,7 +250,7 @@ func (e *ClusterExecuter) Execute(input *contextargs.Context) (bool, error) {
 			event.InternalEvent["template-info"] = operator.templateInfo
 
 			if result == nil && !matched {
-				if err := e.options.Output.WriteFailure(event.InternalEvent); err != nil {
+				if err := e.options.Output.WriteFailure(event); err != nil {
 					gologger.Warning().Msgf("Could not write failure event to output: %s\n", err)
 				}
 				continue

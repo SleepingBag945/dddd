@@ -21,10 +21,10 @@ type customTemplateGitLabRepo struct {
 	projectIDs   []int
 }
 
-// NewGitlabProviders returns a new list of GitLab providers for downloading custom templates
-func NewGitlabProviders(options *types.Options) ([]*customTemplateGitLabRepo, error) {
+// NewGitLabProviders returns a new list of GitLab providers for downloading custom templates
+func NewGitLabProviders(options *types.Options) ([]*customTemplateGitLabRepo, error) {
 	providers := []*customTemplateGitLabRepo{}
-	if options.GitLabToken != "" {
+	if options.GitLabToken != "" && !options.GitLabTemplateDisableDownload {
 		// Establish a connection to GitLab and build a client object with which to download templates from GitLab
 		gitLabClient, err := getGitLabClient(options.GitLabServerURL, options.GitLabToken)
 		if err != nil {
@@ -134,6 +134,10 @@ func (bk *customTemplateGitLabRepo) Download(_ context.Context) {
 // Update is a wrapper around Download since it doesn't maintain a diff of the templates downloaded versus in the
 // repository for simplicity.
 func (bk *customTemplateGitLabRepo) Update(ctx context.Context) {
+	if len(bk.projectIDs) == 0 {
+		// No projects to download or update
+		return
+	}
 	bk.Download(ctx)
 }
 

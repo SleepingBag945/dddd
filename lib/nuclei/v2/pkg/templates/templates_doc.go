@@ -42,7 +42,7 @@ func init() {
 	TemplateDoc.Type = "Template"
 	TemplateDoc.Comments[encoder.LineComment] = " Template is a YAML input file which defines all the requests and"
 	TemplateDoc.Description = "Template is a YAML input file which defines all the requests and\n other metadata for a template."
-	TemplateDoc.Fields = make([]encoder.Doc, 16)
+	TemplateDoc.Fields = make([]encoder.Doc, 17)
 	TemplateDoc.Fields[0].Name = "id"
 	TemplateDoc.Fields[0].Type = "string"
 	TemplateDoc.Fields[0].Note = ""
@@ -138,6 +138,11 @@ func init() {
 	TemplateDoc.Fields[15].Note = ""
 	TemplateDoc.Fields[15].Description = "Variables contains any variables for the current request."
 	TemplateDoc.Fields[15].Comments[encoder.LineComment] = "Variables contains any variables for the current request."
+	TemplateDoc.Fields[16].Name = "constants"
+	TemplateDoc.Fields[16].Type = "map[string]interface{}"
+	TemplateDoc.Fields[16].Note = ""
+	TemplateDoc.Fields[16].Description = "Constants contains any scalar constant for the current template"
+	TemplateDoc.Fields[16].Comments[encoder.LineComment] = "Constants contains any scalar constant for the current template"
 
 	MODELInfoDoc.Type = "model.Info"
 	MODELInfoDoc.Comments[encoder.LineComment] = " Info contains metadata information about a template"
@@ -150,7 +155,7 @@ func init() {
 			FieldName: "info",
 		},
 	}
-	MODELInfoDoc.Fields = make([]encoder.Doc, 9)
+	MODELInfoDoc.Fields = make([]encoder.Doc, 10)
 	MODELInfoDoc.Fields[0].Name = "name"
 	MODELInfoDoc.Fields[0].Type = "string"
 	MODELInfoDoc.Fields[0].Note = ""
@@ -183,37 +188,46 @@ func init() {
 	MODELInfoDoc.Fields[3].AddExample("", "Bower is a package manager which stores package information in the bower.json file")
 
 	MODELInfoDoc.Fields[3].AddExample("", "Subversion ALM for the enterprise before 8.8.2 allows reflected XSS at multiple locations")
-	MODELInfoDoc.Fields[4].Name = "reference"
-	MODELInfoDoc.Fields[4].Type = "stringslice.RawStringSlice"
+	MODELInfoDoc.Fields[4].Name = "impact"
+	MODELInfoDoc.Fields[4].Type = "string"
 	MODELInfoDoc.Fields[4].Note = ""
-	MODELInfoDoc.Fields[4].Description = "References for the template.\n\nThis should contain links relevant to the template."
-	MODELInfoDoc.Fields[4].Comments[encoder.LineComment] = "References for the template."
+	MODELInfoDoc.Fields[4].Description = "Impact of the template.\n\nYou can go in-depth here on impact of the template."
+	MODELInfoDoc.Fields[4].Comments[encoder.LineComment] = "Impact of the template."
 
-	MODELInfoDoc.Fields[4].AddExample("", []string{"https://github.com/strapi/strapi", "https://github.com/getgrav/grav"})
-	MODELInfoDoc.Fields[5].Name = "severity"
-	MODELInfoDoc.Fields[5].Type = "severity.Holder"
+	MODELInfoDoc.Fields[4].AddExample("", "Successful exploitation of this vulnerability could allow an attacker to execute arbitrary SQL queries, potentially leading to unauthorized access, data leakage, or data manipulation.")
+
+	MODELInfoDoc.Fields[4].AddExample("", "Successful exploitation of this vulnerability could allow an attacker to execute arbitrary script code in the context of the victim's browser, potentially leading to session hijacking, defacement, or theft of sensitive information.")
+	MODELInfoDoc.Fields[5].Name = "reference"
+	MODELInfoDoc.Fields[5].Type = "stringslice.RawStringSlice"
 	MODELInfoDoc.Fields[5].Note = ""
-	MODELInfoDoc.Fields[5].Description = "Severity of the template."
-	MODELInfoDoc.Fields[5].Comments[encoder.LineComment] = "Severity of the template."
-	MODELInfoDoc.Fields[6].Name = "metadata"
-	MODELInfoDoc.Fields[6].Type = "map[string]interface{}"
+	MODELInfoDoc.Fields[5].Description = "References for the template.\n\nThis should contain links relevant to the template."
+	MODELInfoDoc.Fields[5].Comments[encoder.LineComment] = "References for the template."
+
+	MODELInfoDoc.Fields[5].AddExample("", []string{"https://github.com/strapi/strapi", "https://github.com/getgrav/grav"})
+	MODELInfoDoc.Fields[6].Name = "severity"
+	MODELInfoDoc.Fields[6].Type = "severity.Holder"
 	MODELInfoDoc.Fields[6].Note = ""
-	MODELInfoDoc.Fields[6].Description = "Metadata of the template."
-	MODELInfoDoc.Fields[6].Comments[encoder.LineComment] = "Metadata of the template."
-
-	MODELInfoDoc.Fields[6].AddExample("", map[string]string{"customField1": "customValue1"})
-	MODELInfoDoc.Fields[7].Name = "classification"
-	MODELInfoDoc.Fields[7].Type = "model.Classification"
+	MODELInfoDoc.Fields[6].Description = "Severity of the template."
+	MODELInfoDoc.Fields[6].Comments[encoder.LineComment] = "Severity of the template."
+	MODELInfoDoc.Fields[7].Name = "metadata"
+	MODELInfoDoc.Fields[7].Type = "map[string]interface{}"
 	MODELInfoDoc.Fields[7].Note = ""
-	MODELInfoDoc.Fields[7].Description = "Classification contains classification information about the template."
-	MODELInfoDoc.Fields[7].Comments[encoder.LineComment] = "Classification contains classification information about the template."
-	MODELInfoDoc.Fields[8].Name = "remediation"
-	MODELInfoDoc.Fields[8].Type = "string"
-	MODELInfoDoc.Fields[8].Note = ""
-	MODELInfoDoc.Fields[8].Description = "Remediation steps for the template.\n\nYou can go in-depth here on how to mitigate the problem found by this template."
-	MODELInfoDoc.Fields[8].Comments[encoder.LineComment] = "Remediation steps for the template."
+	MODELInfoDoc.Fields[7].Description = "Metadata of the template."
+	MODELInfoDoc.Fields[7].Comments[encoder.LineComment] = "Metadata of the template."
 
-	MODELInfoDoc.Fields[8].AddExample("", "Change the default administrative username and password of Apache ActiveMQ by editing the file jetty-realm.properties")
+	MODELInfoDoc.Fields[7].AddExample("", map[string]string{"customField1": "customValue1"})
+	MODELInfoDoc.Fields[8].Name = "classification"
+	MODELInfoDoc.Fields[8].Type = "model.Classification"
+	MODELInfoDoc.Fields[8].Note = ""
+	MODELInfoDoc.Fields[8].Description = "Classification contains classification information about the template."
+	MODELInfoDoc.Fields[8].Comments[encoder.LineComment] = "Classification contains classification information about the template."
+	MODELInfoDoc.Fields[9].Name = "remediation"
+	MODELInfoDoc.Fields[9].Type = "string"
+	MODELInfoDoc.Fields[9].Note = ""
+	MODELInfoDoc.Fields[9].Description = "Remediation steps for the template.\n\nYou can go in-depth here on how to mitigate the problem found by this template."
+	MODELInfoDoc.Fields[9].Comments[encoder.LineComment] = "Remediation steps for the template."
+
+	MODELInfoDoc.Fields[9].AddExample("", "Change the default administrative username and password of Apache ActiveMQ by editing the file jetty-realm.properties")
 
 	STRINGSLICEStringSliceDoc.Type = "stringslice.StringSlice"
 	STRINGSLICEStringSliceDoc.Comments[encoder.LineComment] = " StringSlice represents a single (in-lined) or multiple string value(s)."
@@ -293,7 +307,7 @@ func init() {
 			FieldName: "classification",
 		},
 	}
-	MODELClassificationDoc.Fields = make([]encoder.Doc, 6)
+	MODELClassificationDoc.Fields = make([]encoder.Doc, 7)
 	MODELClassificationDoc.Fields[0].Name = "cve-id"
 	MODELClassificationDoc.Fields[0].Type = "stringslice.StringSlice"
 	MODELClassificationDoc.Fields[0].Note = ""
@@ -329,13 +343,20 @@ func init() {
 	MODELClassificationDoc.Fields[4].Comments[encoder.LineComment] = "EPSS Score for the template."
 
 	MODELClassificationDoc.Fields[4].AddExample("", "0.42509")
-	MODELClassificationDoc.Fields[5].Name = "cpe"
-	MODELClassificationDoc.Fields[5].Type = "string"
+	MODELClassificationDoc.Fields[5].Name = "epss-percentile"
+	MODELClassificationDoc.Fields[5].Type = "float64"
 	MODELClassificationDoc.Fields[5].Note = ""
-	MODELClassificationDoc.Fields[5].Description = "CPE for the template."
-	MODELClassificationDoc.Fields[5].Comments[encoder.LineComment] = "CPE for the template."
+	MODELClassificationDoc.Fields[5].Description = "EPSS Percentile for the template."
+	MODELClassificationDoc.Fields[5].Comments[encoder.LineComment] = "EPSS Percentile for the template."
 
-	MODELClassificationDoc.Fields[5].AddExample("", "cpe:/a:vendor:product:version")
+	MODELClassificationDoc.Fields[5].AddExample("", "0.42509")
+	MODELClassificationDoc.Fields[6].Name = "cpe"
+	MODELClassificationDoc.Fields[6].Type = "string"
+	MODELClassificationDoc.Fields[6].Note = ""
+	MODELClassificationDoc.Fields[6].Description = "CPE for the template."
+	MODELClassificationDoc.Fields[6].Comments[encoder.LineComment] = "CPE for the template."
+
+	MODELClassificationDoc.Fields[6].AddExample("", "cpe:/a:vendor:product:version")
 
 	HTTPRequestDoc.Type = "http.Request"
 	HTTPRequestDoc.Comments[encoder.LineComment] = " Request contains a http request to be made from a template"
@@ -418,7 +439,7 @@ func init() {
 			Value: "HTTP response headers in name:value format",
 		},
 	}
-	HTTPRequestDoc.Fields = make([]encoder.Doc, 30)
+	HTTPRequestDoc.Fields = make([]encoder.Doc, 31)
 	HTTPRequestDoc.Fields[0].Name = "path"
 	HTTPRequestDoc.Fields[0].Type = "[]string"
 	HTTPRequestDoc.Fields[0].Note = ""
@@ -597,6 +618,11 @@ func init() {
 	HTTPRequestDoc.Fields[29].Note = ""
 	HTTPRequestDoc.Fields[29].Description = "DigestAuthPassword specifies the password for digest authentication"
 	HTTPRequestDoc.Fields[29].Comments[encoder.LineComment] = "DigestAuthPassword specifies the password for digest authentication"
+	HTTPRequestDoc.Fields[30].Name = "disable-path-automerge"
+	HTTPRequestDoc.Fields[30].Type = "bool"
+	HTTPRequestDoc.Fields[30].Note = ""
+	HTTPRequestDoc.Fields[30].Description = "DisablePathAutomerge disables merging target url path with raw request path"
+	HTTPRequestDoc.Fields[30].Comments[encoder.LineComment] = "DisablePathAutomerge disables merging target url path with raw request path"
 
 	GENERATORSAttackTypeHolderDoc.Type = "generators.AttackTypeHolder"
 	GENERATORSAttackTypeHolderDoc.Comments[encoder.LineComment] = " AttackTypeHolder is used to hold internal type of the protocol"
@@ -604,6 +630,10 @@ func init() {
 	GENERATORSAttackTypeHolderDoc.AppearsIn = []encoder.Appearance{
 		{
 			TypeName:  "http.Request",
+			FieldName: "attack",
+		},
+		{
+			TypeName:  "dns.Request",
 			FieldName: "attack",
 		},
 		{
@@ -666,6 +696,10 @@ func init() {
 	FUZZRuleDoc.AppearsIn = []encoder.Appearance{
 		{
 			TypeName:  "http.Request",
+			FieldName: "fuzzing",
+		},
+		{
+			TypeName:  "headless.Request",
 			FieldName: "fuzzing",
 		},
 	}
@@ -807,7 +841,7 @@ func init() {
 			Value: "Trace contains trace data for DNS request if enabled",
 		},
 	}
-	DNSRequestDoc.Fields = make([]encoder.Doc, 9)
+	DNSRequestDoc.Fields = make([]encoder.Doc, 11)
 	DNSRequestDoc.Fields[0].Name = "id"
 	DNSRequestDoc.Fields[0].Type = "string"
 	DNSRequestDoc.Fields[0].Note = ""
@@ -857,16 +891,26 @@ func init() {
 	DNSRequestDoc.Fields[6].Comments[encoder.LineComment] = "TraceMaxRecursion is the number of max recursion allowed for trace operations"
 
 	DNSRequestDoc.Fields[6].AddExample("Use a retry of 100 to 150 generally", 100)
-	DNSRequestDoc.Fields[7].Name = "recursion"
-	DNSRequestDoc.Fields[7].Type = "dns.bool"
+	DNSRequestDoc.Fields[7].Name = "attack"
+	DNSRequestDoc.Fields[7].Type = "generators.AttackTypeHolder"
 	DNSRequestDoc.Fields[7].Note = ""
-	DNSRequestDoc.Fields[7].Description = "Recursion determines if resolver should recurse all records to get fresh results."
-	DNSRequestDoc.Fields[7].Comments[encoder.LineComment] = "Recursion determines if resolver should recurse all records to get fresh results."
-	DNSRequestDoc.Fields[8].Name = "resolvers"
-	DNSRequestDoc.Fields[8].Type = "[]string"
+	DNSRequestDoc.Fields[7].Description = "Attack is the type of payload combinations to perform.\n\nBatteringram is inserts the same payload into all defined payload positions at once, pitchfork combines multiple payload sets and clusterbomb generates\npermutations and combinations for all payloads."
+	DNSRequestDoc.Fields[7].Comments[encoder.LineComment] = "Attack is the type of payload combinations to perform."
+	DNSRequestDoc.Fields[8].Name = "payloads"
+	DNSRequestDoc.Fields[8].Type = "map[string]interface{}"
 	DNSRequestDoc.Fields[8].Note = ""
-	DNSRequestDoc.Fields[8].Description = "Resolvers to use for the dns requests"
-	DNSRequestDoc.Fields[8].Comments[encoder.LineComment] = " Resolvers to use for the dns requests"
+	DNSRequestDoc.Fields[8].Description = "Payloads contains any payloads for the current request.\n\nPayloads support both key-values combinations where a list\nof payloads is provided, or optionally a single file can also\nbe provided as payload which will be read on run-time."
+	DNSRequestDoc.Fields[8].Comments[encoder.LineComment] = "Payloads contains any payloads for the current request."
+	DNSRequestDoc.Fields[9].Name = "recursion"
+	DNSRequestDoc.Fields[9].Type = "dns.bool"
+	DNSRequestDoc.Fields[9].Note = ""
+	DNSRequestDoc.Fields[9].Description = "Recursion determines if resolver should recurse all records to get fresh results."
+	DNSRequestDoc.Fields[9].Comments[encoder.LineComment] = "Recursion determines if resolver should recurse all records to get fresh results."
+	DNSRequestDoc.Fields[10].Name = "resolvers"
+	DNSRequestDoc.Fields[10].Type = "[]string"
+	DNSRequestDoc.Fields[10].Note = ""
+	DNSRequestDoc.Fields[10].Description = "Resolvers to use for the dns requests"
+	DNSRequestDoc.Fields[10].Comments[encoder.LineComment] = " Resolvers to use for the dns requests"
 
 	DNSRequestTypeHolderDoc.Type = "DNSRequestTypeHolder"
 	DNSRequestTypeHolderDoc.Comments[encoder.LineComment] = " DNSRequestTypeHolder is used to hold internal type of the DNS type"
@@ -895,6 +939,7 @@ func init() {
 		"AAAA",
 		"CAA",
 		"TLSA",
+		"ANY",
 	}
 
 	FILERequestDoc.Type = "file.Request"
@@ -938,7 +983,7 @@ func init() {
 			Value: "Raw contains the raw file contents",
 		},
 	}
-	FILERequestDoc.Fields = make([]encoder.Doc, 5)
+	FILERequestDoc.Fields = make([]encoder.Doc, 7)
 	FILERequestDoc.Fields[0].Name = "extensions"
 	FILERequestDoc.Fields[0].Type = "[]string"
 	FILERequestDoc.Fields[0].Note = ""
@@ -965,11 +1010,21 @@ func init() {
 	FILERequestDoc.Fields[3].Comments[encoder.LineComment] = "MaxSize is the maximum size of the file to run request on."
 
 	FILERequestDoc.Fields[3].AddExample("", "5Mb")
-	FILERequestDoc.Fields[4].Name = "no-recursive"
+	FILERequestDoc.Fields[4].Name = "archive"
 	FILERequestDoc.Fields[4].Type = "bool"
 	FILERequestDoc.Fields[4].Note = ""
-	FILERequestDoc.Fields[4].Description = "NoRecursive specifies whether to not do recursive checks if folders are provided."
-	FILERequestDoc.Fields[4].Comments[encoder.LineComment] = "NoRecursive specifies whether to not do recursive checks if folders are provided."
+	FILERequestDoc.Fields[4].Description = "elaborates archives"
+	FILERequestDoc.Fields[4].Comments[encoder.LineComment] = "elaborates archives"
+	FILERequestDoc.Fields[5].Name = "mime-type"
+	FILERequestDoc.Fields[5].Type = "bool"
+	FILERequestDoc.Fields[5].Note = ""
+	FILERequestDoc.Fields[5].Description = "enables mime types check"
+	FILERequestDoc.Fields[5].Comments[encoder.LineComment] = "enables mime types check"
+	FILERequestDoc.Fields[6].Name = "no-recursive"
+	FILERequestDoc.Fields[6].Type = "bool"
+	FILERequestDoc.Fields[6].Note = ""
+	FILERequestDoc.Fields[6].Description = "NoRecursive specifies whether to not do recursive checks if folders are provided."
+	FILERequestDoc.Fields[6].Comments[encoder.LineComment] = "NoRecursive specifies whether to not do recursive checks if folders are provided."
 
 	NETWORKRequestDoc.Type = "network.Request"
 	NETWORKRequestDoc.Comments[encoder.LineComment] = " Request contains a Network protocol request to be made from a template"
@@ -1173,7 +1228,7 @@ func init() {
 			Value: "Headless response received from client (default)",
 		},
 	}
-	HEADLESSRequestDoc.Fields = make([]encoder.Doc, 7)
+	HEADLESSRequestDoc.Fields = make([]encoder.Doc, 9)
 	HEADLESSRequestDoc.Fields[0].Name = "id"
 	HEADLESSRequestDoc.Fields[0].Type = "string"
 	HEADLESSRequestDoc.Fields[0].Note = ""
@@ -1209,6 +1264,16 @@ func init() {
 	HEADLESSRequestDoc.Fields[6].Note = ""
 	HEADLESSRequestDoc.Fields[6].Description = "StopAtFirstMatch stops the execution of the requests and template as soon as a match is found."
 	HEADLESSRequestDoc.Fields[6].Comments[encoder.LineComment] = "StopAtFirstMatch stops the execution of the requests and template as soon as a match is found."
+	HEADLESSRequestDoc.Fields[7].Name = "fuzzing"
+	HEADLESSRequestDoc.Fields[7].Type = "[]fuzz.Rule"
+	HEADLESSRequestDoc.Fields[7].Note = ""
+	HEADLESSRequestDoc.Fields[7].Description = "Fuzzing describes schema to fuzz headless requests"
+	HEADLESSRequestDoc.Fields[7].Comments[encoder.LineComment] = " Fuzzing describes schema to fuzz headless requests"
+	HEADLESSRequestDoc.Fields[8].Name = "cookie-reuse"
+	HEADLESSRequestDoc.Fields[8].Type = "bool"
+	HEADLESSRequestDoc.Fields[8].Note = ""
+	HEADLESSRequestDoc.Fields[8].Description = "CookieReuse is an optional setting that enables cookie reuse"
+	HEADLESSRequestDoc.Fields[8].Comments[encoder.LineComment] = "CookieReuse is an optional setting that enables cookie reuse"
 
 	ENGINEActionDoc.Type = "engine.Action"
 	ENGINEActionDoc.Comments[encoder.LineComment] = " Action is an action taken by the browser to reach a navigation"

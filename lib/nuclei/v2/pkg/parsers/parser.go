@@ -80,7 +80,6 @@ func isTemplateInfoMetadataMatch(tagFilter *filter.TagFilter, template *template
 	match, err := tagFilter.Match(template, extraTags)
 
 	if err == filter.ErrExcluded {
-
 		return false, filter.ErrExcluded
 	}
 
@@ -149,9 +148,9 @@ const (
 func init() {
 	parsedTemplatesCache = cache.New()
 
-	stats.NewEntry(SyntaxWarningStats, "Found %d templates with syntax warning")
-	stats.NewEntry(SyntaxErrorStats, "Found %d templates with syntax error")
-	stats.NewEntry(RuntimeWarningsStats, "Found %d templates with runtime error")
+	stats.NewEntry(SyntaxWarningStats, "Found %d templates with syntax warning (use -validate flag for further examination)")
+	stats.NewEntry(SyntaxErrorStats, "Found %d templates with syntax error (use -validate flag for further examination)")
+	stats.NewEntry(RuntimeWarningsStats, "Found %d templates with runtime error (use -validate flag for further examination)")
 }
 
 // ParseTemplate parses a template and returns a *templates.Template structure

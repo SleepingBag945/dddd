@@ -76,13 +76,15 @@ func New(options *Options) (*Client, error) {
 
 func (c *Client) poll() error {
 	if c.options.NoInteractsh {
-		return nil // do not init if disabled
+		// do not init if disabled
+		return ErrInteractshClientNotInitialized
 	}
 	interactsh, err := client.New(&client.Options{
 		ServerURL:           c.options.ServerURL,
 		Token:               c.options.Authorization,
 		DisableHTTPFallback: c.options.DisableHttpFallback,
 		HTTPClient:          c.options.HTTPClient,
+		KeepAliveInterval:   time.Minute,
 	})
 	if err != nil {
 		return errorutil.NewWithErr(err).Msgf("could not create client")
@@ -98,6 +100,10 @@ func (c *Client) poll() error {
 
 	err = interactsh.StartPolling(c.pollDuration, func(interaction *server.Interaction) {
 		request, err := c.requests.Get(interaction.UniqueID)
+		// for more context in github actions
+		if strings.EqualFold(os.Getenv("GITHUB_ACTIONS"), "true") && c.options.Debug {
+			gologger.DefaultLogger.Print().Msgf("[Interactsh]: got interaction of %v for request %v and error %v", interaction, request, err)
+		}
 		if errors.Is(err, gcache.KeyNotFoundError) || request == nil {
 			// If we don't have any request for this ID, add it to temporary
 			// lru cache, so we can correlate when we get an add request.
@@ -126,7 +132,7 @@ func (c *Client) poll() error {
 	return nil
 }
 
-// requestShouldStopAtFirstmatch checks if furthur interactions should be stopped
+// requestShouldStopAtFirstmatch checks if further interactions should be stopped
 // note: extra care should be taken while using this function since internalEvent is
 // synchronized all the time and if caller functions has already acquired lock its best to explicitly specify that
 // we could use `TryLock()` but that may over complicate things and need to differentiate
@@ -154,6 +160,11 @@ func (c *Client) processInteractionForRequest(interaction *server.Interaction, d
 
 	result, matched := data.Operators.Execute(data.Event.InternalEvent, data.MatchFunc, data.ExtractFunc, c.options.Debug || c.options.DebugRequest || c.options.DebugResponse)
 
+	// for more context in github actions
+	if strings.EqualFold(os.Getenv("GITHUB_ACTIONS"), "true") && c.options.Debug {
+		gologger.DefaultLogger.Print().Msgf("[Interactsh]: got result %v and status %v after processing interaction", result, matched)
+	}
+
 	// if we don't match, return
 	if !matched || result == nil {
 		return false
@@ -177,7 +188,9 @@ func (c *Client) processInteractionForRequest(interaction *server.Interaction, d
 		c.debugPrintInteraction(interaction, data.Event.OperatorsResult)
 	}
 
-	if writer.WriteResult(data.Event, c.options.Output, c.options.Progress, c.options.IssuesClient) {
+	// if event is not already matched, write it to output
+	if !data.Event.InteractshMatched.Load() && writer.WriteResult(data.Event, c.options.Output, c.options.Progress, c.options.IssuesClient) {
+		data.Event.InteractshMatched.Store(true)
 		c.matched.Store(true)
 		if requestShouldStopAtFirstMatch(data) || c.options.StopAtFirstMatch {
 			_ = c.matchedTemplates.SetWithExpire(hash(data.Event.InternalEvent), true, defaultInteractionDuration)
@@ -196,18 +209,17 @@ func (c *Client) AlreadyMatched(data *RequestData) bool {
 
 // URL returns a new URL that can be interacted with
 func (c *Client) URL() (string, error) {
+	// first time initialization
+	var err error
+	c.Do(func() {
+		err = c.poll()
+	})
+	if err != nil {
+		return "", errorutil.NewWithErr(err).Wrap(ErrInteractshClientNotInitialized)
+	}
+
 	if c.interactsh == nil {
-		var err error
-		c.Do(func() {
-			err = c.poll()
-		})
-		if err != nil {
-			return "", errorutil.NewWithErr(err).Wrap(ErrInteractshClientNotInitialized)
-		}
-		// ensures interactsh is not nil
-		if c.interactsh == nil {
-			return "", ErrInteractshClientNotInitialized
-		}
+		return "", ErrInteractshClientNotInitialized
 	}
 
 	c.generated.Store(true)

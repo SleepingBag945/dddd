@@ -40,8 +40,8 @@ func NewCustomTemplatesManager(options *types.Options) (*CustomTemplatesManager,
 		return ctm, nil
 	}
 
-	// Add github providers
-	githubProviders, err := NewGithubProviders(options)
+	// Add GitHub providers
+	githubProviders, err := NewGitHubProviders(options)
 	if err != nil {
 		return nil, errorutil.NewWithErr(err).Msgf("could not create github providers for custom templates")
 	}
@@ -49,7 +49,7 @@ func NewCustomTemplatesManager(options *types.Options) (*CustomTemplatesManager,
 		ctm.providers = append(ctm.providers, v)
 	}
 
-	// Add Aws S3 providers
+	// Add AWS S3 providers
 	s3Providers, err := NewS3Providers(options)
 	if err != nil {
 		return nil, errorutil.NewWithErr(err).Msgf("could not create s3 providers for custom templates")
@@ -68,7 +68,7 @@ func NewCustomTemplatesManager(options *types.Options) (*CustomTemplatesManager,
 	}
 
 	// Add GitLab providers
-	gitlabProviders, err := NewGitlabProviders(options)
+	gitlabProviders, err := NewGitLabProviders(options)
 	if err != nil {
 		return nil, errorutil.NewWithErr(err).Msgf("could not create gitlab providers for custom templates")
 	}

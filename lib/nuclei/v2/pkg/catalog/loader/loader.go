@@ -1,6 +1,9 @@
 package loader
 
 import (
+	"fmt"
+	"io"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
@@ -18,6 +21,15 @@ import (
 	"github.com/projectdiscovery/nuclei/v2/pkg/types"
 	"github.com/projectdiscovery/nuclei/v2/pkg/utils/stats"
 	"github.com/projectdiscovery/nuclei/v2/pkg/workflows"
+	"github.com/projectdiscovery/retryablehttp-go"
+	errorutil "github.com/projectdiscovery/utils/errors"
+	stringsutil "github.com/projectdiscovery/utils/strings"
+	urlutil "github.com/projectdiscovery/utils/url"
+)
+
+const (
+	httpPrefix  = "http://"
+	httpsPrefix = "https://"
 )
 
 // Config contains the configuration options for the loader
@@ -43,7 +55,7 @@ type Config struct {
 	IncludeConditions []string
 
 	Catalog         catalog.Catalog
-	ExecutorOptions protocols.ExecuterOptions
+	ExecutorOptions protocols.ExecutorOptions
 }
 
 // Store is a storage for loaded nuclei templates
@@ -60,12 +72,12 @@ type Store struct {
 	preprocessor templates.Preprocessor
 
 	// NotFoundCallback is called for each not found template
-	// This overrides error handling for not found templatesss
+	// This overrides error handling for not found templates
 	NotFoundCallback func(template string) bool
 }
 
 // NewConfig returns a new loader config
-func NewConfig(options *types.Options, catalog catalog.Catalog, executerOpts protocols.ExecuterOptions) *Config {
+func NewConfig(options *types.Options, catalog catalog.Catalog, executerOpts protocols.ExecutorOptions) *Config {
 	loaderConfig := Config{
 		Templates:                options.Templates,
 		Workflows:                options.Workflows,
@@ -121,6 +133,30 @@ func New(config *Config) (*Store, error) {
 		finalWorkflows: config.Workflows,
 	}
 
+	// Do a check to see if we have URLs in templates flag, if so
+	// we need to processs them separately and remove them from the initial list
+	var templatesFinal []string
+	for _, template := range config.Templates {
+		// TODO: Add and replace this with urlutil.IsURL() helper
+		if stringsutil.HasPrefixAny(template, httpPrefix, httpsPrefix) {
+			config.TemplateURLs = append(config.TemplateURLs, template)
+		} else {
+			templatesFinal = append(templatesFinal, template)
+		}
+	}
+
+	// fix editor paths
+	remoteTemplates := []string{}
+	for _, v := range config.TemplateURLs {
+		if _, err := urlutil.Parse(v); err == nil {
+			remoteTemplates = append(remoteTemplates, handleTemplatesEditorURLs(v))
+		} else {
+			templatesFinal = append(templatesFinal, v) // something went wrong, treat it as a file
+		}
+	}
+	config.TemplateURLs = remoteTemplates
+	store.finalTemplates = templatesFinal
+
 	urlBasedTemplatesProvided := len(config.TemplateURLs) > 0 || len(config.WorkflowURLs) > 0
 	if urlBasedTemplatesProvided {
 		remoteTemplates, remoteWorkflows, err := getRemoteTemplatesAndWorkflows(config.TemplateURLs, config.WorkflowURLs, config.RemoteTemplateDomainList)
@@ -144,6 +180,43 @@ func New(config *Config) (*Store, error) {
 		store.finalTemplates = []string{cfg.DefaultConfig.TemplatesDirectory}
 	}
 	return store, nil
+}
+
+func handleTemplatesEditorURLs(input string) string {
+	parsed, err := url.Parse(input)
+	if err != nil {
+		return input
+	}
+	if !strings.HasSuffix(parsed.Hostname(), "templates.nuclei.sh") {
+		return input
+	}
+	if strings.HasSuffix(parsed.Path, ".yaml") {
+		return input
+	}
+	parsed.Path = fmt.Sprintf("%s.yaml", parsed.Path)
+	finalURL := parsed.String()
+	return finalURL
+}
+
+// ReadTemplateFromURI should only be used for viewing templates
+// and should not be used anywhere else like loading and executing templates
+// there is no sandbox restriction here
+func (store *Store) ReadTemplateFromURI(uri string, remote bool) ([]byte, error) {
+	if stringsutil.HasPrefixAny(uri, httpPrefix, httpsPrefix) && remote {
+		uri = handleTemplatesEditorURLs(uri)
+		remoteTemplates, _, err := getRemoteTemplatesAndWorkflows([]string{uri}, nil, store.config.RemoteTemplateDomainList)
+		if err != nil || len(remoteTemplates) == 0 {
+			return nil, errorutil.NewWithErr(err).Msgf("Could not load template %s: got %v", uri, remoteTemplates)
+		}
+		resp, err := retryablehttp.Get(remoteTemplates[0])
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+		return io.ReadAll(resp.Body)
+	} else {
+		return os.ReadFile(uri)
+	}
 }
 
 // Templates returns all the templates in the store
@@ -188,7 +261,7 @@ func (store *Store) ValidateTemplates() error {
 	if areTemplatesValid(store, filteredTemplatePaths) && areWorkflowsValid(store, filteredWorkflowPaths) {
 		return nil
 	}
-	return errors.New("errors occured during template validation")
+	return errors.New("errors occurred during template validation")
 }
 
 func areWorkflowsValid(store *Store, filteredWorkflowPaths map[string]struct{}) bool {

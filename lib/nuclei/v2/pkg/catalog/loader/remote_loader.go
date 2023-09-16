@@ -56,7 +56,6 @@ func getRemoteTemplatesAndWorkflows(templateURLs, workflowURLs, remoteTemplateDo
 			}
 		}
 	}
-
 	return remoteTemplateList, remoteWorkFlowList, err
 }
 
@@ -67,7 +66,7 @@ func getRemoteContent(URL string, remoteTemplateDomainList []string, remoteConte
 		}
 		return
 	}
-	if strings.HasPrefix(URL, "http") && stringsutil.HasSuffixAny(URL, extensions.YAML, extensions.YML) {
+	if strings.HasPrefix(URL, "http") && stringsutil.HasSuffixAny(URL, extensions.YAML) {
 		remoteContentChannel <- RemoteContent{
 			Content: []string{URL},
 			Type:    contentType,

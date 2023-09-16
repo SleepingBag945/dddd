@@ -113,6 +113,10 @@ type Template struct {
 	//   Variables contains any variables for the current request.
 	Variables variables.Variable `yaml:"variables,omitempty" json:"variables,omitempty" jsonschema:"title=variables for the http request,description=Variables contains any variables for the current request"`
 
+	// description: |
+	//   Constants contains any scalar constant for the current template
+	Constants map[string]interface{} `yaml:"constants,omitempty" json:"constants,omitempty" jsonschema:"title=constant for the template,description=constants contains any constant for the template"`
+
 	// TotalRequests is the total number of requests for the template.
 	TotalRequests int `yaml:"-" json:"-"`
 	// Executer is the actual template executor for running template requests
@@ -181,7 +185,7 @@ func (template *Template) UnmarshalYAML(unmarshal func(interface{}) error) error
 	*template = Template(*alias)
 
 	if len(template.RequestsHTTP) > 0 || len(template.RequestsNetwork) > 0 {
-		deprecatedProtocolNameTemplates[template.ID] = struct{}{}
+		_ = deprecatedProtocolNameTemplates.Set(template.ID, true)
 	}
 
 	if len(alias.RequestsHTTP) > 0 && len(alias.RequestsWithHTTP) > 0 {

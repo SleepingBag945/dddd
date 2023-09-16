@@ -4,6 +4,7 @@ package hybrid
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -20,7 +21,9 @@ import (
 	"github.com/projectdiscovery/mapcidr/asn"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/contextargs"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/protocolstate"
+	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/uncover"
 	"github.com/projectdiscovery/nuclei/v2/pkg/types"
+	uncoverlib "github.com/projectdiscovery/uncover"
 	fileutil "github.com/projectdiscovery/utils/file"
 	iputil "github.com/projectdiscovery/utils/ip"
 	readerutil "github.com/projectdiscovery/utils/reader"
@@ -132,6 +135,25 @@ func (i *Input) initializeInputSources(opts *Options) error {
 		if input != nil {
 			i.scanInputFromReader(input)
 			input.Close()
+		}
+	}
+	if options.Uncover && options.UncoverQuery != nil {
+		gologger.Info().Msgf("Running uncover query against: %s", strings.Join(options.UncoverEngine, ","))
+		uncoverOpts := &uncoverlib.Options{
+			Agents:        options.UncoverEngine,
+			Queries:       options.UncoverQuery,
+			Limit:         options.UncoverLimit,
+			MaxRetry:      options.Retries,
+			Timeout:       options.Timeout,
+			RateLimit:     uint(options.UncoverRateLimit),
+			RateLimitUnit: time.Minute, // default unit is minute
+		}
+		ch, err := uncover.GetTargetsFromUncover(context.TODO(), options.UncoverField, uncoverOpts)
+		if err != nil {
+			return err
+		}
+		for c := range ch {
+			i.Set(c)
 		}
 	}
 	return nil
@@ -255,7 +277,7 @@ func (i *Input) setItem(metaInput *contextargs.MetaInput) {
 	}
 }
 
-// setHostMapStream sets iteam in stream mode
+// setHostMapStream sets item in stream mode
 func (i *Input) setHostMapStream(data string) {
 	if _, err := i.hostMapStream.Merge([][]byte{[]byte(data)}); err != nil {
 		gologger.Warning().Msgf("%s\n", err)

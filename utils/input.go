@@ -230,3 +230,14 @@ func GetItemInArray(a []string, s string) int {
 	}
 	return -1
 }
+
+func DeleteReportWithNoResult() {
+	fileInfo, err := os.Stat(structs.GlobalConfig.ReportName)
+	if err == nil {
+		fileSize := fileInfo.Size()
+		// 简单粗暴判断文件大小
+		if fileSize < 99360 {
+			_ = os.Remove(structs.GlobalConfig.ReportName)
+		}
+	}
+}

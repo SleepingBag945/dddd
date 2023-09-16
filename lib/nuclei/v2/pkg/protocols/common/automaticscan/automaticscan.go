@@ -13,6 +13,7 @@ import (
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/common/contextargs"
 	"github.com/projectdiscovery/nuclei/v2/pkg/protocols/http/httpclientpool"
+	httputil "github.com/projectdiscovery/nuclei/v2/pkg/protocols/utils/http"
 	"github.com/projectdiscovery/nuclei/v2/pkg/templates"
 	"github.com/projectdiscovery/nuclei/v2/pkg/templates/types"
 	"github.com/projectdiscovery/retryablehttp-go"
@@ -23,7 +24,7 @@ import (
 
 // Service is a service for automatic scan execution
 type Service struct {
-	opts          protocols.ExecuterOptions
+	opts          protocols.ExecutorOptions
 	store         *loader.Store
 	engine        *core.Engine
 	target        core.InputProvider
@@ -38,7 +39,7 @@ type Service struct {
 
 // Options contains configuration options for automatic scan service
 type Options struct {
-	ExecuterOpts protocols.ExecuterOptions
+	ExecuterOpts protocols.ExecutorOptions
 	Store        *loader.Store
 	Engine       *core.Engine
 	Target       core.InputProvider
@@ -55,17 +56,17 @@ func New(opts Options) (*Service, error) {
 
 	var mappingData map[string]string
 	config := config.DefaultConfig
-	if err == nil {
-		mappingFile := filepath.Join(config.TemplatesDirectory, mappingFilename)
-		if file, err := os.Open(mappingFile); err == nil {
-			_ = yaml.NewDecoder(file).Decode(&mappingData)
-			file.Close()
-		}
+
+	mappingFile := filepath.Join(config.TemplatesDirectory, mappingFilename)
+	if file, err := os.Open(mappingFile); err == nil {
+		_ = yaml.NewDecoder(file).Decode(&mappingData)
+		file.Close()
 	}
+
 	if opts.ExecuterOpts.Options.Verbose {
 		gologger.Verbose().Msgf("Normalized mapping (%d): %v\n", len(mappingData), mappingData)
 	}
-	defaultTemplatesDirectories := []string{}
+	var defaultTemplatesDirectories []string
 
 	// adding custom template path if available
 	if len(opts.ExecuterOpts.Options.Templates) > 0 {
@@ -83,7 +84,9 @@ func New(opts Options) (*Service, error) {
 	childExecuter := opts.Engine.ChildExecuter()
 
 	httpclient, err := httpclientpool.Get(opts.ExecuterOpts.Options, &httpclientpool.Configuration{
-		Connection: &httpclientpool.ConnectionConfiguration{DisableKeepAlive: true},
+		Connection: &httpclientpool.ConnectionConfiguration{
+			DisableKeepAlive: httputil.ShouldDisableKeepAlive(opts.ExecuterOpts.Options),
+		},
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "could not get http client")
@@ -114,7 +117,7 @@ func (s *Service) Close() bool {
 // Execute performs the execution of automatic scan on provided input
 func (s *Service) Execute() {
 	if err := s.executeWappalyzerTechDetection(); err != nil {
-		gologger.Error().Msgf("Could not execute wappalyzer based detection: %s", err)
+		gologger.Error().Msgf("无法执行基于指纹的智能检测: %s", err)
 	}
 }
 
@@ -145,7 +148,6 @@ func (s *Service) executeWappalyzerTechDetection() error {
 }
 
 func (s *Service) processWappalyzerInputPair(input *contextargs.MetaInput) {
-
 	var templatesList []*templates.Template
 	if s.opts.Options.PocNameForSearch != "" {
 		templatesList = s.store.LoadTemplatesWithName(s.allTemplates, s.opts.Options.PocNameForSearch)

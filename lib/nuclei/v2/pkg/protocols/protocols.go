@@ -37,8 +37,8 @@ type Executer interface {
 	ExecuteWithResults(input *contextargs.Context, callback OutputEventCallback) error
 }
 
-// ExecuterOptions contains the configuration options for executer clients
-type ExecuterOptions struct {
+// ExecutorOptions contains the configuration options for executer clients
+type ExecutorOptions struct {
 	// TemplateID is the ID of the template for the request
 	TemplateID string
 	// TemplatePath is the path of the template for the request
@@ -70,6 +70,8 @@ type ExecuterOptions struct {
 	StopAtFirstMatch bool
 	// Variables is a list of variables from template
 	Variables variables.Variable
+	// Constants is a list of constants from template
+	Constants map[string]interface{}
 	// ExcludeMatchers is the list of matchers to exclude
 	ExcludeMatchers *excludematchers.ExcludeMatchers
 	// InputHelper is a helper for input normalization
@@ -88,7 +90,7 @@ type ExecuterOptions struct {
 }
 
 // Copy returns a copy of the executeroptions structure
-func (e ExecuterOptions) Copy() ExecuterOptions {
+func (e ExecutorOptions) Copy() ExecutorOptions {
 	copy := e
 	return copy
 }
@@ -96,7 +98,7 @@ func (e ExecuterOptions) Copy() ExecuterOptions {
 // Request is an interface implemented any protocol based request generator.
 type Request interface {
 	// Compile compiles the request generators preparing any requests possible.
-	Compile(options *ExecuterOptions) error
+	Compile(options *ExecutorOptions) error
 	// Requests returns the total number of requests the rule will perform
 	Requests() int
 	// GetID returns the ID for the request if any. IDs are used for multi-request
@@ -205,6 +207,8 @@ func MakeDefaultMatchFunc(data map[string]interface{}, matcher *matchers.Matcher
 		return matcher.ResultWithMatchedSnippet(matcher.MatchBinary(item))
 	case matchers.DSLMatcher:
 		return matcher.Result(matcher.MatchDSL(data)), nil
+	case matchers.XPathMatcher:
+		return matcher.Result(matcher.MatchXPath(item)), []string{}
 	}
 	return false, nil
 }

@@ -153,10 +153,12 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	// automatic web scan using wappalyzer technology detection to tags mapping
 	// 使用wappalyzer技术检测tags，自动web扫描
 	// 这里被魔改了,根据提供的目标与Pocs的映射进行自动扫描
+	// 必须设置为true
 	options.AutomaticScan = true
 
 	// list of template or template directory to run (comma-separated, file)
-	// 要运行的模板或模板目录列表(逗号分隔，文件)   -t 指定的模板目录  这个就不嵌入了
+	// 要运行的模板或模板目录列表(逗号分隔，文件)   -t 指定的模板目录
+	// 不嵌入可执行文件是为了方便增删poc。内网版本嵌入
 	options.Templates = []string{pwd + "/config/pocs/"}
 
 	// list of template urls to run (comma-separated, file)
@@ -189,7 +191,7 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 
 	// allowed domain list to load remote templates from
 	// 允许域列表从以下位置加载远程模板
-	options.RemoteTemplateDomainList = []string{"api.nuclei.sh"}
+	options.RemoteTemplateDomainList = []string{"templates.nuclei.sh"}
 
 	// templates to run based on authors (comma-separated, file)
 	// 执行指定作者的模板（逗号分隔，文件）
@@ -330,6 +332,8 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	// 当DNS错误时使用系统DNS
 	options.SystemResolvers = false
 
+	options.DisableClustering = false
+
 	// 启用被动扫描处理HTTP响应
 	options.OfflineHTTP = false
 
@@ -354,9 +358,9 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	// 指定tls sni的主机名（默认为输入的域名）
 	options.SNI = ""
 
-	// sandbox nuclei for safe templates execution
-	// 在沙箱中安全运行模板
-	options.Sandbox = false
+	options.AllowLocalFileAccess = false
+
+	options.RestrictLocalNetworkAccess = false
 
 	// 指定网卡
 	options.Interface = ""
@@ -376,6 +380,8 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 
 	// 最大储存响应大小（默认：1 * 1024 * 1024字节）
 	options.ResponseSaveSize = 1 * 1024 * 1024
+
+	options.TlsImpersonate = false
 
 	// 使用interactsh反连检测平台（默认为oast.pro,oast.live,oast.site,oast.online,oast.fun,oast.me）
 	options.InteractshURL = ""
@@ -417,7 +423,7 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	// uncover results to return
 	options.UncoverLimit = 100
 	// delay between uncover query requests in seconds (0 to disable)
-	options.UncoverDelay = 1
+	options.UncoverRateLimit = 60
 
 	// 每秒最大请求量（默认：150）
 	options.RateLimit = 150
@@ -433,9 +439,9 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	options.HeadlessTemplateThreads = 10
 
 	// 超时时间（默认为10秒）
-	options.Timeout = 10
-	// 重试次数（默认：1）
-	options.Retries = 1
+	options.Timeout = 12
+	// 重试次数（默认：1）设置2为降低糟糕网络环境的影响
+	options.Retries = 2
 	// 指定HTTP/HTTPS默认端口（例如：host:80，host:443）
 	options.LeaveDefaultPorts = false
 	// 某主机扫描失败次数，跳过该主机（默认：30）
