@@ -212,7 +212,7 @@ coco@Mac dalaodddd % ./dddd -h
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "`-0-0-'"`-0-0-'"`-0-0-`"`-0-0-'
-dddd.version: 1.2
+dddd.version: 1.3
 
 Usage of ./dddd:
   -Pn
@@ -524,7 +524,7 @@ JDWP RCE
 
 # 更新历史
 
-2023HVV 漏洞正在更新
+支持nuclei v3.0。新加85poc。干就完了！
 
 [更新历史](Update.md)
 

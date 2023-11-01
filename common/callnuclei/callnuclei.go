@@ -2,7 +2,7 @@ package callnuclei
 
 import (
 	"fmt"
-	"github.com/projectdiscovery/nuclei/v2/pkg/output"
+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"os"
 	"os/signal"
 	"runtime"
@@ -12,11 +12,11 @@ import (
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/gologger/levels"
-	"github.com/projectdiscovery/nuclei/v2/pkg/catalog/config"
-	"github.com/projectdiscovery/nuclei/v2/pkg/exportrunner"
-	"github.com/projectdiscovery/nuclei/v2/pkg/operators/common/dsl"
-	"github.com/projectdiscovery/nuclei/v2/pkg/types"
-	"github.com/projectdiscovery/nuclei/v2/pkg/utils/monitor"
+	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
+	"github.com/projectdiscovery/nuclei/v3/pkg/exportrunner"
+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/common/dsl"
+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+	"github.com/projectdiscovery/nuclei/v3/pkg/utils/monitor"
 	errorutil "github.com/projectdiscovery/utils/errors"
 	fileutil "github.com/projectdiscovery/utils/file"
 )
@@ -31,6 +31,7 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 	proxy string,
 	callBack func(result output.ResultEvent),
 	nameForSearch string) []output.ResultEvent {
+
 	// 设置结果回调
 	output.AddResultCallback = callBack
 	if err := exportrunner.ExportRunnerConfigureOptions(); err != nil {
@@ -88,13 +89,6 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 		for range c {
 			gologger.Info().Msgf("CTRL+C pressed: Exiting\n")
 			nucleiRunner.Close()
-			if options.ShouldSaveResume() {
-				gologger.Info().Msgf("Creating resume file: %s\n", resumeFileName)
-				err := nucleiRunner.SaveResumeConfig(resumeFileName)
-				if err != nil {
-					gologger.Error().Msgf("Couldn't create resume file: %s\n", err)
-				}
-			}
 			os.Exit(1)
 		}
 	}()
@@ -371,9 +365,6 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 
 	// 源IP
 	options.SourceIP = ""
-
-	// 重写默认配置路径（$home/.config）
-	options.CustomConfigDir = ""
 
 	// 最大读取响应大小（默认：10 * 1024 * 1024字节）
 	options.ResponseReadSize = 10 * 1024 * 1024

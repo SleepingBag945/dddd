@@ -3,8 +3,8 @@ package report
 import (
 	"dddd/structs"
 	"fmt"
-	"github.com/projectdiscovery/nuclei/v2/pkg/model/types/severity"
-	"github.com/projectdiscovery/nuclei/v2/pkg/output"
+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"os"
 	"strconv"
 	"strings"

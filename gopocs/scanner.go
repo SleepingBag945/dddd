@@ -3,7 +3,7 @@ package gopocs
 import (
 	"dddd/structs"
 	"github.com/projectdiscovery/gologger"
-	"github.com/projectdiscovery/nuclei/v2/pkg/output"
+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"reflect"
 	"strings"
 	"sync"
