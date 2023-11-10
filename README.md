@@ -56,7 +56,20 @@ HTML漏洞报表
 
 
 # 使用说明
+```
+当前文件夹:
+    - config
+        - dict
+            - ...
+        - dir.yaml
+        - finger.yaml
+        - pocs
+        - subdomains.txt
+        - ...
+    - dddd.exe (二进制)
+```
 下载config目录或从releases中下载config.zip解压，与对应的dddd二进制文件。保存在一个目录下，打开终端，照着下边输入命令就可以愉快玩耍啦~
+
 
 
 
