@@ -234,7 +234,7 @@ func getRuleData(rule string) structs.RuleData {
 		ti = 1
 	}
 	for i := pos - 1 - ti; i >= 0; i-- {
-		if rule[i] > 122 || rule[i] < 97 || rule[i] == 95 {
+		if (rule[i] > 122 || rule[i] < 97) && rule[i] != 95 {
 			start = i + 1
 			break
 		}
