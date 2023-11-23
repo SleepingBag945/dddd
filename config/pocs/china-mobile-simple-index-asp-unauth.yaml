@@ -1,0 +1,29 @@
+id: china-mobile-simple-index-asp-unauth
+
+info:
+  name: 中移动禹路由器 simple-index.asp 未授权漏洞
+  author: zan8in
+  severity: high
+  description: |
+    中移禹路由器simple-index.asp处存在未授权漏洞，攻击者可以获取后台权限。
+    fofa：title="互联世界 物联未来-登录"
+  reference:
+    - https://mp.weixin.qq.com/s/nKwgNzSdV6a614IH0IbsLg
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/simple-index.asp"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - '无线密码&nbsp;'
+          - '加密模式&nbsp;'
+          - '无线名称&nbsp;'
+        part: body
+        condition: and

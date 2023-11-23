@@ -1,0 +1,51 @@
+id: bithighway-default-login
+
+info:
+  name: 碧海威L7云路由默认密码
+  author: SleepingBag945
+  severity: high
+  description: |-
+    碧海威 L7 存在两个默认登陆口令，配合该产品的命令执行漏洞实现更深层次的利用 admin/admin admin/admin123
+
+http:
+  - raw:
+      - |
+        POST /login.php?action=login&type=admin HTTP/1.1
+        Host: {{Hostname}}
+        Sec-Ch-Ua: "Chromium";v="105", "Not)A;Brand";v="8"
+        Accept: */*
+        Content-Type: application/x-www-form-urlencoded
+        X-Requested-With: XMLHttpRequest
+        Sec-Ch-Ua-Mobile: ?0
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.127 Safari/537.36
+        Origin: {{BaseURL}}
+        Sec-Fetch-Site: same-origin
+        Sec-Fetch-Mode: cors
+        Sec-Fetch-Dest: empty
+        Referer: {{BaseURL}}
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        
+        username={{username}}&password={{password}}
+
+    attack: clusterbomb
+    payloads:
+      username:
+        - admin
+      password:
+        - admin
+        - admin123
+    stop-at-first-match: true
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"success":"true"'
+          - '"data":'
+        condition: and
+
+      - type: status
+        status:
+          - 200

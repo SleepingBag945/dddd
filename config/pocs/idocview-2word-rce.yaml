@@ -1,0 +1,32 @@
+id: idocview-2word-rce
+
+info:
+  name: iDocView /html/2word 远程代码执行漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |-
+    本漏洞出现在在线文档解析应用中的远程页面下载功能。具体问题在于该应用未能对用户输入的URL进行充分的安全验证，从而导致在13.10.1之前的版本中存在安全隐患。攻击者可通过构造特殊的URL，引诱应用下载恶意文件。
+    该漏洞的利用可能导致服务器被远程控制、敏感数据泄露等等。漏洞的存在不仅威胁到该应用服务器的安全性，还可能成为更广泛网络安全事件的触发点。鉴于此，建议受影响的用户尽快采取必要的安全措施，以防范潜在的安全风险。
+  reference:
+    - https://stack.chaitin.com/vuldb/detail/d7bb33fc-d7e0-4a26-855b-fccffb054cc3
+
+variables:
+  filename: "{{rand_base(8)}}"
+  filename_md5: '{{md5("{{filename}}")}}'
+
+http:
+  - raw:
+      - |
+        GET /html/2word?url={{filename}} HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "Content-Disposition"
+          - "{{filename_md5}}"
+        part: header

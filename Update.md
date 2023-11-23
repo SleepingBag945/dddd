@@ -1,5 +1,152 @@
 # 更新日志
 
+## 2023.11.23
+
+更新了如下135个poc，包含近期热点漏洞。have fun~
+
+```
+CNVD-2023-12632 (泛微V9 SQL注入) 原来的检测条件有问题，已修改。
+idocview-2word-rce (iDocView /html/2word 远程代码执行漏洞)
+yonyou-nc-jiuqiclientreqdispatch-rce (用友 NC com.ufsoft.iufo.jiuqi.JiuQiClientReqDispatch 远程代码执行漏洞)
+feiqi-fe-officeserver-file-upload （飞企互联-FE业务协作平台 OfficeServer 任意文件上传）
+CVD-2023-2425 (万户网络 ezOFFICE senddocument_import.jsp 文件上传漏洞)
+yonyou-mobile-uploadapk-fileupload （用友移动系统管理 uploadApk 任意文件上传）
+yonyou-mobile-maportal-unauth (用友-移动系统管理 maportal 未授权访问)
+CVE-2023-3121 (大华智慧园区综合管理平台 image ssrf 漏洞)
+CVD-2023-1870 (大华智慧园区综合管理平台 itcbulletin SQL注入)
+dahua-smart-park-deleteftp-rce (大华智慧园区综合管理平台 deleteFtp RCE)
+yonyou-u8c-registerservlet-sqli (用友U8C Cloud RegisterServlet SQL注入)
+wanhu-wpsservlet-fileupload (万户OA wpsservlet 任意文件上传)
+xxl-job-executor-default-token-rce (XXL-JOB执行器 默认Token 远程命令执行漏洞)
+kingdee-scpsupreghandler-upload (金蝶云星空 scpsupreghandler 任意文件上传漏洞)
+yonyou-u8-grp-slbmbygr-sqli (用友U8-GRP slbmbygr sql注入)
+yonyou-u8-grp-selectdmje-sqli (用友GRP-U8 SelectDMJE.jsp SQL注入漏洞)
+dahua-icc-default-login (dahua icc 默认密码)
+entersoft-fileupload-upload (浙大恩特客户资源管理系统 fileupload.jsp 任意文件上传漏洞)
+entersoft-customeraction-entphone-upload (浙大恩特客户资源管理系统 entphone 任意文件上传)
+seeyon-oa-saveexcelinbase-fileupload (致远oa 任意文件上传 最近新爆的)
+lionfish-cms-wxapp-php-upload （狮子鱼cms，任意文件上传）
+magicflow-lfi (MagicFlow-防火墙网关任意文件读取)
+trs-test-command-executor-rce (拓尔思 TRS testCommandExecutor.jsp 远程命令执行漏洞)
+milesight-vpn-serverjs-fileread (Milesight VPN server.js 任意文件读取漏洞)
+mingyuan-erp-apiupdate-fileupload （明源erp 文件上传）
+netentsec-ns-asg-rce (NS-ASG安全网关 远程命令执行)
+newcape-campus-system-service-rce (新开普智慧校园系统 service.action 远程代码执行漏洞)
+hfs-rce (hfs远程命令执行)
+hikvision-gateway-data-file-read (HIKVISION 视频编码设备接入网关 $DATA 任意文件读取)
+hikvision-showfile-file-read (HIKVISION 视频编码设备接入网关 showFile.php 任意文件下载漏洞)
+CVD-2023-1212 (红帆-ioffice iorepsavexml.aspx 任意文件上传漏洞)
+hongyun-808gps-filedownload (鸿运主动安全监控云平台任意文件下载)
+huace-handler-filedownload (华测监测预警系统任意文件下载)
+huace-mews-config-xml-infoleak (华测监测预警系统 config.xml 信息泄露)
+iceflow-vpn-disclosure (ICEFlow VPN 信息泄露漏洞)
+jeeplus-sql-injection (Jeeplus SQL注入，三个接口)
+jinher-c6-getsqldata-sqli (金和OA C6-GetSqlData.aspx SQL注入,可rce)
+jinpan-weichatcfg-disclosure (金盘微信管理平台 getsysteminfo信息泄露)
+jumpserver-unauth-rce (Jumpserver堡垒机RCE)
+kedacom-mts-file-read （科达-MTS转码服务器任意文件读取）
+kingdee-commonfileserver-fileread (金蝶云星空任意文件读取)
+kingsoft-v8-file-read (金山v8任意文件读取)
+kingsoft-get-file-content-file-read (金山终端安全v8/v9任意文件读取)
+kingsoft-v8-rce (金山终端安全v8远程代码执行)
+konga-default-jwt-key (konga 默认key)
+CVD-2023-1304 (科荣 AIO 管理系统 UtilServlet 文件 fileName 参数文件读取漏洞)
+landray-eis-saveimg-fileupload (蓝凌EIS智慧协同平台任意文件上传)
+landray-oa-datajson-rce (蓝凌OA RCE 新增两种利用方式)
+leadsec-acm-bottomframe-cgi-sqli (网御 ACM 上网行为管理系统bottomframe.cgi SQL 注入漏洞)
+esafenet-update-sqli (亿赛通文档安全管理系统 update.jsp sql注入)
+seeyon-m1-usertokenservice-rce (致远M1 userTokenService反序列化远程代码执行)
+evolucare-ecsimaging-file-download (Evolucare Ecsimaging download_stats_dicom.php 任意文件读取漏洞)
+evolucare-ecsimaging-rce (Evolucare Ecsimaging new_movie.php 远程命令执行漏洞)
+ezeip-info-leakage （ezEIP 4.1.0 信息泄露）
+facemeeting-struts2-rce (飞视美 视频会议系统 Struts2 远程命令执行漏洞)
+feiqi-fe-showimageservlet-fileread (飞企互联-FE业务协作平台 任意文件读取)
+flir-ax8-download-read-file (FLIR AX8红外热像仪 任意文件读取)
+glodon-linkworks-getuserbyusercode-sqli (广联达oa Linkworks Getuserbyusercode SQL注入)
+glodon-linkworks-service-disclosure (广联达oa Linkworks 信息泄露)
+glodon-linkworks-getimdirectionary-sqli (广联达 Linkworks GetIMDictionary SQL 注入)
+go-fastdfs-unauth (go-fastdfs 认证绕过)
+h3c-miniware-web-disclosure (H3C-Miniware-Webs 设备敏感信息泄露，可登录后台开telnet执行命令)
+h3c-jquery-172-file-read (H3C 用户网管登录系统 jQuery-1.7.2 任意文件读取)
+hand-china-srm-tomcat-jsp-login-bypass (汉得 SRM tomcat.jsp 登录绕过漏洞)
+haofeng-firewall-setdomain-unauth (皓峰防火墙 setdomain.php 越权访问漏洞)
+e-office-v10-sql-inject (泛微 eoffice v10 前台SQL注入)
+yonyou-nc-api-disclosure (在野0day,但危害不大)(用友nc api接口泄露) 
+weaver-e-message-decorator-file-read (在野0day)(泛微 E-message 任意文件读取)
+qianxin-tianqing-getsimilarlist-sqli （奇安信360天擎 getsimilarlist SQL注入漏洞)
+weaver-eoffice-webservice-upload-fileupload (泛微-E-office webservice 任意文件上传)
+easycvr-userlist-info-disclosure (视频监控汇聚平台 EasyCVR 用户信息泄漏)
+ip-guard-webserver-rce （1day）(ip-guard 远程命令执行)
+ecology-e-office-getselectlist-crm-sqli (泛微e-office getSelectList_Crm SQL注入)
+ecology-ifnewscheckoutbycurrentuser-dwr-sqli (2023hvv)(泛微 E-Cology ifnewscheckoutbycurrentuser.dwr SQL 注入)
+ecology-dbconfigreader-info-leak (泛微ecology OA DBconfigReader 数据库配置信息泄露)
+egroupware-rce (eGroupWare spellchecker.php 远程命令执行)
+enjoyscm-file-upload (enjoyscm 供应链管理系统 UploadFile任意文件上传)
+esafenet-dataimport-rce (亿赛通电子文档安全系统 dataimport rce)
+esafenet-xstream-deserialzation-rce (亿赛通电子文档安全系统 xstream rce)
+esafenet-cdg-importfiletype-upload （亿赛通电子文档安全系统importfiletype任意文件上传)
+esafenet-client-ajax-download (亿赛通电子文档安全系统 ClientAjax 任意文件读取)
+cxcms-arbitrary-file-read (CXCMS任意文件读取)
+dss-download-fileread (大华城市安防监控系统平台管理任意文件读取)
+dahua-smart-park-ipms-rce (大华智慧园区综合管理平台 ipms 远程代码执行漏洞)
+dahua-smart-park-poi-upload (大华智慧园区综合管理平台 poi 任意文件上传)
+das-ngfw-aaa-rce (安恒 明御安全网关 aaa_portal_auth_local_submit 远程命令执行漏洞)
+das-mingyu-report-user-bypass (安恒明御Web应用防火墙认证绕过)
+dlink-dar-8000-rce (D-Link DAR-8000 远程命令执行漏洞)
+dlink-sharecenter-dns-320-rce (D-Link ShareCenter DNS-320 system_mgr.cgi 远程命令执行漏洞)
+doc-cms-keyword-sql-injection (DocCMS keyword SQL注入漏洞)
+dotnetcms-sqli (DotnetCMS SQL注入)
+ds-store-file (DS_Store 文件泄露)
+baiteng-default-login (百腾客户关系-弱口令)
+bithighway-default-login (碧海威L7云路由默认密码)
+bohuawanglong-cmd-php-rce (博华网龙防火墙 cmd.php 远程命令执行漏洞(OEM))
+bohuawanglong-users-xml-password-leak (博华网龙防火墙 users.xml 未授权访问)
+byzoro-smart-importhtml-rce (百卓Smart/百卓安全网关 importhtml.php 远程命令执行漏洞)
+casdoor-static-fileread (Casdoor 任意文件读取)
+china-mobile-export-settings-info-leak (中移铁通-禹路由信息泄露)
+china-mobile-simple-index-asp-unauth (中移铁通-禹路由未授权访问)
+activemq-path-disclosure (ActiveMQ物理路径泄漏漏洞)
+alibaba-canal-info-leak （Alibaba Canal config云密钥信息泄露）
+avtech-dvr-exposure (Avtech AVC798HA DVR 信息泄露)
+dedecms-radminpass-disclosure (织梦CMS radminpass.php密码修改文件泄露)
+huawei-router-auth-bypass (Huawei DG8045 deviceinfo 信息泄漏漏洞)
+kyan-credential-exposure (Kyan 网络监控设备 hosts 账号密码泄露)
+openvpn-monitor-disclosure (OpenVPN 监视页面泄露)
+phpinfo-files （phpinfo泄露检测）
+ruijie-eg-login-rce （Ruijie-EG易网关默认密码）
+ruijie-nbr1300g-exposure (锐捷NBR 1300G路由器 越权CLI命令执行漏洞，guest账户可以越权获取管理员账号密码)
+druid-default-login (alibaba-druid默认密码)
+unauthenticated-frp (frp web未授权访问)
+frp-default-login (frp web默认密码)
+jeecg-boot-unauth (Jeecg Boot未授权访问)
+ruoyi-druid-unauth (若依管理系统druid未授权访问)
+springboot未授权访问添加至nacos指纹下
+tensorboard-unauth (Tensorboard 未授权访问)
+exposed-zookeeper (Apache ZooKeeper未授权访问)
+1panel-loadfile-fileread (1panel面板任意文件读取)
+amtt-hiboss-language-sqli (安美数字酒店宽带运营系统SQL注入漏洞)
+amtt-hiboss-server-ping-rce （安美数字酒店宽带运营系统server ping远程命令执行）
+arcgis-rest-service-directory-traversal (Arcgis REST 服务目录遍历)
+panabit-applist-rce (Panabit-Panalog applist RCE)
+aolynk-br304-default-password (华为Aolynk BR304+ 智能安全路由器默认口令)
+datahub-metadata-default-login (DataHub Metadata默认口令)
+hikvision-intercom-service-default-password (海康威视群组对讲服务配置平台默认密码)
+kingsoft-v8-default-password (金山V8+终端安全系统默认密码)
+openerp-default-password (OpenERP 默认密码)
+openfire-default-password (OpenFire 默认密码)
+CVE-2023-22518 (atlassian-confluence-restore-rce)
+dahua-icc-readpic-fileread (大华ICC 任意文件读取)
+sangfor-ngaf-login-rce (深信服下一代防火墙rce)
+eosine-reportfile-file-upload (易思无人值守智能物流系统reportfile文件上传)
+clamav-unauth (ClamAV未授权访问)
+seeyon-wpsassist-servlet-fileread (致远OA任意文件读取)
+travis-ci-disclosure
+```
+
+
+
+
+
 
 
 ## 2023.11.1

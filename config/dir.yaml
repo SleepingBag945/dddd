@@ -24,3 +24,5 @@ GeoServer:
   - "/zentao/"
 phpMyAdmin:
   - "/phpmyadmin/"
+ArcGIS:
+  - "/arcgis/"

@@ -1,0 +1,26 @@
+id: jeecg-boot-unauth
+
+info:
+  name: Jeecg Boot Unauth
+  author: SleepingBag945
+  severity: high
+  description: |-
+    Jeecg Boot 未授权访问
+  reference:
+    - https://github.com/zan8in/afrog/blob/main/v2/pocs/afrog-pocs/unauthorized/jeecg-boot-unauth.yaml
+
+http:
+  - raw:
+      - |
+        GET /jeecg-boot/ HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "Swagger-Bootstrap-UI"
+        part: body

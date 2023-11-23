@@ -1,0 +1,30 @@
+id: tensorboard-unauth
+
+info:
+  name: Tensorboard Unauth
+  author: SleepingBag945
+  severity: high
+  description: |-
+    Tensorboard 未授权访问
+  reference:
+    - https://github.com/zan8in/afrog/blob/main/v2/pocs/afrog-pocs/unauthorized/tensorboard-unauth.yaml
+
+http:
+  - raw:
+      - |
+        GET /data/plugins_listing HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "\"profile\":"
+        part: body
+      - type: word
+        words:
+          - "\"distributions\":"
+        part: body

