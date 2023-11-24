@@ -39,7 +39,7 @@ func showBanner() {
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "` + "`" + `-0-0-'"` + "`" + `-0-0-'"` + "`" + `-0-0-` + "`" + `"` + "`" + `-0-0-'
-dddd.version: 1.3
+dddd.version: 1.4
 `
 	fmt.Println(banner)
 }
@@ -112,10 +112,6 @@ func prepare() {
 	var tmpTargets []string
 
 	// 参数冲突校验
-	if structs.GlobalConfig.Hunter && structs.GlobalConfig.Fofa {
-		gologger.Fatal().Msgf("fofa参数与hunter参数冲突,只能选其中一个。")
-	}
-
 	if structs.GlobalConfig.ReportName != "" {
 		suffix := path.Ext(structs.GlobalConfig.ReportName)
 		if suffix != ".html" && suffix != ".htm" {
@@ -277,6 +273,9 @@ func Flag() {
 
 	// 模糊搜索Poc
 	flag.StringVar(&structs.GlobalConfig.PocNameForSearch, "poc", "", "模糊匹配Poc名称")
+
+	// 仅信息收集
+	flag.BoolVar(&structs.GlobalConfig.NoPoc, "npoc", false, "关闭漏洞探测")
 
 	flag.Parse()
 	prepare()

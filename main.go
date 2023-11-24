@@ -33,12 +33,23 @@ func workflow() {
 
 	// 从Hunter中获取资产
 	if structs.GlobalConfig.Hunter && !structs.GlobalConfig.Fofa {
-		gologger.Info().Msgf("准备从 Hunter 获取数据")
-		structs.GlobalConfig.Targets = uncover.HunterSearch(structs.GlobalConfig.Targets)
+		structs.GlobalConfig.Targets, _ = uncover.HunterSearch(structs.GlobalConfig.Targets)
 	}
+	// 从Fofa中获取资产
 	if structs.GlobalConfig.Fofa && !structs.GlobalConfig.Hunter {
-		gologger.Info().Msgf("准备从 Fofa 获取数据")
 		structs.GlobalConfig.Targets = uncover.FOFASearch(structs.GlobalConfig.Targets)
+	}
+	// 从Hunter中获取资产后使用Fofa进行端口补充。
+	if structs.GlobalConfig.Fofa && structs.GlobalConfig.Hunter {
+		targets, tIPs := uncover.HunterSearch(structs.GlobalConfig.Targets)
+		var querys []string
+		for _, i := range tIPs {
+			querys = append(querys, "ip=\""+i+"\"")
+		}
+		querys = utils.RemoveDuplicateElement(querys)
+		structs.GlobalConfig.Targets = uncover.FOFASearch(querys)
+		structs.GlobalConfig.Targets = append(structs.GlobalConfig.Targets, targets...)
+		structs.GlobalConfig.Targets = utils.RemoveDuplicateElement(structs.GlobalConfig.Targets)
 	}
 
 	for _, input := range structs.GlobalConfig.Targets {
@@ -197,6 +208,11 @@ func workflow() {
 	}
 
 	ddfinger.FingerprintIdentification()
+
+	if structs.GlobalConfig.NoPoc {
+		gologger.Info().Msg("跳过漏洞探测")
+		return
+	}
 
 	// 生成报告头部
 	report.GenerateHTMLReportHeader()

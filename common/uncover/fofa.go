@@ -61,6 +61,9 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 	url := "https://fofa.info/api/v1/search/all"
 	keys := getFOFAKeys()
 	randKey := keys[rand.Intn(len(keys))]
+	if !strings.Contains(randKey, ":") {
+		gologger.Fatal().Msg("请核对FOFA API KEY格式。正确格式为: email:key")
+	}
 	tmp := strings.Split(randKey, ":")
 	email := tmp[0]
 	key := tmp[1]
@@ -147,6 +150,7 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 }
 
 func FOFASearch(keywords []string) []string {
+	gologger.Info().Msgf("准备从 Fofa 获取数据")
 	var results []string
 	for _, keyword := range keywords {
 		result := SearchFOFACore(keyword,

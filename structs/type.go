@@ -47,6 +47,7 @@ type Config struct {
 	WebThreads                 int
 	WebTimeout                 int
 	PocNameForSearch           string
+	NoPoc                      bool
 }
 
 type CDNResult struct {

@@ -71,7 +71,7 @@ func getHunterKeys() []string {
 }
 
 // SearchHunter 从Hunter中搜索目标
-func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) []string {
+func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string, []string) {
 	opts := retryablehttp.DefaultOptionsSpraying
 	client := retryablehttp.NewClient(opts)
 
@@ -83,6 +83,7 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) []string {
 	currentQueryCount := 0
 
 	var results []string
+	var ipResult []string
 	for page <= maxQueryPage {
 		req, err := retryablehttp.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
@@ -133,12 +134,12 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) []string {
 				time.Sleep(time.Second * 3)
 				continue
 			}
-			return results
+			return results, ipResult
 		}
 
 		if responseJson.Data.Total == 0 {
 			gologger.Error().Msgf("[Hunter] %s 无结果。", keyword)
-			return results
+			return results, ipResult
 		}
 
 		for _, v := range responseJson.Data.InfoArr {
@@ -149,6 +150,7 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) []string {
 				gologger.Silent().Msgf("[Hunter] %s://%s:%d", v.Protocol, v.IP, v.Port)
 				results = append(results, fmt.Sprintf("%s:%v", v.IP, v.Port))
 			}
+			ipResult = append(ipResult, v.IP)
 		}
 
 		currentQueryCount += len(responseJson.Data.InfoArr)
@@ -156,7 +158,7 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) []string {
 			responseJson.Data.Total, responseJson.Data.RestQuota)
 
 		if currentQueryCount >= responseJson.Data.Total {
-			return results
+			return results, ipResult
 		}
 
 		page += 1
@@ -165,17 +167,19 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) []string {
 		time.Sleep(time.Second * 3)
 
 	}
-
-	return results
+	return results, ipResult
 }
 
-func HunterSearch(keywords []string) []string {
+func HunterSearch(keywords []string) ([]string, []string) {
+	gologger.Info().Msgf("准备从 Hunter 获取数据")
 	var results []string
+	var ipResults []string
 	for _, keyword := range keywords {
-		result := SearchHunterCore(keyword,
+		result, ipResult := SearchHunterCore(keyword,
 			structs.GlobalConfig.HunterPageSize,
 			structs.GlobalConfig.HunterMaxPageCount)
 		results = append(results, result...)
+		ipResults = append(ipResults, ipResult...)
 	}
-	return utils.RemoveDuplicateElement(results)
+	return utils.RemoveDuplicateElement(results), utils.RemoveDuplicateElement(ipResults)
 }
