@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
+	"github.com/projectdiscovery/httpx/common/hashes"
 	"github.com/projectdiscovery/retryablehttp-go"
 	"github.com/projectdiscovery/subfinder/v2/pkg/passive"
 	"gopkg.in/yaml.v3"
@@ -14,6 +15,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -36,6 +38,7 @@ type infoArr struct {
 	Code     int    `json:"status_code"`
 	Title    string `json:"web_title"`
 	Country  string `json:"country"`
+	Banner   string `json:"banner"`
 }
 
 type hunterData struct {
@@ -145,10 +148,75 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 		for _, v := range responseJson.Data.InfoArr {
 			if v.IsWeb == "是" {
 				gologger.Silent().Msgf("[Hunter] [%d] %s [%s] [%s] [%s]", v.Code, v.URL, v.Title, v.City, v.Company)
-				results = append(results, v.URL)
+
+				if structs.GlobalConfig.LowPerceptionMode {
+					rootURL := fmt.Sprintf("%s://%s:%d", v.Protocol, v.IP, v.Port)
+
+					structs.GlobalURLMapLock.Lock()
+					_, rootURLOK := structs.GlobalURLMap[rootURL]
+					structs.GlobalURLMapLock.Unlock()
+					if !rootURLOK {
+						responseCode, header, body, server, contentType, contentLen := utils.ExtractResponse(v.Banner)
+
+						md5 := hashes.Md5([]byte(body))
+						headerMd5 := hashes.Md5([]byte(header))
+						_ = structs.GlobalHttpBodyHMap.Set(md5, []byte(body))
+						_ = structs.GlobalHttpHeaderHMap.Set(headerMd5, []byte(header))
+
+						l, e := strconv.Atoi(contentLen)
+						if e != nil {
+							l = 0
+						}
+
+						rspc, re := strconv.Atoi(responseCode)
+						if re != nil {
+							rspc = 0
+						}
+
+						webPath := structs.UrlPathEntity{
+							Hash:             md5,
+							Title:            v.Title,
+							StatusCode:       rspc,
+							ContentType:      contentType,
+							Server:           server,
+							ContentLength:    l,
+							HeaderHashString: headerMd5,
+							IconHash:         "", // hunter未提供hash
+						}
+
+						urlE := structs.URLEntity{
+							IP:       v.IP,
+							Port:     v.Port,
+							WebPaths: nil,
+							Cert:     "", // hunter未提供证书信息
+						}
+
+						urlE.WebPaths = make(map[string]structs.UrlPathEntity)
+						urlE.WebPaths["/"] = webPath
+
+						structs.GlobalURLMapLock.Lock()
+						structs.GlobalURLMap[rootURL] = urlE
+						structs.GlobalURLMapLock.Unlock()
+					}
+				} else {
+					results = append(results, v.URL)
+				}
 			} else {
 				gologger.Silent().Msgf("[Hunter] %s://%s:%d", v.Protocol, v.IP, v.Port)
-				results = append(results, fmt.Sprintf("%s:%v", v.IP, v.Port))
+				if structs.GlobalConfig.LowPerceptionMode {
+					hostPort := fmt.Sprintf("%s:%d", v.IP, v.Port)
+					structs.GlobalIPPortMapLock.Lock()
+					_, ok := structs.GlobalIPPortMap[hostPort]
+					structs.GlobalIPPortMapLock.Unlock()
+					if !ok {
+						structs.GlobalBannerHMap.Set(hostPort, []byte(v.Banner))
+						structs.GlobalIPPortMapLock.Lock()
+						structs.GlobalIPPortMap[hostPort] = v.Protocol
+						structs.GlobalIPPortMapLock.Unlock()
+					}
+				} else {
+					results = append(results, fmt.Sprintf("%s:%v", v.IP, v.Port))
+				}
 			}
 			ipResult = append(ipResult, v.IP)
 		}

@@ -39,7 +39,7 @@ func showBanner() {
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "` + "`" + `-0-0-'"` + "`" + `-0-0-'"` + "`" + `-0-0-` + "`" + `"` + "`" + `-0-0-'
-dddd.version: 1.4
+dddd.version: 1.4.1
 `
 	fmt.Println(banner)
 }
@@ -137,8 +137,23 @@ func prepare() {
 	}
 	tmpTargets = utils.RemoveDuplicateElement(tmpTargets)
 
-	// 过滤不支持输入
+	// 低感知模式
+	if structs.GlobalConfig.LowPerceptionMode {
+		if structs.GlobalConfig.Fofa && structs.GlobalConfig.Hunter {
+			gologger.Fatal().Msg("暂不支持在低感知模式下同时使用-fofa与-hunter参数，请使用-hunter参数")
+		}
+		if structs.GlobalConfig.Fofa {
+			gologger.Fatal().Msg("暂不支持基于Fofa的低感知模式，请使用-hunter参数。")
+		}
+		// 默认使用hunter fofa不支持
+		if !structs.GlobalConfig.Fofa && !structs.GlobalConfig.Hunter {
+			structs.GlobalConfig.Hunter = true
+		}
+		// 低感知模式下不进行目录探测
+		structs.GlobalConfig.NoDirSearch = true
+	}
 
+	// 过滤不支持输入
 	for _, tg := range tmpTargets {
 		if tg == "" {
 			continue
@@ -263,6 +278,9 @@ func Flag() {
 	// 从fofa获取资产
 	flag.BoolVar(&structs.GlobalConfig.Fofa, "fofa", false, "从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词")
 	flag.IntVar(&structs.GlobalConfig.FofaMaxCount, "ffmc", 100, "Fofa 查询资产条数 Max:10000")
+
+	// 低感知模式
+	flag.BoolVar(&structs.GlobalConfig.LowPerceptionMode, "lpm", false, "低感知模式 (当前只支持Hunter,且默认选择Hunter)")
 
 	// 输出
 	flag.StringVar(&structs.GlobalConfig.ReportName, "o", "", "html格式输出报告")

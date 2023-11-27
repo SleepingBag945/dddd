@@ -96,3 +96,59 @@ func IsLocalIP(input string) bool {
 	ip := net.ParseIP(input)
 	return ip.IsPrivate() || ip.IsLoopback()
 }
+
+func ExtractResponse(response string) (code string, header string, body string, server string, contentType string, contentLen string) {
+	if !strings.HasPrefix(response, "HTTP") {
+		return "", "", "", "", "", ""
+	}
+	parts := strings.SplitN(response, "\r\n", 2)
+	if len(parts) != 2 {
+		return "", "", "", "", "", ""
+	}
+	responseLine := parts[0]
+	remaining := parts[1]
+
+	headerParts := strings.SplitN(remaining, "\r\n\r\n", 2)
+	if len(headerParts) != 2 {
+		return "", "", "", "", "", ""
+	}
+	header = headerParts[0]
+	body = headerParts[1]
+
+	server = ""
+	t := strings.Split(header, "\r\n")
+	if strings.Contains(strings.ToLower(header), "server: ") {
+		for _, line := range t {
+			if !strings.HasPrefix(strings.ToLower(line), "server: ") {
+				continue
+			}
+			tt := strings.SplitN(line, ": ", 2)
+			server = tt[1]
+		}
+	}
+
+	contentType = ""
+	if strings.Contains(strings.ToLower(header), "content-type: ") {
+		for _, line := range t {
+			if !strings.HasPrefix(strings.ToLower(line), "content-type: ") {
+				continue
+			}
+			tt := strings.SplitN(line, ": ", 2)
+			contentType = tt[1]
+		}
+	}
+
+	contentLen = ""
+	if strings.Contains(strings.ToLower(header), "content-length: ") {
+		for _, line := range t {
+			if !strings.HasPrefix(strings.ToLower(line), "content-length: ") {
+				continue
+			}
+			tt := strings.SplitN(line, ": ", 2)
+			contentLen = tt[1]
+		}
+	}
+
+	responseCode := strings.Fields(responseLine)[1]
+	return responseCode, header, body, server, contentType, contentLen
+}

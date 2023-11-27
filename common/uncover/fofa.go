@@ -53,7 +53,7 @@ func getFOFAKeys() []string {
 	return apiKeys
 }
 
-// SearchHunter 从Hunter中搜索目标
+// 从Fofa中搜索目标
 func SearchFOFACore(keyword string, pageSize int) []string {
 	opts := retryablehttp.DefaultOptionsSpraying
 	client := retryablehttp.NewClient(opts)
@@ -81,6 +81,7 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 	q.Add("page", "1")
 	q.Add("size", fmt.Sprintf("%d", pageSize))
 	q.Add("fields", "host,protocol,title,icp")
+
 	q.Add("full", "false")
 	req.URL.RawQuery = q.Encode()
 

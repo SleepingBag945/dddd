@@ -48,6 +48,7 @@ type Config struct {
 	WebTimeout                 int
 	PocNameForSearch           string
 	NoPoc                      bool
+	LowPerceptionMode          bool
 }
 
 type CDNResult struct {
