@@ -39,7 +39,7 @@ func showBanner() {
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "` + "`" + `-0-0-'"` + "`" + `-0-0-'"` + "`" + `-0-0-` + "`" + `"` + "`" + `-0-0-'
-dddd.version: 1.4.1
+dddd.version: 1.5
 `
 	fmt.Println(banner)
 }
@@ -118,6 +118,16 @@ func prepare() {
 			gologger.Fatal().Msgf("输出参数(-o)必须为html拓展名或htm拓展名")
 		}
 	}
+	if (structs.GlobalConfig.Fofa || structs.GlobalConfig.Hunter) && structs.GlobalConfig.Quake {
+		structs.GlobalConfig.Fofa = false
+		structs.GlobalConfig.Quake = false
+		gologger.Warning().Msg("quake参数不兼容fofa或hunter参数")
+	}
+
+	if !structs.GlobalConfig.SkipHostDiscovery && !structs.GlobalConfig.TCPPing && structs.GlobalConfig.NoICMPPing {
+		gologger.Warning().Msg("未选择TCP或ICMP Ping，跳过存活探测")
+		structs.GlobalConfig.SkipHostDiscovery = true
+	}
 
 	// 兼容文件输入
 	if utils.IsFileNameValid(TargetString) {
@@ -161,6 +171,11 @@ func prepare() {
 		if structs.GlobalConfig.Hunter || structs.GlobalConfig.Fofa {
 			// 从网络空间搜索引擎中获取目标
 			if !strings.Contains(tg, "=") {
+				gologger.Error().Msgf("不支持的格式: %s", tg)
+				continue
+			}
+		} else if structs.GlobalConfig.Quake {
+			if !strings.Contains(tg, ":") {
 				gologger.Error().Msgf("不支持的格式: %s", tg)
 				continue
 			}
@@ -251,7 +266,9 @@ func Flag() {
 
 	// 端口扫描
 	flag.StringVar(&PortString, "p", "", "目标IP扫描的端口。 默认扫描Top1000")
-	flag.BoolVar(&structs.GlobalConfig.SkipHostDiscovery, "Pn", false, "禁用主机发现功能(icmp,arp)")
+	flag.BoolVar(&structs.GlobalConfig.SkipHostDiscovery, "Pn", false, "禁用主机发现功能(icmp,tcp)")
+	flag.BoolVar(&structs.GlobalConfig.NoICMPPing, "nicmp", false, "当启用主机发现功能时，禁用ICMP主机发现功能")
+	flag.BoolVar(&structs.GlobalConfig.TCPPing, "tcpp", false, "当启用主机发现功能时，启用TCP主机发现功能")
 	flag.IntVar(&structs.GlobalConfig.GetBannerThreads, "tc", 30, "TCP全连接获取Banner的线程数量")
 	flag.StringVar(&structs.GlobalConfig.PortScanType, "st", "tcp", "端口扫描方式 tcp使用TCP扫描(慢),syn为调用masscan进行扫描(需要masscan依赖)")
 	flag.IntVar(&structs.GlobalConfig.TCPPortScanThreads, "tcpt", 600, "TCP扫描线程")
@@ -278,6 +295,10 @@ func Flag() {
 	// 从fofa获取资产
 	flag.BoolVar(&structs.GlobalConfig.Fofa, "fofa", false, "从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词")
 	flag.IntVar(&structs.GlobalConfig.FofaMaxCount, "ffmc", 100, "Fofa 查询资产条数 Max:10000")
+
+	// 从quake获取资产
+	flag.BoolVar(&structs.GlobalConfig.Quake, "quake", false, "从Quake中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词")
+	flag.IntVar(&structs.GlobalConfig.QuakeSize, "qkmc", 100, "Quake 查询资产条数")
 
 	// 低感知模式
 	flag.BoolVar(&structs.GlobalConfig.LowPerceptionMode, "lpm", false, "低感知模式 (当前只支持Hunter,且默认选择Hunter)")

@@ -49,6 +49,10 @@ type Config struct {
 	PocNameForSearch           string
 	NoPoc                      bool
 	LowPerceptionMode          bool
+	Quake                      bool
+	QuakeSize                  int
+	NoICMPPing                 bool
+	TCPPing                    bool
 }
 
 type CDNResult struct {

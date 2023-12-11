@@ -524,27 +524,42 @@ func (store *Store) LoadTemplatesWithNames(templatesList, pocNames []string) []*
 
 	loadedTemplates := make([]*templates.Template, 0, len(templatePathMap))
 	for templatePath := range templatePathMap {
+		parsed, err := templates.Parse(templatePath, store.preprocessor, store.config.ExecutorOptions)
+		if err != nil {
+			stats.Increment(parsers.RuntimeWarningsStats)
+			gologger.Warning().Msgf("Could not parse template %s: %s\n", templatePath, err)
+			continue
+		}
+		tags := parsed.Info.Tags.ToSlice()
 		flag := false
 		for _, pocName := range pocNames {
 			changePocName := strings.ToLower(strings.ReplaceAll(pocName, "/", "\\"))
 			if strings.HasSuffix(strings.ToLower(templatePath), strings.ToLower(pocName)) {
 				flag = true
+				break
 			}
 			if strings.HasSuffix(strings.ToLower(templatePath), changePocName) {
 				flag = true
+				break
+			}
+			if strings.HasPrefix(pocName, "Tags@") {
+				tagName := pocName[5 : len(pocName)-5]
+				for _, t := range tags {
+					if strings.ToLower(t) == strings.ToLower(tagName) {
+						flag = true
+						break
+					}
+				}
+				if flag {
+					break
+				}
 			}
 		}
 		if flag {
-			parsed, err := templates.Parse(templatePath, store.preprocessor, store.config.ExecutorOptions)
-			if err != nil {
-				stats.Increment(parsers.RuntimeWarningsStats)
-				gologger.Warning().Msgf("Could not parse template %s: %s\n", templatePath, err)
-			} else if parsed != nil {
-				if len(parsed.RequestsHeadless) > 0 && !store.config.ExecutorOptions.Options.Headless {
-					gologger.Warning().Msgf("Headless flag is required for headless template %s\n", templatePath)
-				} else {
-					loadedTemplates = append(loadedTemplates, parsed)
-				}
+			if len(parsed.RequestsHeadless) > 0 && !store.config.ExecutorOptions.Options.Headless {
+				gologger.Warning().Msgf("Headless flag is required for headless template %s\n", templatePath)
+			} else {
+				loadedTemplates = append(loadedTemplates, parsed)
 			}
 		}
 	}

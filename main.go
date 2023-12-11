@@ -15,6 +15,7 @@ import (
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/httpx"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
+	"strings"
 )
 
 func main() {
@@ -89,7 +90,36 @@ func workflow() {
 	// 端口扫描
 	if len(ips) > 0 {
 		if !structs.GlobalConfig.SkipHostDiscovery {
-			ips = common.CheckLive(ips, false)
+			var ICMPAlive []string
+			// ICMP 探测存活
+			if !structs.GlobalConfig.NoICMPPing {
+				ICMPAlive = common.CheckLive(ips, false)
+			}
+
+			// TCP 探测存活
+			var TCPAlive []string
+			if structs.GlobalConfig.TCPPing {
+				// 获取没有存活的进行探测
+				var uncheck []string
+				for _, ip := range ips {
+					index := utils.GetItemInArray(ICMPAlive, ip)
+					if index == -1 {
+						uncheck = append(uncheck, ip)
+					}
+				}
+				gologger.Info().Msg("TCP存活探测")
+				common.PortScan = false
+				tcpAliveIPPort := common.PortScanTCP(uncheck, "80,443,3389,445,22",
+					structs.GlobalConfig.TCPPortScanTimeout)
+				for _, tIPPort := range tcpAliveIPPort {
+					t := strings.Split(tIPPort, ":")
+					TCPAlive = append(TCPAlive, t[0])
+				}
+			}
+
+			ips = append(ips, ICMPAlive...)
+			ips = append(ips, TCPAlive...)
+			ips = utils.RemoveDuplicateElement(ips)
 		}
 		var tmpIPPort []string
 
@@ -105,6 +135,7 @@ func workflow() {
 			// 全端口扫描
 			tmpIPPort = common.PortScanSYN(ips)
 		} else {
+			common.PortScan = true
 			tmpIPPort = common.PortScanTCP(ips, structs.GlobalConfig.Ports,
 				structs.GlobalConfig.TCPPortScanTimeout)
 		}
@@ -222,10 +253,12 @@ func searchEngine() {
 	// 从Hunter中获取资产
 	if structs.GlobalConfig.Hunter && !structs.GlobalConfig.Fofa {
 		structs.GlobalConfig.Targets, _ = uncover.HunterSearch(structs.GlobalConfig.Targets)
+		return
 	}
 	// 从Fofa中获取资产
 	if structs.GlobalConfig.Fofa && !structs.GlobalConfig.Hunter {
 		structs.GlobalConfig.Targets = uncover.FOFASearch(structs.GlobalConfig.Targets)
+		return
 	}
 	// 从Hunter中获取资产后使用Fofa进行端口补充。
 	if structs.GlobalConfig.Fofa && structs.GlobalConfig.Hunter {
@@ -238,5 +271,11 @@ func searchEngine() {
 		structs.GlobalConfig.Targets = uncover.FOFASearch(querys)
 		structs.GlobalConfig.Targets = append(structs.GlobalConfig.Targets, targets...)
 		structs.GlobalConfig.Targets = utils.RemoveDuplicateElement(structs.GlobalConfig.Targets)
+		return
 	}
+	// 从Quake获取资产
+	if structs.GlobalConfig.Quake {
+		structs.GlobalConfig.Targets = uncover.QuakeSearch(structs.GlobalConfig.Targets)
+	}
+
 }

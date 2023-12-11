@@ -57,6 +57,9 @@ func PortScanTCP(IPs []string, Ports string, timeout int) []string {
 	probePorts := ParsePort(Ports)
 
 	workers := structs.GlobalConfig.TCPPortScanThreads
+	if workers > len(IPs)*len(probePorts) {
+		workers = len(IPs) * len(probePorts)
+	}
 	Addrs := make(chan Addr, len(IPs)*len(probePorts))
 	results := make(chan string, len(IPs)*len(probePorts))
 	var wg sync.WaitGroup
@@ -98,6 +101,8 @@ type Addr struct {
 	port int
 }
 
+var PortScan bool
+
 func PortConnect(addr Addr, respondingHosts chan<- string, adjustedTimeout int, wg *sync.WaitGroup) {
 	host, port := addr.ip, addr.port
 	conn, err := WrapperTcpWithTimeout("tcp4", fmt.Sprintf("%s:%v", host, port), time.Duration(adjustedTimeout)*time.Second)
@@ -108,7 +113,11 @@ func PortConnect(addr Addr, respondingHosts chan<- string, adjustedTimeout int, 
 	}()
 	if err == nil {
 		address := host + ":" + strconv.Itoa(port)
-		gologger.Silent().Msgf("[PortScan] %v", address)
+		if PortScan {
+			gologger.Silent().Msgf("[PortScan] %v", address)
+		} else {
+			gologger.Silent().Msgf("[TCP-Alive] %v", address)
+		}
 		wg.Add(1)
 		respondingHosts <- address
 	}
