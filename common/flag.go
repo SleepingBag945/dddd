@@ -39,7 +39,7 @@ func showBanner() {
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "` + "`" + `-0-0-'"` + "`" + `-0-0-'"` + "`" + `-0-0-` + "`" + `"` + "`" + `-0-0-'
-dddd.version: 1.5
+dddd.version: 1.5.1
 `
 	fmt.Println(banner)
 }
@@ -297,7 +297,7 @@ func Flag() {
 	flag.IntVar(&structs.GlobalConfig.FofaMaxCount, "ffmc", 100, "Fofa 查询资产条数 Max:10000")
 
 	// 从quake获取资产
-	flag.BoolVar(&structs.GlobalConfig.Quake, "quake", false, "从Quake中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词")
+	flag.BoolVar(&structs.GlobalConfig.Quake, "quake", false, "从Quake中获取资产,开启此选项后-t参数变更为需要在quake中搜索的关键词")
 	flag.IntVar(&structs.GlobalConfig.QuakeSize, "qkmc", 100, "Quake 查询资产条数")
 
 	// 低感知模式

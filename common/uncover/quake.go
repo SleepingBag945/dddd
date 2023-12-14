@@ -18,6 +18,8 @@ import (
 	"time"
 )
 
+var IsVIP bool
+
 type QuakeServiceInfo struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -32,20 +34,21 @@ type QuakeServiceInfo struct {
 					Location string `json:"location"`
 					Data     string `json:"data"`
 				} `json:"favicon"`
-				Robots          string `json:"robots"`
-				SitemapHash     string `json:"sitemap_hash"`
-				Server          string `json:"server"`
-				Body            string `json:"body"`
-				XPoweredBy      string `json:"x_powered_by"`
-				MetaKeywords    string `json:"meta_keywords"`
-				RobotsHash      string `json:"robots_hash"`
-				Sitemap         string `json:"sitemap"`
-				Path            string `json:"path"`
-				Title           string `json:"title"`
-				Host            string `json:"host"`
-				SecurityText    string `json:"security_text"`
-				StatusCode      int    `json:"status_code"`
-				ResponseHeaders string `json:"response_headers"`
+				Robots          string   `json:"robots"`
+				SitemapHash     string   `json:"sitemap_hash"`
+				Server          string   `json:"server"`
+				Body            string   `json:"body"`
+				XPoweredBy      string   `json:"x_powered_by"`
+				MetaKeywords    string   `json:"meta_keywords"`
+				RobotsHash      string   `json:"robots_hash"`
+				Sitemap         string   `json:"sitemap"`
+				Path            string   `json:"path"`
+				Title           string   `json:"title"`
+				Host            string   `json:"host"`
+				SecurityText    string   `json:"security_text"`
+				StatusCode      int      `json:"status_code"`
+				ResponseHeaders string   `json:"response_headers"`
+				URL             []string `json:"http_load_url"`
 			} `json:"http"`
 			Version  string `json:"version"`
 			Name     string `json:"name"`
@@ -126,7 +129,9 @@ func SearchQuakeCore(keyword string, pageSize int) []string {
 	data["query"] = keyword
 	data["start"] = "0"
 	data["size"] = strconv.Itoa(pageSize)
-	data["include"] = []string{"ip", "port"}
+	if !IsVIP {
+		data["include"] = []string{"ip", "port"}
+	}
 	jsonData, _ := json.Marshal(data)
 
 	req, err := retryablehttp.NewRequest(http.MethodPost, url, jsonData)
@@ -160,21 +165,81 @@ func SearchQuakeCore(keyword string, pageSize int) []string {
 	var serviceInfo QuakeServiceInfo
 	err = json.Unmarshal(respBody, &serviceInfo)
 	if err != nil {
-		gologger.Error().Msg("[Quake] 响应解析失败，疑似Quake Token失效。")
+		gologger.Error().Msg("[Quake] 响应解析失败，疑似Token失效、。Quake接口具体返回信息如下：")
+		fmt.Println(string(respBody))
 		return results
 	}
 
 	for _, d := range serviceInfo.Data {
-		t := fmt.Sprintf("%s:%d", d.IP, d.Port)
-		if utils.GetItemInArray(results, t) == -1 {
-			gologger.Silent().Msgf("[Quake] %s", t)
-			results = append(results, t)
+		if d.Service.HTTP.URL == nil {
+			t := fmt.Sprintf("%s:%d", d.IP, d.Port)
+			if utils.GetItemInArray(results, t) == -1 {
+				gologger.Silent().Msgf("[Quake] %s", t)
+				results = append(results, t)
+			}
+		} else {
+			for _, u := range d.Service.HTTP.URL {
+				if utils.GetItemInArray(results, u) == -1 {
+					gologger.Silent().Msgf("[Quake] %s", u)
+					results = append(results, u)
+				}
+			}
 		}
+
 	}
 	return results
 }
 
+func IsQuakeVIP() bool {
+	keys := getQuakeKeys()
+	randKey := keys[rand.Intn(len(keys))]
+	opts := retryablehttp.DefaultOptionsSpraying
+	client := retryablehttp.NewClient(opts)
+
+	url := "https://quake.360.net/api/v3/user/info"
+
+	req, err := retryablehttp.NewRequest(http.MethodGet, url, "")
+	if err != nil {
+		gologger.Fatal().Msgf("Quake API请求构建失败。")
+	}
+	req.Header.Set("X-QuakeToken", randKey)
+	req.Header.Set("Content-Type", "application/json")
+	resp, errDo := client.Do(req)
+	if errDo != nil {
+		gologger.Error().Msgf("[Quake] 用户信息查询失败！请检查网络状态。Error:%s", errDo.Error())
+		return false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 401 {
+		gologger.Fatal().Msgf("[Quake] API-KEY错误。请检查。")
+	}
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		gologger.Error().Msgf("[Quake] 获取Hunter 响应Body失败: %v", err.Error())
+		return false
+	}
+
+	if strings.Contains(string(respBody), "终身会员") {
+		return true
+	}
+	if strings.Contains(string(respBody), "高级会员") {
+		return true
+	}
+
+	return false
+}
+
 func QuakeSearch(keywords []string) []string {
+	IsVIP = false
+	gologger.Info().Msg("正在查询Quake账户权限。")
+	IsVIP = IsQuakeVIP()
+	if IsVIP {
+		gologger.Info().Msgf("VIP")
+	} else {
+		gologger.Info().Msgf("非VIP")
+	}
 	gologger.Info().Msgf("准备从 Quake 获取数据")
 	var results []string
 	for _, keyword := range keywords {
