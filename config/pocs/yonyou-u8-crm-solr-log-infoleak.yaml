@@ -1,0 +1,19 @@
+id: yonyou-u8-crm-solr-log-infoleak
+
+info:
+  name: 用友U8 CRM /datacache/solr.log 信息泄露
+  author: SleepingBag945
+  severity: low
+
+http:
+  - raw:
+      - |
+        HEAD /datacache/solr.log HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
+        Connection: close
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code==200 && contains_all(all_headers,"text/plain")'

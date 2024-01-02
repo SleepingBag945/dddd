@@ -15,10 +15,13 @@ var smbUserPasswdDict string
 
 func SmbScan(info *structs.HostInfo) (tmperr error) {
 	starttime := time.Now().Unix()
+	gologger.AuditTimeLogger("[Go] [SMB-Brute] start try %s:%v", info.Host, info.Ports)
+	defer gologger.AuditTimeLogger("[Go] [SMB-Brute] SmbScan return %s:%v", info.Host, info.Ports)
 
 	userPasswdList := sortUserPassword(info, smbUserPasswdDict, []string{})
 
 	for _, userPass := range userPasswdList {
+		gologger.AuditTimeLogger("[Go] [SMB-Brute] start try %s %v %v", info.Host, userPass.UserName, userPass.Password)
 		flag, err := doWithTimeOut(info, userPass.UserName, userPass.Password)
 		if flag == true && err == nil {
 			return err

@@ -30,7 +30,8 @@ var (
 func CallNuclei(TargetAndPocsName map[string][]string,
 	proxy string,
 	callBack func(result output.ResultEvent),
-	nameForSearch string) []output.ResultEvent {
+	nameForSearch string,
+	NoInteractsh bool) []output.ResultEvent {
 
 	// 设置结果回调
 	output.AddResultCallback = callBack
@@ -38,7 +39,7 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 		gologger.Fatal().Msgf("Could not initialize options: %s\n", err)
 	}
 
-	readConfig(TargetAndPocsName, proxy, nameForSearch)
+	readConfig(TargetAndPocsName, proxy, nameForSearch, NoInteractsh)
 	// configPath, _ := flagSet.GetConfigFilePath()
 
 	if options.ListDslSignatures {
@@ -108,7 +109,7 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 	return output.Results
 }
 
-func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSearch string) {
+func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSearch string, NoInteractsh bool) {
 
 	pwd, _ := os.Getwd()
 
@@ -393,7 +394,7 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	options.InteractionsCoolDownPeriod = 5
 
 	// 禁用反连检测平台，同时排除基于反连检测的模板
-	options.NoInteractsh = false
+	options.NoInteractsh = NoInteractsh
 
 	// overrides fuzzing type set in template (replace, prefix, postfix, infix)
 	// 覆盖模板中设置的模糊类型(替换、前缀、后缀、中缀)

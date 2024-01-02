@@ -3,6 +3,7 @@ package gopocs
 import (
 	"dddd/common"
 	"dddd/structs"
+	"encoding/hex"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
 	"strings"
@@ -25,8 +26,8 @@ func JDWPScan(info *structs.HostInfo) (err error) {
 	if err != nil {
 		return err
 	}
-
 	_, err = client.Write([]byte("JDWP-Handshake"))
+	gologger.AuditTimeLogger("[Go] [JDWP] [1/3] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump([]byte("JDWP-Handshake")))
 	if err != nil {
 		return err
 	}
@@ -36,13 +37,14 @@ func JDWPScan(info *structs.HostInfo) (err error) {
 	if errRead != nil {
 		return errRead
 	}
-
+	gologger.AuditTimeLogger("[Go] [JDWP] [1/3] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(rev[:n]))
 	if !strings.Contains(string(rev[:n]), "JDWP-Handshake") {
 		// 不是JDWP
 		return err
 	}
 
 	_, err = client.Write([]byte("\x00\x00\x00\x0b\x00\x00\x00\x01\x00\x01\x07"))
+	gologger.AuditTimeLogger("[Go] [JDWP] [2/3] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump([]byte("\x00\x00\x00\x0b\x00\x00\x00\x01\x00\x01\x07")))
 	if err != nil {
 		return err
 	}
@@ -52,12 +54,12 @@ func JDWPScan(info *structs.HostInfo) (err error) {
 	if errRead != nil {
 		return errRead
 	}
-
 	if n == 0 {
 		return err
 	}
-
+	gologger.AuditTimeLogger("[Go] [JDWP] [2/3] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(rev[:n]))
 	_, err = client.Write([]byte("\x00\x00\x00\x0b\x00\x00\x00\x03\x00\x01\x01"))
+	gologger.AuditTimeLogger("[Go] [JDWP] [3/3] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump([]byte("\x00\x00\x00\x0b\x00\x00\x00\x03\x00\x01\x01")))
 	if err != nil {
 		return err
 	}
@@ -67,7 +69,7 @@ func JDWPScan(info *structs.HostInfo) (err error) {
 	if errRead != nil {
 		return errRead
 	}
-
+	gologger.AuditTimeLogger("[Go] [JDWP] [3/3] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(rev[:n]))
 	data := string(rev[:n])
 	if !strings.Contains(data, "Java Debug Wire Protocol") {
 		return err

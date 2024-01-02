@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"dddd/common"
 	"dddd/structs"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
@@ -70,25 +71,30 @@ func NetBIOS1(info *structs.HostInfo) (netbios NetBiosInfo, err error) {
 
 	if info.Ports == "139" && len(payload0) > 0 {
 		_, err1 := conn.Write(payload0)
+		gologger.AuditTimeLogger("[Go] [netbios] [NetBIOS1] [1/] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump(payload0))
 		if err1 != nil {
 			return
 		}
-		_, err1 = ReadBytes(conn)
-		if err1 != nil {
+		t, err1t := ReadBytes(conn)
+		if err1t != nil {
 			return
 		}
+		gologger.AuditTimeLogger("[Go] [netbios] [NetBIOS1] [1/] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(t))
 	}
 
 	_, err = conn.Write(NegotiateSMBv1Data1)
+	gologger.AuditTimeLogger("[Go] [netbios] [NetBIOS1] [2/] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump(NegotiateSMBv1Data1))
 	if err != nil {
 		return
 	}
-	_, err = ReadBytes(conn)
-	if err != nil {
+	t, err1t := ReadBytes(conn)
+	if err1t != nil {
 		return
 	}
+	gologger.AuditTimeLogger("[Go] [netbios] [NetBIOS1] [2/] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(t))
 
 	_, err = conn.Write(NegotiateSMBv1Data2)
+	gologger.AuditTimeLogger("[Go] [netbios] [NetBIOS1] [3/] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump(NegotiateSMBv1Data2))
 	if err != nil {
 		return
 	}
@@ -97,6 +103,7 @@ func NetBIOS1(info *structs.HostInfo) (netbios NetBiosInfo, err error) {
 	if err != nil {
 		return
 	}
+	gologger.AuditTimeLogger("[Go] [netbios] [NetBIOS1] [3/] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(ret))
 	netbios2, err := ParseNTLM(ret)
 	JoinNetBios(&netbios, &netbios2)
 	return
@@ -120,10 +127,12 @@ func GetNbnsname(info *structs.HostInfo) (netbios NetBiosInfo, err error) {
 		return
 	}
 	_, err = conn.Write(senddata1)
+	gologger.AuditTimeLogger("[Go] [netbios] [GetNbnsname] Dumped UDP request for %s\n\n%s\n", realhost, hex.Dump(senddata1))
 	if err != nil {
 		return
 	}
 	text, _ := ReadBytes(conn)
+	gologger.AuditTimeLogger("[Go] [netbios] [GetNbnsname] Dumped UDP response for %s\n\n%s\n", realhost, hex.Dump(text))
 	netbios, err = ParseNetBios(text)
 	return
 }

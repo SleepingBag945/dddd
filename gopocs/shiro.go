@@ -127,6 +127,7 @@ func ShiroKeyCheck(info *structs.HostInfo) {
 	url := info.Url
 
 	// 不是shiro目标
+	gologger.AuditTimeLogger("[Go] [Shiro] detect shiro %v", url)
 	if checkShiro(url) {
 		return
 	}
@@ -134,6 +135,7 @@ func ShiroKeyCheck(info *structs.HostInfo) {
 	content, _ := base64.StdEncoding.DecodeString(CheckContent)
 
 	for _, key := range structs.ShiroKeys {
+		gologger.AuditTimeLogger("[Go] [Shiro] try %v key: %v", url, key)
 		ok, tp := checkKey(url, key, content)
 		if ok && tp != "" {
 			gologger.Silent().Msgf("[GoPoc] %v [%v] [%v]", url, key, tp)
@@ -151,5 +153,6 @@ func ShiroKeyCheck(info *structs.HostInfo) {
 			break
 		}
 	}
+	gologger.AuditTimeLogger("[Go] [Shiro] ShiroKeyCheck return! %v", url)
 
 }

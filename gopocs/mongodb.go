@@ -3,6 +3,7 @@ package gopocs
 import (
 	"dddd/common"
 	"dddd/structs"
+	"encoding/hex"
 	"fmt"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/projectdiscovery/gologger"
@@ -58,6 +59,7 @@ func MongodbUnauth(info *structs.HostInfo) (flag bool, err error) {
 			return "", err
 		}
 		_, err = conn.Write(packet)
+		gologger.AuditTimeLogger("[Go] [Mongodb] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump(packet))
 		if err != nil {
 			return "", err
 		}
@@ -66,6 +68,7 @@ func MongodbUnauth(info *structs.HostInfo) (flag bool, err error) {
 		if err != nil {
 			return "", err
 		}
+		gologger.AuditTimeLogger("[Go] [Mongodb] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(reply[0:count]))
 		return string(reply[0:count]), nil
 	}
 

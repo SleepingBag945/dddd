@@ -1,5 +1,6 @@
 Alibaba-Nacos:
   - "/nacos/"
+  - "/api/nacos/"
 Alibaba-Druid:
   - "/druid/index.html"
 泛微-协同办公OA:
@@ -7,6 +8,7 @@ Alibaba-Druid:
 vmware-SpringBoot-Framework:
   - "/error"
   - "/gateway/error/"
+  - "/api/error/"
 ThinkPHP:
   - "/?a=WKtwuea&c=2RVM&m=fv3C&s=ba5a"
 帆软-FineReport:
@@ -15,6 +17,8 @@ ThinkPHP:
   - "/webroot/decision/login"
 XXL-JOB:
   - "/xxl-job-admin/toLogin"
+  - "/xxl-job/toLogin"
+  - "/xxl/toLogin"
 GeoServer:
   - "/geoserver/web/"
 百度-UEditor:
@@ -24,5 +28,14 @@ GeoServer:
   - "/zentao/"
 phpMyAdmin:
   - "/phpmyadmin/"
+  - "/pma/"
 ArcGIS:
   - "/arcgis/"
+SMARTBI:
+  - "/smartbi/vision/index.jsp"
+HARBOR:
+  - "/harbor/"
+MINIO-Browser:
+  - "/minio/"
+Tomcat-Login:
+  - "/manager/html"

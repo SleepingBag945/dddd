@@ -183,6 +183,7 @@ func workflow() {
 
 	// 模糊搜索Yaml Poc直接打
 	if structs.GlobalConfig.PocNameForSearch != "" {
+		gologger.AuditTimeLogger("模糊搜索Poc: %v", structs.GlobalConfig.PocNameForSearch)
 		TargetAndPocsName := make(map[string][]string)
 		for _, url := range aliveURLs {
 			TargetAndPocsName[url] = []string{}
@@ -191,7 +192,8 @@ func workflow() {
 		callnuclei.CallNuclei(TargetAndPocsName,
 			structs.GlobalConfig.HTTPProxy,
 			report.AddResultByResultEvent,
-			structs.GlobalConfig.PocNameForSearch)
+			structs.GlobalConfig.PocNameForSearch,
+			structs.GlobalConfig.NoInteractsh)
 		utils.DeleteReportWithNoResult()
 		return
 	}
@@ -217,6 +219,7 @@ func workflow() {
 			structs.GlobalConfig.HTTPProxy,
 			structs.GlobalConfig.WebThreads,
 			structs.GlobalConfig.WebTimeout)
+		gologger.AuditTimeLogger("主动指纹探测结束")
 	}
 
 	ddfinger.FingerprintIdentification()
@@ -236,7 +239,7 @@ func workflow() {
 		nucleiResults = callnuclei.CallNuclei(TargetAndPocsName,
 			structs.GlobalConfig.HTTPProxy,
 			report.AddResultByResultEvent,
-			"")
+			"", structs.GlobalConfig.NoInteractsh)
 	}
 
 	// GoPoc引擎

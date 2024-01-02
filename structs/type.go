@@ -35,6 +35,8 @@ type Config struct {
 	MasscanPath                string
 	AllowLocalAreaDomain       bool
 	HTTPProxy                  string
+	HTTPProxyTest              bool
+	HTTPProxyTestURL           string
 	Hunter                     bool
 	HunterPageSize             int
 	HunterMaxPageCount         int
@@ -53,6 +55,7 @@ type Config struct {
 	QuakeSize                  int
 	NoICMPPing                 bool
 	TCPPing                    bool
+	NoInteractsh               bool
 }
 
 type CDNResult struct {

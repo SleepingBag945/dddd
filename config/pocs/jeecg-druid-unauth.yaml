@@ -1,0 +1,24 @@
+id: jeecg-druid-unauth
+
+info:
+  name: Jeecg-Boot Druid 未授权访问
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        GET /webpage/system/druid/index.html HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        part: body
+        words:
+          - "Druid Stat Index"
+          - "DruidVersion"
+        condition: and

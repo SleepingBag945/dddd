@@ -15,6 +15,7 @@ func FtpScan(info *structs.HostInfo) (tmperr error) {
 	starttime := time.Now().Unix()
 
 	// 先检测匿名访问
+	gologger.AuditTimeLogger("[Go] [FTP-Unauth] Try %s:%v", info.Host, info.Ports)
 	flag, err := FtpConn(info, "anonymous", "")
 	if flag == true && err == nil {
 		return err
@@ -29,6 +30,7 @@ func FtpScan(info *structs.HostInfo) (tmperr error) {
 
 	// 暴力破解
 	for _, userPass := range userPasswdList {
+		gologger.AuditTimeLogger("[Go] [FTP-Brute] start try %s:%v User:%s Pass:%s", info.Host, info.Ports, userPass.UserName, userPass.Password)
 		ftpFlag, ftpErr := FtpConn(info, userPass.UserName, userPass.Password)
 		if ftpFlag == true && ftpErr == nil {
 			return ftpErr
@@ -38,11 +40,12 @@ func FtpScan(info *structs.HostInfo) (tmperr error) {
 				return ftpErr
 			}
 			if time.Now().Unix()-starttime > (int64(len(userPasswdList)) * 6) {
+				gologger.AuditTimeLogger("[Go] [FTP-Brute] Timeout,break! %s:%v", info.Host, info.Ports)
 				return err
 			}
 		}
 	}
-
+	gologger.AuditTimeLogger("[Go] [FTP-Brute] return! %s:%v", info.Host, info.Ports)
 	return tmperr
 }
 

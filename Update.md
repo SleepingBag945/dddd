@@ -1,5 +1,83 @@
 # 更新日志
 
+## 2023.1.2
+
+更新到1.6版本
+
+1. 优化Tomcat爆破的探测逻辑。优化碰撞路径(XXL-JOB/phpMyAdmin)
+
+2. 更新了 **-ni** 参数，用于禁用反连平台。不出网的内网就没必要用反连平台了，容易拖慢扫描速度，且在敏感环境建议开启避免外连至国外地址造成不必要的麻烦。（敏感肌也能用！）
+3. 新增审计日志输出。默认关闭，使用 **-a** 参数(audit)开启。时间、请求地址、响应包、请求包等写至audit.log (可以通过 **-alf** 参数自定义名称)，~~便于甩锅~~ 。避免日志过大，**Golang Poc中爆破不会显示详细数据包，只显示时间、目标、账号与密码。**在敏感环境建议开启，尽管会占用一些磁盘，但能让自己安全一点总归是好事。
+4. 审计功能可以当做debug使用。会在日志中写入详细的运行过程/数据包。便于调试poc/workflow。
+5. 启动时可通过 **-pt** 参数开启代理验证，验证失败程序退出。**-ptu** 参数指定访问的代理测试url，默认为https://www.baidu.com。（https://github.com/SleepingBag945/dddd/issues/24）
+6. 修复了fofa请求的base64编码问题。 （https://github.com/SleepingBag945/dddd/issues/23）
+
+7. 更新53个热点Poc。
+
+   
+
+由于基本是我自己个人在维护这个项目，实在没有那么多精力同时维护代码和持续跟踪热点漏洞、找漏洞、复现、写poc。
+
+这些热点poc可能不是特别全，见谅兄弟们。
+
+```
+apache-ofbiz-programexport-rce (Apache-OFBiz ProgramExport 远程命令执行)
+亿赛通 /CDGServer3/DBAjax JDBC反序列化
+金和OA C6 GetHomeInfo SQL注入
+IP网络对讲广播系统 /php/ping.php 远程命令执行
+yonyou-u8-crm-solr-log-infoleak
+hikvision-isecure-center-files-fileread
+tosei-washing-machine-network-test-rce 日本tosei自助洗衣机rce
+kingdee-eas-uploadlogo-fileupload (金蝶EAS uploadlogo 任意文件上传)
+jeespringcloud-uploadfile-fileupload (JeeSpringCloud uploadFile.jsp 文件上传漏洞)
+erpnext-default-login (ERPNEXT 默认密码)
+esafenet-getvalidateloginuserservice-xstream-deserialzation-rce
+esafenet-checkclientservelt-xstream-deserialzation-rce
+jeecg-druid-unauth
+edusoho-education-open-fileread
+advantech-webaccess-default-login
+jinher-oa-sap-b1config-unauth
+bifrost-user-update-authbypass (bifrost 用户添加)
+Kuaipu-M6 整合管理平台系统SQL注入漏洞
+philip-m6-salaryaccounting-sqli (快普整合管理平台系统 SalaryAccounting.asmx SQL注入)
+freerdp-webconnect-fileread (FreeRDP WebConnect Url 任意文件读取)
+yonyou-turbo-crm-help2-fileread （用友 TurboCRM /pub/help2.php 接口任意文件读取）
+yonyou-turbo-crm-help-fileread（用友 TurboCRM /pub/help.php 接口任意文件读取）
+yonyou-turbo-crm-downloadfile-fileread （用友 TurboCRM /pub/downloadfile.php 接口任意文件读取）
+tongda-oa-action-crawler-fileupload (通达OA action_crawler.php 任意文件上传)
+realor-rapagent-sqli （瑞友天翼虚拟化 rapagent SQL注入）
+cdg-decryptapplicationservice2-arbitrary-file-upload （亿赛通 decryptapplicationservice2 任意文件上传）
+esafenet-cdg-user-fastjson-rce （亿赛通 user fastjson RCE）
+esafenet-emailauditservice-xstream-deserialzation-rce (亿赛通 emailauditservice xstream 反序列化)
+dahua-dss-s2-045-rce (大华DSS s2-045远程命令执行漏洞)
+kingdee-eas-extweb-fileread (金蝶EAS extweb 任意文件读取)
+idocview-url-fileread (I Doc View /view/url 接口任意文件读取)
+idocview-cmd-rce (I Doc View CMD 远程命令执行)
+宏景hcm loadhistroyorgtree SQL注入
+logbase-test-qrcide-b-rce (LogBase堡垒机 RCE)
+weaver-ebridge-addtaste-sqli 泛微云桥SQL注入
+dahua-smart-park-download-fileread (大华智慧园区综合管理平台 download 任意文件读取)
+hikvision-ivms8700-getpic-fileupload (海康威视 ivms8700 getPic 任意文件上传)
+CNVD-2023-59457 (亿赛通电子文档安全管理系统 LinkFilterService 远程代码执行漏洞)
+CVD-2023-1718 (Panabit Panalog sprog_deletevent.php SQL 注入漏洞)
+tongweb-selectapp-fileupload (东方通 TongWeb selectApp.jsp 任意文件上传)
+iclock-weaklogin (时间精细化管理平台弱口令)
+yonyou-u8-cloud-appletinvoke-cacheinvokeservlet-rce (用友U8 Cloud com.ufsoft.iufo.web.appletinvoke.CacheInvokeServlet 反序列化)
+CVE-2023-49070 (Apache OFBiz < 18.12.10 - Arbitrary Code Execution 带DNSLog利用链确认)
+webui-js-oem-sslvpn-client-fileupload （某OEM厂商的rce2文件上传)
+CVD-2023-2868 (广联达 linkworks GB/LK/ArchiveManagement/Js/GWGDWebService.asmx 文件上传漏洞)
+jinher-oa-saveasotherformatservlet-fileupload (金和OA saveAsOtherFormatServlet 任意文件上传)
+webui-js-oem-file-read (OEM厂商的洞任意文件读取)
+seeyon-wpsassistservlet-filetype-fileread (致远OA wpsAssistServlet fileType参数任意文件读取)
+yonyou-nc-icustomerexporttocrmservice-sqli (用友NC ICustomerExportToCrmService SQL注入)
+hjhost-hcm-get-org-tree-sqli (宏景人力资源管理系统 get_org_tree.jsp SQL注入漏洞)
+CVD-2022-1170 (泛微 E-Office login.wsdl.php 文件 SQL 注入漏洞)
+yonyou-nc-monitorservlet-rce (用友NC nc.bs.framework.mx.monitor.MonitorServlet 反序列化漏洞)
+CVD-2022-5298 (泛微 E-Office sample 权限绕过 file-upload 后台文件上传漏洞)
+```
+
+
+
 ## 2023.12.14
 
 更新到1.5.1版本。

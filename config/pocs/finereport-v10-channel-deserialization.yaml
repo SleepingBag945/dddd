@@ -1,0 +1,29 @@
+id: finereport-v10-channel-deserialization
+
+info:
+  name: 帆软报表 channel反序列化漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |
+    帆软报表 channel 接口存在反序列化漏洞, 攻击者通过漏洞可以获取服务器权限，攻击服务器
+  metadata:
+  tags: finereport
+
+http:
+  - raw:
+      - |
+        GET /webroot/decision/remote/design/channel HTTP/1.1
+        Content-Type: application/json
+        Host: {{Hostname}}
+
+      - |
+        POST /webroot/decision/remote/design/channel HTTP/1.1
+        Content-Type: application/json
+        Host: {{Hostname}}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200 && contains(body_1,"document.getElementById") && contains(body_1,"/webroot/decision")
+          - status_code_2 == 200 && !contains(body_2,"/webroot/decision")
+        condition: and

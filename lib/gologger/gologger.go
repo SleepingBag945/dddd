@@ -21,7 +21,9 @@ var (
 		levels.LevelVerbose: "VER",
 	}
 	// DefaultLogger is the default logging instance
-	DefaultLogger *Logger
+	DefaultLogger    *Logger
+	Audit            bool
+	AuditLogFileName string
 )
 
 func init() {
@@ -29,6 +31,24 @@ func init() {
 	DefaultLogger.SetMaxLevel(levels.LevelInfo)
 	DefaultLogger.SetFormatter(formatter.NewCLI(false))
 	DefaultLogger.SetWriter(writer.NewCLI())
+}
+
+func AuditLogger(format string, args ...interface{}) {
+	if !Audit {
+		return
+	}
+	message := fmt.Sprintf(format, args...)
+	WriteFile(message, AuditLogFileName)
+}
+
+func AuditTimeLogger(format string, args ...interface{}) {
+	if !Audit {
+		return
+	}
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	currentTime := time.Now().In(loc).String()
+	message := fmt.Sprintf(format, args...)
+	WriteFile("[ "+currentTime+" ] "+message, AuditLogFileName)
 }
 
 // Logger is a logger for logging structured data in a beautfiul and fast manner.
@@ -78,6 +98,9 @@ func (l *Logger) Log(event *Event) {
 	if event.level == levels.LevelSilent {
 		WriteFile(string(data), "log.txt")
 	}
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	currentTime := time.Now().In(loc).String()
+	WriteFile("[ "+currentTime+" ] "+string(data), AuditLogFileName)
 
 	if event.level == levels.LevelFatal {
 		os.Exit(1)

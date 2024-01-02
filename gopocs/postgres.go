@@ -15,6 +15,7 @@ var postgreSQLUserPasswdDict string
 
 func PostgresScan(info *structs.HostInfo) (tmperr error) {
 	starttime := time.Now().Unix()
+	defer gologger.AuditTimeLogger("[Go] [PostgreSQL] PostgresScan return! %s:%v", info.Host, info.Ports)
 
 	userPasswdList := sortUserPassword(info, postgreSQLUserPasswdDict, []string{"Postgres"})
 
@@ -46,6 +47,7 @@ func PostgresConn(info *structs.HostInfo, user string, pass string) (flag bool, 
 	flag = false
 	Host, Port, Username, Password := info.Host, info.Ports, user, pass
 	dataSourceName := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=%v", Username, Password, Host, Port, "postgres", "disable")
+	gologger.AuditTimeLogger("[Go] [PostgreSQL-Brute] start try %s", dataSourceName)
 	db, err := sql.Open("postgres", dataSourceName)
 	if err == nil {
 		db.SetConnMaxLifetime(time.Duration(5) * time.Second)

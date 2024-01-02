@@ -54,6 +54,7 @@ func ParsePort(ports string) (scanPorts []int) {
 
 func PortScanTCP(IPs []string, Ports string, timeout int) []string {
 	var AliveAddress []string
+	gologger.AuditTimeLogger("开始TCP端口扫描，端口设置: %s\nTCP端口扫描目标:%s", Ports, strings.Join(IPs, ","))
 	probePorts := ParsePort(Ports)
 
 	workers := structs.GlobalConfig.TCPPortScanThreads
@@ -92,6 +93,7 @@ func PortScanTCP(IPs []string, Ports string, timeout int) []string {
 	wg.Wait()
 	close(Addrs)
 	close(results)
+	gologger.AuditTimeLogger("TCP端口扫描结束")
 
 	return AliveAddress
 }
@@ -135,8 +137,9 @@ func PortScanSYN(IPs []string) []string {
 	ms.SetFileName("masscan_tmp.txt")
 	ms.SetPorts("1-65535")
 	ms.SetRate(strconv.Itoa(structs.GlobalConfig.SYNPortScanThreads))
-	gologger.Info().Msgf("开始SYN端口扫描")
+	gologger.Info().Msgf("调用masscan进行SYN端口扫描")
 	err = ms.Run()
+	gologger.AuditTimeLogger("masscan扫描结束")
 	if err != nil {
 		return []string{}
 	}
@@ -194,6 +197,8 @@ func CheckMasScan() bool {
 
 func RemoveFirewall(ipPorts []string) []string {
 	var results []string
+
+	gologger.AuditTimeLogger("移除开放端口过多的目标")
 
 	m := make(map[string][]string)
 	for _, ipPort := range ipPorts {

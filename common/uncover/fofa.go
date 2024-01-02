@@ -73,7 +73,7 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 		gologger.Fatal().Msgf("FOFA API请求构建失败。")
 	}
 	unc := keyword
-	search := base64.URLEncoding.EncodeToString([]byte(unc))
+	search := base64.StdEncoding.EncodeToString([]byte(unc))
 	q := req.URL.Query()
 	q.Add("qbase64", search)
 	q.Add("email", email)
@@ -109,7 +109,7 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 	}
 
 	if responseJson.Error {
-		gologger.Error().Msgf("[Fofa] [%s] 搜索失败！返回响应体Error为True。", keyword)
+		gologger.Error().Msgf("[Fofa] [%s] 搜索失败！返回响应体Error为True。返回信息: %v", keyword, string(data))
 		return results
 	}
 

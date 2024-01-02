@@ -5,12 +5,15 @@ import (
 	"dddd/structs"
 	"dddd/utils"
 	"fmt"
+	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/httpx"
 	"net/url"
 	"strings"
 )
 
 func HostBindCheck() {
+	gologger.AuditTimeLogger("域名绑定资产发现")
+
 	var urls []string
 	for rootURL, _ := range structs.GlobalURLMap {
 		URL, err := url.Parse(rootURL)
@@ -54,5 +57,5 @@ func HostBindCheck() {
 		structs.GlobalConfig.HTTPProxy,
 		structs.GlobalConfig.WebThreads,
 		structs.GlobalConfig.WebTimeout)
-
+	gologger.AuditTimeLogger("域名绑定资产发现结束")
 }

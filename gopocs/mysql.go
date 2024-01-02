@@ -27,11 +27,12 @@ func MysqlScan(info *structs.HostInfo) (tmperr error) {
 				return err
 			}
 			if time.Now().Unix()-starttime > (int64(len(userPasswdList)) * 6) {
+				gologger.AuditTimeLogger("[Go] [MYSQL] Timeout,break! %s:%v", info.Host, info.Ports)
 				return err
 			}
 		}
 	}
-
+	gologger.AuditTimeLogger("[Go] [MYSQL] done! %s:%v", info.Host, info.Ports)
 	return tmperr
 }
 
@@ -39,6 +40,7 @@ func MysqlConn(info *structs.HostInfo, user string, pass string) (flag bool, err
 	flag = false
 	Host, Port, Username, Password := info.Host, info.Ports, user, pass
 	dataSourceName := fmt.Sprintf("%v:%v@tcp(%v:%v)/mysql?charset=utf8&timeout=%v", Username, Password, Host, Port, time.Duration(6)*time.Second)
+	gologger.AuditTimeLogger("[Go] [MYSQL-Brute] start try %s", dataSourceName)
 	db, err := sql.Open("mysql", dataSourceName)
 	if err == nil {
 		db.SetConnMaxLifetime(time.Duration(6) * time.Second)
@@ -87,7 +89,7 @@ func MysqlConn(info *structs.HostInfo, user string, pass string) (flag bool, err
 					msg += "     " + dbname + "\n"
 				}
 			}
-
+			gologger.AuditLogger("[Go] [MYSQL-Brute] %s Result:\n%s", showData, msg)
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "Mysql-Login",
 				Security:    "High",

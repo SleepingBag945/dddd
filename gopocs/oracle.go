@@ -27,11 +27,12 @@ func OracleScan(info *structs.HostInfo) (tmperr error) {
 				return err
 			}
 			if time.Now().Unix()-starttime > (int64(len(userPasswdList)) * 6) {
+				gologger.AuditTimeLogger("[Go] [Oracle] Timeout,break! %s:%v", info.Host, info.Ports)
 				return err
 			}
 		}
 	}
-
+	gologger.AuditTimeLogger("[Go] [Oracle] done! %s:%v", info.Host, info.Ports)
 	return tmperr
 }
 
@@ -39,6 +40,7 @@ func OracleConn(info *structs.HostInfo, user string, pass string) (flag bool, er
 	flag = false
 	Host, Port, Username, Password := info.Host, info.Ports, user, pass
 	dataSourceName := fmt.Sprintf("oracle://%s:%s@%s:%s/orcl", Username, Password, Host, Port)
+	gologger.AuditTimeLogger("[Go] [Oracle-Brute] start try %s", dataSourceName)
 	db, err := sql.Open("oracle", dataSourceName)
 	if err == nil {
 		db.SetConnMaxLifetime(time.Duration(6) * time.Second)
@@ -51,7 +53,6 @@ func OracleConn(info *structs.HostInfo, user string, pass string) (flag bool, er
 			gologger.Silent().Msg("[GoPoc] " + result)
 
 			showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", Host, Port, Username, Password)
-
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "Oracle-Login",
 				Security:    "High",

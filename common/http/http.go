@@ -149,6 +149,7 @@ func addPocs(target string, result *map[string][]string, workflowEntity structs.
 		(*result)[target] = []string{}
 		for _, pocName := range workflowEntity.PocsName {
 			(*result)[target] = append((*result)[target], AddYamlSuffix(pocName))
+			gologger.AuditLogger("    - " + pocName)
 		}
 	} else { // 添加过就逐个比较
 		existPocNames, _ := (*result)[target]
@@ -156,12 +157,14 @@ func addPocs(target string, result *map[string][]string, workflowEntity structs.
 			// 没有就添加
 			if utils.GetItemInArray(existPocNames, pocName) == -1 {
 				(*result)[target] = append((*result)[target], AddYamlSuffix(pocName))
+				gologger.AuditLogger("    - " + pocName)
 			}
 		}
 	}
 }
 
 func GetPocs(workflowDB map[string]structs.WorkFlowEntity) (map[string][]string, int) {
+	gologger.AuditTimeLogger("根据指纹选择Poc")
 	result := make(map[string][]string)
 	count := 0
 
@@ -176,6 +179,7 @@ func GetPocs(workflowDB map[string]structs.WorkFlowEntity) (map[string][]string,
 	}
 
 	for target, fingerprints := range structs.GlobalResultMap {
+		gologger.AuditLogger(target + ":")
 		for _, finger := range fingerprints {
 			workflowEntity, ok := workflowDB[finger]
 			if !ok || len(workflowEntity.PocsName) == 0 {

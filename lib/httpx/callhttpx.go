@@ -5,6 +5,7 @@ import (
 	"github.com/projectdiscovery/httpx/runner"
 	errorutil "github.com/projectdiscovery/utils/errors"
 	"os"
+	"strings"
 )
 
 func RemoveDuplicateElement(input []string) []string {
@@ -42,6 +43,7 @@ func CallHTTPx(urls []string, callBack func(resp runner.Result), proxy string, t
 	gologger.Info().Msg("获取Web响应中")
 
 	nextUrls := RemoveDuplicateElement(urls)
+	gologger.AuditLogger("响应探测目标: %s", strings.Join(nextUrls, ","))
 
 	times := 0
 	for len(nextUrls) > 0 && times < 3 {
@@ -85,6 +87,7 @@ func CallHTTPx(urls []string, callBack func(resp runner.Result), proxy string, t
 		times += 1
 
 	}
+	gologger.AuditTimeLogger("响应探测结束")
 
 }
 

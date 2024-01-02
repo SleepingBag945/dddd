@@ -30,6 +30,8 @@ func IsContain(items []string, item string) bool {
 }
 
 func CheckLive(hostslist []string, Ping bool) []string {
+	gologger.AuditTimeLogger("ICMP发包探测存活，目标IP如下")
+	gologger.AuditLogger(strings.Join(hostslist, ","))
 	chanHosts := make(chan string, len(hostslist))
 	go func() {
 		for ip := range chanHosts {

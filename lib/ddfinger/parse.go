@@ -566,6 +566,7 @@ func FingerprintIdentification() {
 			}
 		}
 	}
+	gologger.AuditTimeLogger("指纹识别结束")
 }
 
 func SingleCheck(finger structs.FingerPEntity, Protocol string, headerString string, body string,

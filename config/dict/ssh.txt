@@ -248,6 +248,7 @@ postgres : postgres
 kali : kali
 defaultUsername : defaultPassword
 root : edr@sangfor
+root : Cloud@1234
 admin : Admin@huawei
 admin : admin@huawei.com
 admin : Changeme_123

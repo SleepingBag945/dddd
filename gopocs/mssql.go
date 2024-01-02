@@ -27,11 +27,12 @@ func MssqlScan(info *structs.HostInfo) (tmperr error) {
 				return err
 			}
 			if time.Now().Unix()-starttime > (int64(len(userPasswdList)) * 6) {
+				gologger.AuditTimeLogger("[Go] [MSSQL] Timeout,break! %s:%v", info.Host, info.Ports)
 				return err
 			}
 		}
 	}
-
+	gologger.AuditTimeLogger("[Go] [MSSQL] done! %s:%v", info.Host, info.Ports)
 	return tmperr
 }
 
@@ -101,6 +102,7 @@ func MssqlConn(info *structs.HostInfo, user string, pass string) (flag bool, err
 	Host, Port, Username, Password := info.Host, info.Ports, user, pass
 	dataSourceName := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%v;encrypt=disable;timeout=%v",
 		Host, Username, Password, Port, time.Duration(6)*time.Second)
+	gologger.AuditTimeLogger("[Go] [MSSQL-Brute] start try %s", dataSourceName)
 	db, err := sql.Open("mssql", dataSourceName)
 	if err == nil {
 		db.SetConnMaxLifetime(time.Duration(6) * time.Second)
@@ -113,13 +115,14 @@ func MssqlConn(info *structs.HostInfo, user string, pass string) (flag bool, err
 			gologger.Silent().Msg(result)
 
 			showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", Host, Port, Username, Password)
-
+			r := verifyMssql(db)
+			gologger.AuditLogger("[Go] [MSSQL-Brute] %s Result:\n%s", showData, r)
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "Mssql-Login",
 				Security:    "CRITICAL",
 				Target:      Host + ":" + Port,
 				InfoLeft:    showData,
-				InfoRight:   verifyMssql(db),
+				InfoRight:   r,
 				Description: "Mssql弱口令",
 			})
 

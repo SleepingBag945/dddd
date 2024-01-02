@@ -32,6 +32,8 @@ type Brutelist struct {
 
 func RdpScan(info *structs.HostInfo) (tmperr error) {
 	userPasswdList := sortUserPassword(info, rdpUserPasswdDict, []string{})
+	gologger.AuditTimeLogger("[Go] [RDP-Brute] start try %s:%v", info.Host, info.Ports)
+	defer gologger.AuditTimeLogger("[Go] [RDP-Brute] RdpScan return %s:%v", info.Host, info.Ports)
 
 	var wg sync.WaitGroup
 	var signal bool
@@ -69,6 +71,8 @@ func worker(host, domain string, port int, wg *sync.WaitGroup, brlist chan Brute
 		}
 		go incrNum(num, mutex)
 		user, pass := one.user, one.pass
+		gologger.AuditTimeLogger("[Go] [RDP-Brute] start try %s:%v %v %v", host, port, user, pass)
+
 		flag, err := RdpConn(host, domain, user, pass, port, timeout)
 		if flag == true && err == nil {
 			var result string

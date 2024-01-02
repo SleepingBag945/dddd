@@ -240,6 +240,7 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 
 func HunterSearch(keywords []string) ([]string, []string) {
 	gologger.Info().Msgf("准备从 Hunter 获取数据")
+	gologger.AuditTimeLogger("准备从 Hunter 获取数据")
 	var results []string
 	var ipResults []string
 	for _, keyword := range keywords {

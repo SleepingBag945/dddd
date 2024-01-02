@@ -1250,14 +1250,18 @@ retry:
 		fullURL = parsedURL.String()
 	}
 
-	if r.options.Debug || r.options.DebugRequests {
-		gologger.Info().Msgf("Dumped HTTP request for %s\n\n", fullURL)
-		gologger.Print().Msgf("%s", string(requestDump))
-	}
-	if (r.options.Debug || r.options.DebugResponse) && resp != nil {
-		gologger.Info().Msgf("Dumped HTTP response for %s\n\n", fullURL)
-		gologger.Print().Msgf("%s", string(resp.Raw))
-	}
+	// 审计日志
+	gologger.AuditTimeLogger("Dumped HTTP request for %s\n\n%s", fullURL, string(requestDump))
+	gologger.AuditTimeLogger("Dumped HTTP response for %s\n\n%s", fullURL, string(resp.Raw))
+
+	//if r.options.Debug || r.options.DebugRequests {
+	//	gologger.Info().Msgf("Dumped HTTP request for %s\n\n", fullURL)
+	//	gologger.Print().Msgf("%s", string(requestDump))
+	//}
+	//if (r.options.Debug || r.options.DebugResponse) && resp != nil {
+	//	gologger.Info().Msgf("Dumped HTTP response for %s\n\n", fullURL)
+	//	gologger.Print().Msgf("%s", string(resp.Raw))
+	//}
 
 	builder := &strings.Builder{}
 	builder.WriteString(stringz.RemoveURLDefaultPort(fullURL))

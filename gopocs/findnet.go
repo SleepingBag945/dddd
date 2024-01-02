@@ -40,21 +40,26 @@ func FindnetScan(info *structs.HostInfo) error {
 		return err
 	}
 	_, err = conn.Write(bufferV1)
+	gologger.AuditTimeLogger("[Go] [WMI-Leak] [1/2] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump(bufferV1))
 	if err != nil {
 		return err
 	}
+
 	reply := make([]byte, 4096)
 	_, err = conn.Read(reply)
 	if err != nil {
 		return err
 	}
+	gologger.AuditTimeLogger("[Go] [WMI-Leak] [1/2] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(reply))
 	_, err = conn.Write(bufferV2)
+	gologger.AuditTimeLogger("[Go] [WMI-Leak] [2/2] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump(bufferV2))
 	if err != nil {
 		return err
 	}
 	if n, err := conn.Read(reply); err != nil || n < 42 {
 		return err
 	}
+	gologger.AuditTimeLogger("[Go] [WMI-Leak] [2/2] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(reply))
 	text := reply[42:]
 	flag := true
 	for i := 0; i < len(text)-5; i++ {

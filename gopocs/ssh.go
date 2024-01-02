@@ -15,10 +15,13 @@ var sshUserPasswdDict string
 
 func SshScan(info *structs.HostInfo) (tmperr error) {
 	starttime := time.Now().Unix()
+	gologger.AuditTimeLogger("[Go] [SSH-Brute] start try %s:%v", info.Host, info.Ports)
+	defer gologger.AuditTimeLogger("[Go] [SSH-Brute] SshScan return %s:%v", info.Host, info.Ports)
 
 	userPasswdList := sortUserPassword(info, sshUserPasswdDict, []string{"ssh"})
 
 	for _, userPass := range userPasswdList {
+		gologger.AuditTimeLogger("[Go] [SSH-Brute] start try %s:%v %v %v", info.Host, info.Ports, userPass.UserName, userPass.Password)
 		flag, err := SshConn(info, userPass.UserName, userPass.Password)
 		if flag == true && err == nil {
 			return err

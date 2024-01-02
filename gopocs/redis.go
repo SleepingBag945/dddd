@@ -5,16 +5,12 @@ import (
 	"dddd/structs"
 	"dddd/utils"
 	_ "embed"
+	"encoding/hex"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
 	"net"
 	"strings"
 	"time"
-)
-
-var (
-	dbfilename string
-	dir        string
 )
 
 var redisUserPasswdDict string
@@ -61,6 +57,7 @@ func RedisScan(info *structs.HostInfo) (tmperr error) {
 	passwdList = utils.RemoveDuplicateElement(passwdList)
 
 	for _, pass := range passwdList {
+		gologger.AuditTimeLogger("[Go] [Redis-Brute] try %s:%v Pass:%s", info.Host, info.Ports, pass)
 		flag, err := RedisConn(info, pass)
 		if flag == true && err == nil {
 			return err
@@ -70,10 +67,12 @@ func RedisScan(info *structs.HostInfo) (tmperr error) {
 				return err
 			}
 			if time.Now().Unix()-starttime > (int64(len(passwdList)) * 6) {
+				gologger.AuditTimeLogger("[Go] [Redis-Brute] Timeout,break! %s:%v", info.Host, info.Ports)
 				return err
 			}
 		}
 	}
+	gologger.AuditTimeLogger("[Go] [Redis-Brute] RedisScan return! %s:%v", info.Host, info.Ports)
 
 	return tmperr
 }
@@ -140,6 +139,7 @@ func RedisUnauth(info *structs.HostInfo) (flag bool, err error) {
 		return flag, err
 	}
 	_, err = conn.Write([]byte("info\r\n"))
+	gologger.AuditTimeLogger("[GoPoc] [Redis-Unauth] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump([]byte("info\r\n")))
 	if err != nil {
 		return flag, err
 	}
@@ -147,6 +147,7 @@ func RedisUnauth(info *structs.HostInfo) (flag bool, err error) {
 	if err != nil {
 		return flag, err
 	}
+	gologger.AuditTimeLogger("[GoPoc] [Redis-Unauth] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump([]byte(reply)))
 	if strings.Contains(reply, "redis_version") {
 		flag = true
 

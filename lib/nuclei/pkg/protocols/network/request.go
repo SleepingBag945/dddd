@@ -221,10 +221,11 @@ func (request *Request) executeRequestWithPayloads(variables map[string]interfac
 	}
 
 	request.options.Progress.IncrementRequests()
-
+	requestBytes := []byte(reqBuilder.String())
+	msg := fmt.Sprintf("[%s] Dumped Network request for %s\n%s", request.options.TemplateID, actualAddress, hex.Dump(requestBytes))
+	gologger.AuditTimeLogger("%s", msg)
 	if request.options.Options.Debug || request.options.Options.DebugRequests || request.options.Options.StoreResponse {
-		requestBytes := []byte(reqBuilder.String())
-		msg := fmt.Sprintf("[%s] Dumped Network request for %s\n%s", request.options.TemplateID, actualAddress, hex.Dump(requestBytes))
+
 		if request.options.Options.Debug || request.options.Options.DebugRequests {
 			gologger.Info().Str("address", actualAddress).Msg(msg)
 		}
@@ -335,10 +336,11 @@ func (request *Request) executeRequestWithPayloads(variables map[string]interfac
 
 func dumpResponse(event *output.InternalWrappedEvent, request *Request, response string, actualAddress, address string) {
 	cliOptions := request.options.Options
+	requestBytes := []byte(response)
+	highlightedResponse := responsehighlighter.Highlight(event.OperatorsResult, hex.Dump(requestBytes), cliOptions.NoColor, true)
+	msg := fmt.Sprintf("[%s] Dumped Network response for %s\n\n%s", request.options.TemplateID, actualAddress, highlightedResponse)
+	gologger.AuditTimeLogger("%s", msg)
 	if cliOptions.Debug || cliOptions.DebugResponse || cliOptions.StoreResponse {
-		requestBytes := []byte(response)
-		highlightedResponse := responsehighlighter.Highlight(event.OperatorsResult, hex.Dump(requestBytes), cliOptions.NoColor, true)
-		msg := fmt.Sprintf("[%s] Dumped Network response for %s\n\n", request.options.TemplateID, actualAddress)
 		if cliOptions.Debug || cliOptions.DebugResponse {
 			gologger.Debug().Msg(fmt.Sprintf("%s%s", msg, highlightedResponse))
 		}

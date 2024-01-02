@@ -3,6 +3,7 @@ package gopocs
 import (
 	"dddd/common"
 	"dddd/structs"
+	"encoding/hex"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
 	"strings"
@@ -21,10 +22,12 @@ func MemcachedScan(info *structs.HostInfo) (err error) {
 		err = client.SetDeadline(time.Now().Add(time.Duration(6) * time.Second))
 		if err == nil {
 			_, err = client.Write([]byte("stats\n")) //Set the key randomly to prevent the key on the server from being overwritten
+			gologger.AuditTimeLogger("[Go] [Memcached] Dumped TCP request for %s\n\n%s\n", realhost, hex.Dump([]byte("stats\n")))
 			if err == nil {
 				rev := make([]byte, 1024)
 				n, errRead := client.Read(rev)
 				if errRead == nil {
+					gologger.AuditTimeLogger("[Go] [Memcached] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(rev[:n]))
 					if strings.Contains(string(rev[:n]), "STAT") {
 						result := fmt.Sprintf("[GoPoc] Memcached://%s Unauthorized", realhost)
 						gologger.Silent().Msg(result)

