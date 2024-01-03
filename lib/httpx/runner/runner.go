@@ -1252,7 +1252,11 @@ retry:
 
 	// 审计日志
 	gologger.AuditTimeLogger("Dumped HTTP request for %s\n\n%s", fullURL, string(requestDump))
-	gologger.AuditTimeLogger("Dumped HTTP response for %s\n\n%s", fullURL, string(resp.Raw))
+	respRaw := ""
+	if resp != nil {
+		respRaw = resp.Raw
+	}
+	gologger.AuditTimeLogger("Dumped HTTP response for %s\n\n%s", fullURL, respRaw)
 
 	//if r.options.Debug || r.options.DebugRequests {
 	//	gologger.Info().Msgf("Dumped HTTP request for %s\n\n", fullURL)

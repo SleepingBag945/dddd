@@ -95,9 +95,9 @@ func (l *Logger) Log(event *Event) {
 	}
 	l.writer.Write(data, event.level)
 
-	if event.level == levels.LevelSilent {
-		WriteFile(string(data), "log.txt")
-	}
+	//if event.level == levels.LevelSilent {
+	//	WriteFile(string(data), "log.txt")
+	//}
 	loc, _ := time.LoadLocation("Asia/Shanghai")
 	currentTime := time.Now().In(loc).String()
 	WriteFile("[ "+currentTime+" ] "+string(data), AuditLogFileName)

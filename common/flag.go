@@ -34,7 +34,7 @@ func GC() {
 	debug.FreeOSMemory()
 }
 
-var version = "1.6"
+var version = "1.6.1"
 
 func showBanner() {
 	banner := fmt.Sprintf(`
