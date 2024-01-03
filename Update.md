@@ -6,7 +6,7 @@
 
 嘎掉log.txt的记录，有审计日志就没必要存在了。
 
-修复时区异常处理的问题。
+修复时区异常处理的问题。(https://github.com/SleepingBag945/dddd/issues/25)
 
 
 
