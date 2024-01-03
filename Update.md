@@ -19,8 +19,8 @@
 2. 更新了 **-ni** 参数，用于禁用反连平台。不出网的内网就没必要用反连平台了，容易拖慢扫描速度，且在敏感环境建议开启避免外连至国外地址造成不必要的麻烦。（敏感肌也能用！）
 3. 新增审计日志输出。默认关闭，使用 **-a** 参数(audit)开启。时间、请求地址、响应包、请求包等写至audit.log (可以通过 **-alf** 参数自定义名称)，~~便于甩锅~~ 。避免日志过大，**Golang Poc中爆破不会显示详细数据包，只显示时间、目标、账号与密码。**在敏感环境建议开启，尽管会占用一些磁盘，但能让自己安全一点总归是好事。
 4. 审计功能可以当做debug使用。会在日志中写入详细的运行过程/数据包。便于调试poc/workflow。
-5. 启动时可通过 **-pt** 参数开启代理验证，验证失败程序退出。**-ptu** 参数指定访问的代理测试url，默认为https://www.baidu.com。（https://github.com/SleepingBag945/dddd/issues/24）
-6. 修复了fofa请求的base64编码问题。 （https://github.com/SleepingBag945/dddd/issues/23）
+5. 启动时可通过 **-pt** 参数开启代理验证，验证失败程序退出。**-ptu** 参数指定访问的代理测试url，默认为https://www.baidu.com。(https://github.com/SleepingBag945/dddd/issues/24)
+6. 修复了fofa请求的base64编码问题。 (https://github.com/SleepingBag945/dddd/issues/23)
 
 7. 更新53个热点Poc。
 
