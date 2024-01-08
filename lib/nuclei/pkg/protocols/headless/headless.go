@@ -60,8 +60,17 @@ type Request struct {
 	Fuzzing []*fuzz.Rule `yaml:"fuzzing,omitempty" json:"fuzzing,omitempty" jsonschema:"title=fuzzin rules for http fuzzing,description=Fuzzing describes rule schema to fuzz headless requests"`
 
 	// description: |
+	//   SelfContained specifies if the request is self-contained.
+	SelfContained bool `yaml:"-" json:"-"`
+
+	// description: |
 	//   CookieReuse is an optional setting that enables cookie reuse
+	// Deprecated: This is default now. Use disable-cookie to disable cookie reuse. cookie-reuse will be removed in future releases.
 	CookieReuse bool `yaml:"cookie-reuse,omitempty" json:"cookie-reuse,omitempty" jsonschema:"title=optional cookie reuse enable,description=Optional setting that enables cookie reuse"`
+
+	// description: |
+	//   DisableCookie is an optional setting that disables cookie reuse
+	DisableCookie bool `yaml:"disable-cookie,omitempty" json:"disable-cookie,omitempty" jsonschema:"title=optional disable cookie reuse,description=Optional setting that disables cookie reuse"`
 }
 
 // RequestPartDefinitions contains a mapping of request part definitions and their

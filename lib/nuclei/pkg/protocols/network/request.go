@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"io"
 	"net"
 	"net/url"
 	"os"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"go.uber.org/multierr"
 	"golang.org/x/exp/maps"
 
 	"github.com/projectdiscovery/gologger"
@@ -24,12 +24,20 @@ import (
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/helpers/eventcreator"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/helpers/responsehighlighter"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/replacer"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/utils/vardump"
 	protocolutils "github.com/projectdiscovery/nuclei/v3/pkg/protocols/utils"
 	templateTypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
 	errorutil "github.com/projectdiscovery/utils/errors"
 	mapsutil "github.com/projectdiscovery/utils/maps"
+	"github.com/projectdiscovery/utils/reader"
+)
+
+var (
+	// TODO: make this configurable
+	// DefaultReadTimeout is the default read timeout for network requests
+	DefaultReadTimeout = time.Duration(5) * time.Second
 )
 
 var _ protocols.Request = &Request{}
@@ -39,18 +47,82 @@ func (request *Request) Type() templateTypes.ProtocolType {
 	return templateTypes.NetworkProtocol
 }
 
+// getOpenPorts returns all open ports from list of ports provided in template
+// if only 1 port is provided, no need to check if port is open or not
+func (request *Request) getOpenPorts(target *contextargs.Context) ([]string, error) {
+	if len(request.ports) == 1 {
+		// no need to check if port is open or not
+		return request.ports, nil
+	}
+	errs := []error{}
+	// if more than 1 port is provided, check if port is open or not
+	openPorts := make([]string, 0)
+	for _, port := range request.ports {
+		cloned := target.Clone()
+		if err := cloned.UseNetworkPort(port, request.ExcludePorts); err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		addr, err := getAddress(cloned.MetaInput.Input)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		conn, err := protocolstate.Dialer.Dial(context.TODO(), "tcp", addr)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		_ = conn.Close()
+		openPorts = append(openPorts, port)
+	}
+	if len(openPorts) == 0 {
+		return nil, multierr.Combine(errs...)
+	}
+	return openPorts, nil
+}
+
 // ExecuteWithResults executes the protocol requests and returns results instead of writing them.
 func (request *Request) ExecuteWithResults(target *contextargs.Context, metadata, previous output.InternalEvent, callback protocols.OutputEventCallback) error {
+	visitedAddresses := make(mapsutil.Map[string, struct{}])
+
+	if request.Port == "" {
+		// backwords compatibility or for other use cases
+		// where port is not provided in template
+		if err := request.executeOnTarget(target, visitedAddresses, metadata, previous, callback); err != nil {
+			return err
+		}
+	}
+
+	// get open ports from list of ports provided in template
+	ports, err := request.getOpenPorts(target)
+	if len(ports) == 0 {
+		return err
+	}
+	if err != nil {
+		// TODO: replace this after scan context is implemented
+		gologger.Verbose().Msgf("[%v] got errors while checking open ports: %s\n", request.options.TemplateID, err)
+	}
+
+	for _, port := range ports {
+		input := target.Clone()
+		// use network port updates input with new port requested in template file
+		// and it is ignored if input port is not standard http(s) ports like 80,8080,8081 etc
+		// idea is to reduce redundant dials to http ports
+		if err := input.UseNetworkPort(port, request.ExcludePorts); err != nil {
+			gologger.Debug().Msgf("Could not network port from constants: %s\n", err)
+		}
+		if err := request.executeOnTarget(input, visitedAddresses, metadata, previous, callback); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (request *Request) executeOnTarget(input *contextargs.Context, visited mapsutil.Map[string, struct{}], metadata, previous output.InternalEvent, callback protocols.OutputEventCallback) error {
 	var address string
 	var err error
-
-	input := target.Clone()
-	// use network port updates input with new port requested in template file
-	// and it is ignored if input port is not standard http(s) ports like 80,8080,8081 etc
-	// idea is to reduce redundant dials to http ports
-	if err := input.UseNetworkPort(request.Port, request.ExcludePorts); err != nil {
-		gologger.Debug().Msgf("Could not network port from constants: %s\n", err)
-	}
 
 	if request.SelfContained {
 		address = ""
@@ -68,15 +140,13 @@ func (request *Request) ExecuteWithResults(target *contextargs.Context, metadata
 	variablesMap := request.options.Variables.Evaluate(variables)
 	variables = generators.MergeMaps(variablesMap, variables, request.options.Constants)
 
-	visitedAddresses := make(mapsutil.Map[string, struct{}])
-
 	for _, kv := range request.addresses {
 		actualAddress := replacer.Replace(kv.address, variables)
 
-		if visitedAddresses.Has(actualAddress) && !request.options.Options.DisableClustering {
+		if visited.Has(actualAddress) && !request.options.Options.DisableClustering {
 			continue
 		}
-		visitedAddresses.Set(actualAddress, struct{}{})
+		visited.Set(actualAddress, struct{}{})
 
 		if err := request.executeAddress(variables, actualAddress, address, input, kv.tls, previous, callback); err != nil {
 			outputEvent := request.responseToDSLMap("", "", "", address, "")
@@ -196,15 +266,14 @@ func (request *Request) executeRequestWithPayloads(variables map[string]interfac
 		}
 
 		if input.Read > 0 {
-			buffer := make([]byte, input.Read)
-			n, err := conn.Read(buffer)
+			buffer, err := ConnReadNWithTimeout(conn, int64(input.Read), DefaultReadTimeout)
 			if err != nil {
 				return errorutil.NewWithErr(err).Msgf("could not read response from connection")
 			}
 
-			responseBuilder.Write(buffer[:n])
+			responseBuilder.Write(buffer)
 
-			bufferStr := string(buffer[:n])
+			bufferStr := string(buffer)
 			if input.Name != "" {
 				inputEvents[input.Name] = bufferStr
 				interimValues[input.Name] = bufferStr
@@ -221,11 +290,10 @@ func (request *Request) executeRequestWithPayloads(variables map[string]interfac
 	}
 
 	request.options.Progress.IncrementRequests()
-	requestBytes := []byte(reqBuilder.String())
-	msg := fmt.Sprintf("[%s] Dumped Network request for %s\n%s", request.options.TemplateID, actualAddress, hex.Dump(requestBytes))
-	gologger.AuditTimeLogger("%s", msg)
-	if request.options.Options.Debug || request.options.Options.DebugRequests || request.options.Options.StoreResponse {
 
+	if request.options.Options.Debug || request.options.Options.DebugRequests || request.options.Options.StoreResponse {
+		requestBytes := []byte(reqBuilder.String())
+		msg := fmt.Sprintf("[%s] Dumped Network request for %s\n%s", request.options.TemplateID, actualAddress, hex.Dump(requestBytes))
 		if request.options.Options.Debug || request.options.Options.DebugRequests {
 			gologger.Info().Str("address", actualAddress).Msg(msg)
 		}
@@ -244,51 +312,19 @@ func (request *Request) executeRequestWithPayloads(variables map[string]interfac
 	if request.ReadSize != 0 {
 		bufferSize = request.ReadSize
 	}
-
-	var (
-		final []byte
-		n     int
-	)
-
 	if request.ReadAll {
-		readInterval := time.NewTimer(time.Second * 1)
-		// stop the timer and drain the channel
-		closeTimer := func(t *time.Timer) {
-			if !t.Stop() {
-				<-t.C
-			}
-		}
-	readSocket:
-		for {
-			select {
-			case <-readInterval.C:
-				closeTimer(readInterval)
-				break readSocket
-			default:
-				buf := make([]byte, bufferSize)
-				nBuf, err := conn.Read(buf)
-				if err != nil && !os.IsTimeout(err) && err != io.EOF {
-					request.options.Output.Request(request.options.TemplatePath, address, request.Type().String(), err)
-					closeTimer(readInterval)
-					return errors.Wrap(err, "could not read from server")
-				}
-				responseBuilder.Write(buf[:nBuf])
-				final = append(final, buf...)
-				n += nBuf
-			}
-		}
-	} else {
-		final = make([]byte, bufferSize)
-		n, err = conn.Read(final)
-		if err != nil && !os.IsTimeout(err) && err != io.EOF {
-			request.options.Output.Request(request.options.TemplatePath, address, request.Type().String(), err)
-			return errors.Wrap(err, "could not read from server")
-		}
-		responseBuilder.Write(final[:n])
+		bufferSize = -1
 	}
 
+	final, err := ConnReadNWithTimeout(conn, int64(bufferSize), DefaultReadTimeout)
+	if err != nil {
+		request.options.Output.Request(request.options.TemplatePath, address, request.Type().String(), err)
+		return errors.Wrap(err, "could not read from server")
+	}
+	responseBuilder.Write(final)
+
 	response := responseBuilder.String()
-	outputEvent := request.responseToDSLMap(reqBuilder.String(), string(final[:n]), response, input.MetaInput.Input, actualAddress)
+	outputEvent := request.responseToDSLMap(reqBuilder.String(), string(final), response, input.MetaInput.Input, actualAddress)
 	// add response fields to template context and merge templatectx variables to output event
 	request.options.AddTemplateVars(input.MetaInput, request.Type(), request.ID, outputEvent)
 	outputEvent = generators.MergeMaps(outputEvent, request.options.GetTemplateCtx(input.MetaInput).GetAll())
@@ -336,11 +372,10 @@ func (request *Request) executeRequestWithPayloads(variables map[string]interfac
 
 func dumpResponse(event *output.InternalWrappedEvent, request *Request, response string, actualAddress, address string) {
 	cliOptions := request.options.Options
-	requestBytes := []byte(response)
-	highlightedResponse := responsehighlighter.Highlight(event.OperatorsResult, hex.Dump(requestBytes), cliOptions.NoColor, true)
-	msg := fmt.Sprintf("[%s] Dumped Network response for %s\n\n%s", request.options.TemplateID, actualAddress, highlightedResponse)
-	gologger.AuditTimeLogger("%s", msg)
 	if cliOptions.Debug || cliOptions.DebugResponse || cliOptions.StoreResponse {
+		requestBytes := []byte(response)
+		highlightedResponse := responsehighlighter.Highlight(event.OperatorsResult, hex.Dump(requestBytes), cliOptions.NoColor, true)
+		msg := fmt.Sprintf("[%s] Dumped Network response for %s\n\n", request.options.TemplateID, actualAddress)
 		if cliOptions.Debug || cliOptions.DebugResponse {
 			gologger.Debug().Msg(fmt.Sprintf("%s%s", msg, highlightedResponse))
 		}
@@ -377,4 +412,28 @@ func getAddress(toTest string) (string, error) {
 		toTest = parsed.Host
 	}
 	return toTest, nil
+}
+
+func ConnReadNWithTimeout(conn net.Conn, n int64, timeout time.Duration) ([]byte, error) {
+	if timeout == 0 {
+		timeout = DefaultReadTimeout
+	}
+	if n == -1 {
+		// if n is -1 then read all available data from connection
+		return reader.ConnReadNWithTimeout(conn, -1, timeout)
+	} else if n == 0 {
+		n = 4096 // default buffer size
+	}
+	b := make([]byte, n)
+	_ = conn.SetDeadline(time.Now().Add(timeout))
+	count, err := conn.Read(b)
+	_ = conn.SetDeadline(time.Time{})
+	if err != nil && os.IsTimeout(err) && count > 0 {
+		// in case of timeout with some value read, return the value
+		return b[:count], nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return b[:count], nil
 }

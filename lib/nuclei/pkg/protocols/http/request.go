@@ -73,13 +73,11 @@ func (request *Request) executeRaceRequest(input *contextargs.Context, previous 
 	if err != nil {
 		return err
 	}
-	msg := fmt.Sprintf("[%s] Dumped HTTP request for %s\n\n%s", request.options.TemplateID, reqURL, string(dumpedRequest))
-	gologger.AuditTimeLogger("%s", msg)
 	if request.options.Options.Debug || request.options.Options.DebugRequests || request.options.Options.StoreResponse {
-
+		msg := fmt.Sprintf("[%s] Dumped HTTP request for %s\n\n", request.options.TemplateID, reqURL)
 		if request.options.Options.Debug || request.options.Options.DebugRequests {
-			gologger.Info().Msg(msg)
-			gologger.Print().Msgf("%s", string(dumpedRequest))
+			gologger.Debug().Msg(msg)
+			gologger.Debug().Msgf("%s", string(dumpedRequest))
 		}
 		if request.options.Options.StoreResponse {
 			request.options.Output.WriteStoreDebugData(reqURL, request.options.TemplateID, request.Type().String(), fmt.Sprintf("%s\n%s", msg, dumpedRequest))
@@ -636,12 +634,12 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
 			return dumpError
 		}
 		dumpedRequestString := string(dumpedRequest)
-		msg := fmt.Sprintf("[%s] Dumped HTTP request for %s\n\n%s", request.options.TemplateID, formedURL, dumpedRequestString)
-		gologger.AuditTimeLogger("%s", msg)
 		if request.options.Options.Debug || request.options.Options.DebugRequests || request.options.Options.StoreResponse {
+			msg := fmt.Sprintf("[%s] Dumped HTTP request for %s\n\n", request.options.TemplateID, formedURL)
+
 			if request.options.Options.Debug || request.options.Options.DebugRequests {
-				gologger.Info().Msg(msg)
-				gologger.Print().Msgf("%s", dumpedRequestString)
+				gologger.Debug().Msg(msg)
+				gologger.Debug().Msgf("%s", dumpedRequestString)
 			}
 			if request.options.Options.StoreResponse {
 				request.options.Output.WriteStoreDebugData(input.MetaInput.Input, request.options.TemplateID, request.Type().String(), fmt.Sprintf("%s\n%s", msg, dumpedRequestString))
@@ -657,26 +655,25 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
 		request.options.Output.Request(request.options.TemplatePath, formedURL, request.Type().String(), err)
 		request.options.Progress.IncrementErrorsBy(1)
 
-		// If we have interactsh markers and request times out, still send
+		// In case of interactsh markers and request times out, still send
 		// a callback event so in case we receive an interaction, correlation is possible.
-		if hasInteractMatchers {
-			outputEvent := request.responseToDSLMap(&http.Response{}, input.MetaInput.Input, formedURL, tostring.UnsafeToString(dumpedRequest), "", "", "", 0, generatedRequest.meta)
-			if i := strings.LastIndex(hostname, ":"); i != -1 {
-				hostname = hostname[:i]
-			}
-
-			if input.MetaInput.CustomIP != "" {
-				outputEvent["ip"] = input.MetaInput.CustomIP
-			} else {
-				outputEvent["ip"] = httpclientpool.Dialer.GetDialedIP(hostname)
-			}
-
-			event := &output.InternalWrappedEvent{InternalEvent: outputEvent}
-			if request.CompiledOperators != nil {
-				event.InternalEvent = outputEvent
-			}
-			callback(event)
+		// Also, to log failed use-cases.
+		outputEvent := request.responseToDSLMap(&http.Response{}, input.MetaInput.Input, formedURL, tostring.UnsafeToString(dumpedRequest), "", "", "", 0, generatedRequest.meta)
+		if i := strings.LastIndex(hostname, ":"); i != -1 {
+			hostname = hostname[:i]
 		}
+
+		if input.MetaInput.CustomIP != "" {
+			outputEvent["ip"] = input.MetaInput.CustomIP
+		} else {
+			outputEvent["ip"] = httpclientpool.Dialer.GetDialedIP(hostname)
+		}
+
+		event := &output.InternalWrappedEvent{InternalEvent: outputEvent}
+		if request.CompiledOperators != nil {
+			event.InternalEvent = outputEvent
+		}
+		callback(event)
 		return err
 	}
 	defer func() {
@@ -867,23 +864,22 @@ func (request *Request) setCustomHeaders(req *generatedRequest) {
 const CRLF = "\r\n"
 
 func dumpResponse(event *output.InternalWrappedEvent, request *Request, redirectedResponse []byte, formedURL string, responseContentType string, isResponseTruncated bool, reqURL string) {
-	response := string(redirectedResponse)
 	cliOptions := request.options.Options
-	var highlightedResult string
-	if responseContentType == "application/octet-stream" || ((responseContentType == "" || responseContentType == "application/x-www-form-urlencoded") && responsehighlighter.HasBinaryContent(response)) {
-		highlightedResult = createResponseHexDump(event, response, cliOptions.NoColor)
-	} else {
-		highlightedResult = responsehighlighter.Highlight(event.OperatorsResult, response, cliOptions.NoColor, false)
-	}
-
-	msg := "[%s] Dumped HTTP response %s\n\n%s"
-	if isResponseTruncated {
-		msg = "[%s] Dumped HTTP response (Truncated) %s\n\n%s"
-	}
-	fMsg := fmt.Sprintf(msg, request.options.TemplateID, formedURL, highlightedResult)
-	gologger.AuditTimeLogger("%s", fMsg)
-
 	if cliOptions.Debug || cliOptions.DebugResponse || cliOptions.StoreResponse {
+		response := string(redirectedResponse)
+
+		var highlightedResult string
+		if responseContentType == "application/octet-stream" || ((responseContentType == "" || responseContentType == "application/x-www-form-urlencoded") && responsehighlighter.HasBinaryContent(response)) {
+			highlightedResult = createResponseHexDump(event, response, cliOptions.NoColor)
+		} else {
+			highlightedResult = responsehighlighter.Highlight(event.OperatorsResult, response, cliOptions.NoColor, false)
+		}
+
+		msg := "[%s] Dumped HTTP response %s\n\n%s"
+		if isResponseTruncated {
+			msg = "[%s] Dumped HTTP response (Truncated) %s\n\n%s"
+		}
+		fMsg := fmt.Sprintf(msg, request.options.TemplateID, formedURL, highlightedResult)
 		if cliOptions.Debug || cliOptions.DebugResponse {
 			gologger.Debug().Msg(fMsg)
 		}

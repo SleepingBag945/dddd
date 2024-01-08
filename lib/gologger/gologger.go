@@ -93,11 +93,11 @@ func (l *Logger) Log(event *Event) {
 	if err != nil {
 		return
 	}
-	l.writer.Write(data, event.level)
 
-	//if event.level == levels.LevelSilent {
-	//	WriteFile(string(data), "log.txt")
-	//}
+	if event.level != levels.LevelDebug {
+		l.writer.Write(data, event.level)
+	}
+
 	loc, err := time.LoadLocation("Asia/Shanghai")
 	currentTime := ""
 	if err != nil {

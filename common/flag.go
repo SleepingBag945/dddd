@@ -34,7 +34,7 @@ func GC() {
 	debug.FreeOSMemory()
 }
 
-var version = "1.6.1"
+var version = "1.7"
 
 func showBanner() {
 	banner := fmt.Sprintf(`
@@ -255,7 +255,7 @@ func prepare() {
 
 	structs.FingerprintDB = ddfinger.ParseFingerYaml()
 	if len(structs.FingerprintDB) == 0 {
-		gologger.Fatal().Msg("请检查指纹数据库是否正常。")
+		gologger.Fatal().Msg("请检查指纹数据库是否正常，是否正确放置config文件夹。")
 	}
 	gologger.Info().Msgf("YAML指纹数据: %d 条\n", len(structs.FingerprintDB))
 

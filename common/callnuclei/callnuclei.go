@@ -121,6 +121,8 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	}
 	options.Targets = targets
 
+	options.ExcludeTargets = []string{}
+
 	// path to file containing a list of target URLs/hosts to scan (one per line)
 	// 包含要扫描的目标URL/主机列表的文件路径(每行一个)
 	options.TargetsFilePath = ""
@@ -472,7 +474,7 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	options.ShowActions = false
 
 	// 显示所有请求和响应
-	options.Debug = false
+	options.Debug = gologger.Audit
 	// 显示所有请求
 	options.DebugRequests = false
 	// 显示所有响应
@@ -522,48 +524,21 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 	// 更改Nuclei默认端口（默认：9092）
 	options.MetricsPort = 9092
 
-	// run scan on nuclei cloud
-	options.Cloud = false
-	// add specified data source (s3,github)
-	options.AddDatasource = ""
-	// add target(s) to cloud
-	options.AddTarget = ""
-	// add template(s) to cloud
-	options.AddTemplate = ""
-	// list previous cloud scans
-	options.ScanList = false
-	// list scan output by scan id
-	options.ScanOutput = ""
-	// list cloud target by id
-	options.ListTargets = false
-	// list cloud template by id
-	options.ListTemplates = false
-	// list cloud datasource by id
-	options.ListDatasources = false
-	// list reporting sources
-	options.ListReportingSources = false
-	// delete cloud scan by id
-	options.DeleteScan = ""
-	// delete target(s) from cloud
-	options.RemoveTarget = ""
-	// delete template(s) from cloud
-	options.RemoveTemplate = ""
-	// delete specified data source
-	options.RemoveDatasource = ""
-	// disable specified reporting source
-	options.DisableReportingSource = ""
-	// enable specified reporting source
-	options.EnableReportingSource = ""
-	// get target content by id
-	options.GetTarget = ""
-	// get template content by id
-	options.GetTemplate = ""
-	// disable scan/output storage on cloud
-	options.NoStore = false
-	// do not display pretty-printed tables
-	options.NoTables = false
-	// limit the number of output to display
-	options.OutputLimit = 100
+	options.OmitTemplate = false
+
+	// network请求超时时间
+	options.DialerTimeout = 0
+
+	// network请求的keep-alive持续时间
+	options.DialerKeepAlive = 0
+
+	// 启用加载基于代码协议的模板
+	options.EnableCodeTemplates = false
+
+	// 将扫描结果上传到pdcp仪表板 敏感环境高危
+	options.EnableCloudUpload = false
+
+	options.SignTemplates = false
 
 	options.PocNameForSearch = nameForSearch
 

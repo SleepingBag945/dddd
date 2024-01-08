@@ -39,6 +39,14 @@ func (request *Request) Type() templateTypes.ProtocolType {
 
 // ExecuteWithResults executes the protocol requests and returns results instead of writing them.
 func (request *Request) ExecuteWithResults(input *contextargs.Context, metadata, previous output.InternalEvent, callback protocols.OutputEventCallback) error {
+	if request.SelfContained {
+		url, err := extractBaseURLFromActions(request.Steps)
+		if err != nil {
+			return err
+		}
+		input = contextargs.NewWithInput(url)
+	}
+
 	if request.options.Browser.UserAgent() == "" {
 		request.options.Browser.SetUserAgent(request.compiledUserAgent)
 	}
@@ -86,6 +94,21 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, metadata,
 	return nil
 }
 
+// This function extracts the base URL from actions.
+func extractBaseURLFromActions(steps []*engine.Action) (string, error) {
+	for _, action := range steps {
+		if action.ActionType.ActionType == engine.ActionNavigate {
+			navigateURL := action.GetArg("url")
+			url, err := urlutil.Parse(navigateURL)
+			if err != nil {
+				return "", errors.Errorf("could not parse URL '%s': %s", navigateURL, err.Error())
+			}
+			return fmt.Sprintf("%s://%s", url.Scheme, url.Host), nil
+		}
+	}
+	return "", errors.New("no navigation action found")
+}
+
 func (request *Request) executeRequestWithPayloads(input *contextargs.Context, payloads map[string]interface{}, previous output.InternalEvent, callback protocols.OutputEventCallback) error {
 	instance, err := request.options.Browser.NewInstance()
 	if err != nil {
@@ -107,13 +130,13 @@ func (request *Request) executeRequestWithPayloads(input *contextargs.Context, p
 		return errors.Wrap(err, errCouldGetHtmlElement)
 	}
 	options := &engine.Options{
-		Timeout:     time.Duration(request.options.Options.PageTimeout) * time.Second,
-		CookieReuse: request.CookieReuse,
-		Options:     request.options.Options,
+		Timeout:       time.Duration(request.options.Options.PageTimeout) * time.Second,
+		DisableCookie: request.DisableCookie,
+		Options:       request.options.Options,
 	}
 
-	if options.CookieReuse && input.CookieJar == nil {
-		return errors.New("cookie-reuse set but cookie-jar is nil")
+	if !options.DisableCookie && input.CookieJar == nil {
+		return errors.New("cookie reuse enabled but cookie-jar is nil")
 	}
 
 	out, page, err := instance.Run(input, request.Steps, payloads, options)
@@ -157,7 +180,7 @@ func (request *Request) executeRequestWithPayloads(input *contextargs.Context, p
 		responseBody, _ = html.HTML()
 	}
 
-	outputEvent := request.responseToDSLMap(responseBody, out["header"], out["status_code"], reqBuilder.String(), input.MetaInput.Input, input.MetaInput.Input, page.DumpHistory())
+	outputEvent := request.responseToDSLMap(responseBody, out["header"], out["status_code"], reqBuilder.String(), input.MetaInput.Input, navigatedURL, page.DumpHistory())
 	// add response fields to template context and merge templatectx variables to output event
 	request.options.AddTemplateVars(input.MetaInput, request.Type(), request.ID, outputEvent)
 	outputEvent = generators.MergeMaps(outputEvent, request.options.GetTemplateCtx(input.MetaInput).GetAll())

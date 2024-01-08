@@ -76,6 +76,22 @@ type Request struct {
 	//   - "auto"
 	//	 - "openssl" # reverts to "auto" is openssl is not installed
 	ScanMode string `yaml:"scan_mode,omitempty" json:"scan_mode,omitempty" jsonschema:"title=Scan Mode,description=Scan Mode - auto if not specified.,enum=ctls,enum=ztls,enum=auto"`
+	// description: |
+	//   TLS Versions Enum - false if not specified
+	//   Enumerates supported TLS versions
+	TLSVersionsEnum bool `yaml:"tls_version_enum,omitempty" json:"tls_version_enum,omitempty" jsonschema:"title=Enumerate Versions,description=Enumerate Version - false if not specified"`
+	// description: |
+	//   TLS Ciphers Enum - false if not specified
+	//   Enumerates supported TLS ciphers
+	TLSCiphersEnum bool `yaml:"tls_cipher_enum,omitempty" json:"tls_cipher_enum,omitempty" jsonschema:"title=Enumerate Ciphers,description=Enumerate Ciphers - false if not specified"`
+	// description: |
+	//  TLS Cipher types to enumerate
+	// values:
+	//   - "insecure" (default)
+	//   - "weak"
+	//   - "secure"
+	//   - "all"
+	TLSCipherTypes []string `yaml:"tls_cipher_types,omitempty" json:"tls_cipher_types,omitempty" jsonschema:"title=TLS Cipher Types,description=TLS Cipher Types to enumerate,enum=weak,enum=secure,enum=insecure,enum=all"`
 
 	// cache any variables that may be needed for operation.
 	dialer  *fastdialer.Dialer
@@ -115,6 +131,14 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
 		// if openssl is not installed instead of failing "auto" scanmode is used
 		request.ScanMode = "auto"
 	}
+	if request.TLSCiphersEnum {
+		// cipher enumeration requires tls version enumeration first
+		request.TLSVersionsEnum = true
+	}
+	if request.TLSCiphersEnum && len(request.TLSCipherTypes) == 0 {
+		// by default only look for insecure ciphers
+		request.TLSCipherTypes = []string{"insecure"}
+	}
 
 	tlsxOptions := &clients.Options{
 		AllCiphers:        true,
@@ -133,6 +157,9 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
 		ClientHello:       true,
 		ServerHello:       true,
 		DisplayDns:        true,
+		TlsVersionsEnum:   request.TLSVersionsEnum,
+		TlsCiphersEnum:    request.TLSCiphersEnum,
+		TLsCipherLevel:    request.TLSCipherTypes,
 	}
 
 	tlsxService, err := tlsx.New(tlsxOptions)
@@ -363,18 +390,30 @@ func (request *Request) Type() templateTypes.ProtocolType {
 }
 
 func (request *Request) MakeResultEventItem(wrapped *output.InternalWrappedEvent) *output.ResultEvent {
+	fields := protocolutils.GetJsonFieldsFromURL(types.ToString(wrapped.InternalEvent["host"]))
+	if types.ToString(wrapped.InternalEvent["ip"]) != "" {
+		fields.Ip = types.ToString(wrapped.InternalEvent["ip"])
+	}
+	// in case scheme is not specified , we only connect to port 443 unless custom https port was specified
+	// like 8443 etc
+	if fields.Port == "80" {
+		fields.Port = "443"
+	}
 	data := &output.ResultEvent{
 		TemplateID:       types.ToString(wrapped.InternalEvent["template-id"]),
 		TemplatePath:     types.ToString(wrapped.InternalEvent["template-path"]),
 		Info:             wrapped.InternalEvent["template-info"].(model.Info),
 		Type:             types.ToString(wrapped.InternalEvent["type"]),
-		Host:             types.ToString(wrapped.InternalEvent["host"]),
+		Host:             fields.Host,
+		Port:             fields.Port,
 		Matched:          types.ToString(wrapped.InternalEvent["matched"]),
 		Metadata:         wrapped.OperatorsResult.PayloadValues,
 		ExtractedResults: wrapped.OperatorsResult.OutputExtracts,
 		Timestamp:        time.Now(),
 		MatcherStatus:    true,
-		IP:               types.ToString(wrapped.InternalEvent["ip"]),
+		IP:               fields.Ip,
+		TemplateEncoded:  request.options.EncodeTemplate(),
+		Error:            types.ToString(wrapped.InternalEvent["error"]),
 	}
 	return data
 }
