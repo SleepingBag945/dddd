@@ -34,6 +34,8 @@ type Config struct {
 	TCPPortScanTimeout         int
 	MasscanPath                string
 	AllowLocalAreaDomain       bool
+	AllowCDNAssets             bool
+	NoHostBind bool
 	HTTPProxy                  string
 	HTTPProxyTest              bool
 	HTTPProxyTestURL           string
@@ -56,6 +58,7 @@ type Config struct {
 	NoICMPPing                 bool
 	TCPPing                    bool
 	NoInteractsh               bool
+	OnlyIPPort                 bool
 }
 
 type CDNResult struct {

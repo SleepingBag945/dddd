@@ -3,6 +3,7 @@ package uncover
 import (
 	"dddd/structs"
 	"dddd/utils"
+	"dddd/utils/cdn"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -127,8 +128,8 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 		if responseJson.Code != 200 {
 			gologger.Error().Msgf("[Hunter] %s 搜索失败！Error:%s", keyword, responseJson.Message)
 
-			if strings.Contains(responseJson.Message, "今日免费积分已用") &&
-				strings.Contains(responseJson.Message, "导出数据将扣除权益积分") {
+			if strings.Contains(responseJson.Message, "今日免费积分已用") ||
+				strings.Contains(responseJson.Message, "今日免费积分不足") {
 				time.Sleep(time.Second * 3)
 				continue
 			}
@@ -145,10 +146,42 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 			return results, ipResult
 		}
 
-		for _, v := range responseJson.Data.InfoArr {
-			if v.IsWeb == "是" {
-				gologger.Silent().Msgf("[Hunter] [%d] %s [%s] [%s] [%s]", v.Code, v.URL, v.Title, v.City, v.Company)
+		// 做一个域名缓存，避免重复dns请求
+		domainCDNMap := make(map[string]bool)
+		var domainList []string
 
+		for _, v := range responseJson.Data.InfoArr {
+			domainList = append(domainList, v.Domain)
+		}
+
+		domainList = utils.RemoveDuplicateElement(domainList)
+		if len(domainList) != 0 {
+			gologger.Info().Msgf("正在查询 [%v] 个域名是否为CDN资产", len(domainList))
+		}
+		cdnDomains, normalDomains, _ := cdn.CheckCDNs(domainList, structs.GlobalConfig.SubdomainBruteForceThreads)
+		for _, d := range cdnDomains {
+			_, ok := domainCDNMap[d]
+			if !ok {
+				domainCDNMap[d] = true
+			}
+		}
+		for _, d := range normalDomains {
+			_, ok := domainCDNMap[d]
+			if !ok {
+				domainCDNMap[d] = false
+			}
+		}
+
+		for _, v := range responseJson.Data.InfoArr {
+			isCDN := false
+			t, ok := domainCDNMap[v.Domain]
+			if ok {
+				isCDN = t
+			}
+			if !isCDN {
+				AddIPDomainMap(v.IP, v.Domain)
+			}
+			if v.IsWeb == "是" {
 				if structs.GlobalConfig.LowPerceptionMode {
 					rootURL := fmt.Sprintf("%s://%s:%d", v.Protocol, v.IP, v.Port)
 
@@ -198,11 +231,21 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 						structs.GlobalURLMap[rootURL] = urlE
 						structs.GlobalURLMapLock.Unlock()
 					}
-				} else {
-					results = append(results, v.URL)
+				} else { // 正常模式
+					p := ""
+					if structs.GlobalConfig.OnlyIPPort && !isCDN {
+						p = fmt.Sprintf("%s://%s:%d", v.Protocol, v.IP, v.Port)
+					} else {
+						p = v.URL
+					}
+					if utils.GetItemInArray(results, p) == -1 {
+						if !isCDN || structs.GlobalConfig.AllowCDNAssets {
+							results = append(results, p)
+							gologger.Silent().Msgf("[Hunter] [%d] %s [%s] [%s] [%s]", v.Code, p, v.Title, v.City, v.Company)
+						}
+					}
 				}
 			} else {
-				gologger.Silent().Msgf("[Hunter] %s://%s:%d", v.Protocol, v.IP, v.Port)
 				if structs.GlobalConfig.LowPerceptionMode {
 					hostPort := fmt.Sprintf("%s:%d", v.IP, v.Port)
 					structs.GlobalIPPortMapLock.Lock()
@@ -216,9 +259,19 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 					}
 				} else {
 					results = append(results, fmt.Sprintf("%s:%v", v.IP, v.Port))
+
+					p := fmt.Sprintf("%s:%d", v.IP, v.Port)
+					if utils.GetItemInArray(results, p) == -1 {
+						if !isCDN || structs.GlobalConfig.AllowCDNAssets {
+							results = append(results, p)
+							gologger.Silent().Msgf("[Hunter] %s://%s:%d", v.Protocol, v.IP, v.Port)
+						}
+					}
 				}
 			}
-			ipResult = append(ipResult, v.IP)
+			if !isCDN {
+				ipResult = append(ipResult, v.IP)
+			}
 		}
 
 		currentQueryCount += len(responseJson.Data.InfoArr)

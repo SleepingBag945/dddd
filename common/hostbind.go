@@ -12,7 +12,7 @@ import (
 )
 
 func HostBindCheck() {
-	gologger.AuditTimeLogger("域名绑定资产发现")
+	gologger.Info().Msg("域名绑定资产发现")
 
 	var urls []string
 	for rootURL, _ := range structs.GlobalURLMap {

@@ -85,15 +85,18 @@ func AddResultByResultEvent(result output.ResultEvent) {
 			<td colspan="3">%s</td>
 		</tr>`, info)
 
-	reqraw := result.Request
-	respraw := result.Response
-	// }
 
 	fullurl := xssfilter(result.Matched)
 
-	body := fmt.Sprintf(`<tr>
-		<td colspan="3"  style="border-top:1px solid #60786F"><a href="%s" target="_blank">%s</a></td>
-	</tr><tr>
+
+	footer := "</tbody></table>"
+	d := title + header + bodyinfo
+
+	urlShow :=`<tr>
+		<td colspan="3"  style="border-top:1px solid #60786F"><a href="` + fullurl + `" target="_blank">` + fullurl + `</a></td>
+	</tr><tr>`
+
+	bodyHeader := `
 			<td colspan="3" style="background: #1c1b19; color: #048d18;">
 				<div class="clr">
 				<div class="request w50">
@@ -107,10 +110,26 @@ func AddResultByResultEvent(result output.ResultEvent) {
 			</div>
 			</td>
 		</tr>
-	`, fullurl, fullurl, reqraw, respraw)
+	`
 
-	footer := "</tbody></table>"
-	d := title + header + bodyinfo + body + footer
+	if len(result.Packet) == 0{
+		body := urlShow + fmt.Sprintf(bodyHeader, result.Request , result.Response)
+		d += body
+	}else{
+		for index,v := range result.Packet{
+			if index == 1{
+				d += urlShow
+			}else{
+				d += "<tr><td colspan=\"3\"  style=\"border-top:1px solid #60786F\"></td></tr>"
+			}
+			body := fmt.Sprintf(bodyHeader, v.Request, v.Response)
+			d += body
+		}
+	}
+
+
+	d += footer
+
 	writeFile(d, structs.GlobalConfig.ReportName)
 
 	ReportIndex += 1

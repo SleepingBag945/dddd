@@ -3,6 +3,7 @@ package uncover
 import (
 	"dddd/structs"
 	"dddd/utils"
+	"dddd/utils/cdn"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -80,7 +81,7 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 	q.Add("key", key)
 	q.Add("page", "1")
 	q.Add("size", fmt.Sprintf("%d", pageSize))
-	q.Add("fields", "host,protocol,title,icp")
+	q.Add("fields", "host,protocol,title,icp,ip,port,domain")
 
 	q.Add("full", "false")
 	req.URL.RawQuery = q.Encode()
@@ -118,31 +119,103 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 		return results
 	}
 
+	// 做一个域名缓存，避免重复dns请求
+	domainCDNMap := make(map[string]bool)
+	var domainList []string
+	for _, result := range responseJson.Results {
+		host := result[0]
+		protocol := result[1]
+		port := result[5]
+		domain := ""
+		if result[6] != "" {
+			realHost := strings.ReplaceAll(host, protocol+"://", "")
+			domain = strings.ReplaceAll(realHost, ":"+port, "")
+		}
+		domainList = append(domainList, domain)
+	}
+	domainList = utils.RemoveDuplicateElement(domainList)
+	if len(domainList) != 0 {
+		gologger.Info().Msgf("正在查询 [%v] 个域名是否为CDN资产", len(domainList))
+	}
+	cdnDomains, normalDomains, _ := cdn.CheckCDNs(domainList, structs.GlobalConfig.SubdomainBruteForceThreads)
+	for _, d := range cdnDomains {
+		_, ok := domainCDNMap[d]
+		if !ok {
+			domainCDNMap[d] = true
+		}
+	}
+	for _, d := range normalDomains {
+		_, ok := domainCDNMap[d]
+		if !ok {
+			domainCDNMap[d] = false
+		}
+	}
+
 	for _, result := range responseJson.Results {
 		host := result[0]
 		protocol := result[1]
 		icp := result[2]
 		title := result[3]
+		ip := result[4]
+		port := result[5]
+		domain := ""
+		if result[6] != "" {
+			realHost := strings.ReplaceAll(host, protocol+"://", "")
+			domain = strings.ReplaceAll(realHost, ":"+port, "")
+		}
+
+		isCDN := false
+		if domain != "" {
+			domainInfo, ok := domainCDNMap[domain]
+			if ok {
+				isCDN = domainInfo
+			}
+			if !isCDN {
+				AddIPDomainMap(ip, domain)
+			}
+
+		}
 
 		show := "[Fofa]"
-		if protocol == "http" {
-			URL := protocol + "://" + host
-			results = append(results, URL)
-			show += " " + URL
-		} else if protocol == "https" {
-			results = append(results, host)
-			show += " " + host
+		addTarget := ""
+		if structs.GlobalConfig.OnlyIPPort && !isCDN {
+			if protocol == "http" || protocol == "https" {
+				addTarget = protocol + "://" + ip + ":" + port
+				show += " " + addTarget
+			} else {
+				addTarget = protocol + "://" + ip + ":" + port
+				show += " " + addTarget
+			}
 		} else {
-			results = append(results, host)
-			show += " " + protocol + "://" + host
+			if protocol == "http" {
+				addTarget = protocol + "://" + host
+				show += " " + addTarget
+			} else if protocol == "https" {
+				addTarget = host
+				show += " " + host
+			} else {
+				addTarget = host
+				show += " " + protocol + "://" + host
+			}
 		}
+
 		if title != "" {
 			show += " [" + title + "]"
 		}
 		if icp != "" {
 			icp += " [" + icp + "]"
 		}
-		gologger.Silent().Msg(show)
+		if isCDN {
+			show += " [CDN]"
+		}
+
+		if utils.GetItemInArray(results, addTarget) == -1 {
+			if !isCDN || structs.GlobalConfig.AllowCDNAssets {
+				results = append(results, addTarget)
+			}
+			gologger.Silent().Msg(show)
+		}
+
 	}
 
 	gologger.Info().Msgf("[Fofa] [%s] 已查询: %d/%d", keyword, len(responseJson.Results), responseJson.Size)

@@ -34,7 +34,7 @@ func GC() {
 	debug.FreeOSMemory()
 }
 
-var version = "1.7"
+var version = "1.8"
 
 func showBanner() {
 	banner := fmt.Sprintf(`
@@ -293,6 +293,8 @@ func Flag() {
 	flag.BoolVar(&structs.GlobalConfig.NoSubFinder, "nsf", false, "关闭被动子域名枚举")
 	flag.IntVar(&structs.GlobalConfig.SubdomainBruteForceThreads, "sbft", 150, "爆破子域名协程数量")
 	flag.BoolVar(&structs.GlobalConfig.AllowLocalAreaDomain, "ld", false, "允许域名解析到局域网")
+	flag.BoolVar(&structs.GlobalConfig.AllowCDNAssets, "ac", false, "允许扫描带CDN的资产，默认略过")
+	flag.BoolVar(&structs.GlobalConfig.NoHostBind,"nh",false,"禁用域名绑定资产探测")
 
 	// 端口扫描
 	flag.StringVar(&PortString, "p", "", "目标IP扫描的端口。 默认扫描Top1000")
@@ -323,6 +325,7 @@ func Flag() {
 	flag.BoolVar(&structs.GlobalConfig.Hunter, "hunter", false, "从hunter中获取资产,开启此选项后-t参数变更为需要在hunter中搜索的关键词")
 	flag.IntVar(&structs.GlobalConfig.HunterPageSize, "htps", 100, "Hunter 每页资产条数")
 	flag.IntVar(&structs.GlobalConfig.HunterMaxPageCount, "htpc", 10, "Hunter 最大查询页数")
+	flag.BoolVar(&structs.GlobalConfig.OnlyIPPort, "oip", false, "从网络空间搜索引擎中以IP:Port的形式拉取资产，而不是Domain(IP):Port")
 
 	// 从fofa获取资产
 	flag.BoolVar(&structs.GlobalConfig.Fofa, "fofa", false, "从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词")

@@ -81,9 +81,11 @@ func workflow() {
 	ips = utils.RemoveDuplicateElement(ips)
 
 	// 处理带CDN的域名，只进行https,http的探测，不进行端口扫描
-	for _, cd := range cdnDomains {
-		urls = append(urls, "http://"+cd)
-		urls = append(urls, "https://"+cd)
+	if structs.GlobalConfig.AllowCDNAssets {
+		for _, cd := range cdnDomains {
+			urls = append(urls, "http://"+cd)
+			urls = append(urls, "https://"+cd)
+		}
 	}
 	urls = utils.RemoveDuplicateElement(urls)
 
@@ -174,7 +176,9 @@ func workflow() {
 
 	// 非CDN域名 探测域名绑定资产
 	// 把只允许域名访问的资产扒拉出来
-	common.HostBindCheck()
+	if !structs.GlobalConfig.NoHostBind{
+		common.HostBindCheck()
+	}
 
 	var aliveURLs []string
 	for rootURL, _ := range structs.GlobalURLMap {
