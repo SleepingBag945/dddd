@@ -886,6 +886,7 @@ func (r *Runner) RunEnumeration() {
 
 			newPath := getJumpPath(resp.Raw)
 			if newPath != "" {
+				newPath = strings.Trim(newPath, " ")
 				newPath = strings.Trim(newPath, "'")
 				newPath = strings.Trim(newPath, "\"")
 				if strings.HasPrefix(newPath, "https://") || strings.HasPrefix(newPath, "http://") {

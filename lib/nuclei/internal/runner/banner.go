@@ -2,8 +2,8 @@
 package runner
 
 import (
-	"github.com/projectdiscovery/nuclei/v3/internal/pdcp"
 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
+	pdcpauth "github.com/projectdiscovery/utils/auth/pdcp"
 	updateutils "github.com/projectdiscovery/utils/update"
 )
 
@@ -14,5 +14,5 @@ func NucleiToolUpdateCallback() {
 
 // AuthWithPDCP is used to authenticate with PDCP
 func AuthWithPDCP() {
-	pdcp.CheckNValidateCredentials(config.BinaryName)
+	pdcpauth.CheckNValidateCredentials(config.BinaryName)
 }

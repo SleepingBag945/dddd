@@ -156,7 +156,7 @@ icp.name="带带弟弟"
 # 详细参数
 
 ```shell
-coco@Mac % ./dddd -h
+coco@Mac dddd % ./dddd -h
 
      _       _       _       _   
   __| |   __| |   __| |   __| |  
@@ -164,12 +164,14 @@ coco@Mac % ./dddd -h
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "`-0-0-'"`-0-0-'"`-0-0-`"`-0-0-'
-dddd.version: 1.6
+dddd.version: 1.9
 
-Usage of dddd:
+Usage of ./dddd:
   -Pn
         禁用主机发现功能(icmp,tcp)
   -a    开启审计日志
+  -ac
+        允许扫描带CDN的资产，默认略过
   -alf string
         审计日志文件名称 (default "audit.log")
   -ffmc int
@@ -194,6 +196,8 @@ Usage of dddd:
         关闭主动指纹探测
   -ngp
         关闭Golang Poc探测
+  -nh
+        禁用域名绑定资产探测
   -ni
         禁用Interactsh服务器，排除反连模版
   -nicmp
@@ -206,6 +210,8 @@ Usage of dddd:
         关闭被动子域名枚举
   -o string
         html格式输出报告
+  -oip
+        从网络空间搜索引擎中以IP:Port的形式拉取资产，而不是Domain(IP):Port
   -p string
         目标IP扫描的端口。 默认扫描Top1000
   -pc int
@@ -246,6 +252,7 @@ Usage of dddd:
         Web探针线程,根据网络环境调整 (default 100)
   -wto int
         Web探针超时时间,根据网络环境调整 (default 12)
+
 ```
 
 

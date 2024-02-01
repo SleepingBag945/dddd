@@ -34,7 +34,7 @@ func GC() {
 	debug.FreeOSMemory()
 }
 
-var version = "1.8"
+var version = "1.9"
 
 func showBanner() {
 	banner := fmt.Sprintf(`
@@ -294,7 +294,7 @@ func Flag() {
 	flag.IntVar(&structs.GlobalConfig.SubdomainBruteForceThreads, "sbft", 150, "爆破子域名协程数量")
 	flag.BoolVar(&structs.GlobalConfig.AllowLocalAreaDomain, "ld", false, "允许域名解析到局域网")
 	flag.BoolVar(&structs.GlobalConfig.AllowCDNAssets, "ac", false, "允许扫描带CDN的资产，默认略过")
-	flag.BoolVar(&structs.GlobalConfig.NoHostBind,"nh",false,"禁用域名绑定资产探测")
+	flag.BoolVar(&structs.GlobalConfig.NoHostBind, "nh", false, "禁用域名绑定资产探测")
 
 	// 端口扫描
 	flag.StringVar(&PortString, "p", "", "目标IP扫描的端口。 默认扫描Top1000")

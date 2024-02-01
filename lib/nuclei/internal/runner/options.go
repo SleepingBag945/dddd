@@ -259,9 +259,9 @@ func createReportingOptions(options *types.Options) (*reporting.Options, error) 
 	}
 	if options.MarkdownExportDirectory != "" {
 		reportingOptions.MarkdownExporter = &markdown.Options{
-			Directory:         options.MarkdownExportDirectory,
-			IncludeRawPayload: !options.OmitRawRequests,
-			SortMode:          options.MarkdownExportSortMode,
+			Directory: options.MarkdownExportDirectory,
+			OmitRaw:   options.OmitRawRequests,
+			SortMode:  options.MarkdownExportSortMode,
 		}
 	}
 	if options.SarifExport != "" {
@@ -269,17 +269,18 @@ func createReportingOptions(options *types.Options) (*reporting.Options, error) 
 	}
 	if options.JSONExport != "" {
 		reportingOptions.JSONExporter = &jsonexporter.Options{
-			File:              options.JSONExport,
-			IncludeRawPayload: !options.OmitRawRequests,
+			File:    options.JSONExport,
+			OmitRaw: options.OmitRawRequests,
 		}
 	}
 	if options.JSONLExport != "" {
 		reportingOptions.JSONLExporter = &jsonl.Options{
-			File:              options.JSONLExport,
-			IncludeRawPayload: !options.OmitRawRequests,
+			File:    options.JSONLExport,
+			OmitRaw: options.OmitRawRequests,
 		}
 	}
 
+	reportingOptions.OmitRaw = options.OmitRawRequests
 	return reportingOptions, nil
 }
 

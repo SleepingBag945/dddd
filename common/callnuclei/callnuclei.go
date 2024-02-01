@@ -16,7 +16,6 @@ import (
 	"github.com/projectdiscovery/nuclei/v3/pkg/exportrunner"
 	"github.com/projectdiscovery/nuclei/v3/pkg/operators/common/dsl"
 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-	"github.com/projectdiscovery/nuclei/v3/pkg/utils/monitor"
 	errorutil "github.com/projectdiscovery/utils/errors"
 	fileutil "github.com/projectdiscovery/utils/file"
 )
@@ -67,11 +66,6 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 	}
 
 	exportrunner.ExportRunnerParseOptions(options)
-
-	if options.HangMonitor {
-		cancel := monitor.NewStackMonitor(10 * time.Second)
-		defer cancel()
-	}
 
 	nucleiRunner, err := exportrunner.ExportRunnerNew(options)
 	if err != nil {
