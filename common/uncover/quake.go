@@ -1,6 +1,7 @@
 package uncover
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
 	"dddd/utils/cdn"
@@ -93,9 +94,9 @@ type QuakeServiceInfo struct {
 
 func getQuakeKeys() []string {
 	var apiKeys []string
-	f, err := os.Open("config/subfinder-config.yaml")
+	f, err := os.Open(structs.GlobalConfig.APIConfigFilePath)
 	if err != nil {
-		gologger.Fatal().Msg("打开API Key配置文件config/subfinder-config.yaml失败")
+		gologger.Fatal().Msgf("打开API Key配置文件 %v 失败", structs.GlobalConfig.APIConfigFilePath)
 		return []string{}
 	}
 	defer f.Close()
@@ -201,7 +202,22 @@ func SearchQuakeCore(keyword string, pageSize int) []string {
 		if d.Service.HTTP.URL == nil {
 			t := fmt.Sprintf("%s:%d", d.IP, d.Port)
 			if utils.GetItemInArray(results, t) == -1 {
-				gologger.Silent().Msgf("[Quake] %s", t)
+				ddout.FormatOutput(ddout.OutputMessage{
+					Type:          "Quake",
+					IP:            d.IP,
+					IPs:           nil,
+					Port:          strconv.Itoa(d.Port),
+					Protocol:      "",
+					Web:           ddout.WebInfo{},
+					Finger:        nil,
+					Domain:        "",
+					GoPoc:         ddout.GoPocsResultType{},
+					URI:           "",
+					City:          "",
+					Show:          t,
+					AdditionalMsg: "",
+				})
+				// gologger.Silent().Msgf("[Quake] %s", t)
 				results = append(results, t)
 			}
 		} else {
@@ -215,16 +231,46 @@ func SearchQuakeCore(keyword string, pageSize int) []string {
 			}
 
 			if structs.GlobalConfig.OnlyIPPort && !isCDN {
-				u := fmt.Sprintf("%v://%v:%v",strings.ReplaceAll(d.Service.Name,"http/ssl","https") ,d.IP ,d.Port)
-				if utils.GetItemInArray(results,u) == -1{
+				u := fmt.Sprintf("%v://%v:%v", strings.ReplaceAll(d.Service.Name, "http/ssl", "https"), d.IP, d.Port)
+				if utils.GetItemInArray(results, u) == -1 {
 					results = append(results, u)
-					gologger.Silent().Msgf("[Quake] %s", u)
+					// gologger.Silent().Msgf("[Quake] %s", u)
+					ddout.FormatOutput(ddout.OutputMessage{
+						Type:          "Quake",
+						IP:            d.IP,
+						IPs:           nil,
+						Port:          strconv.Itoa(d.Port),
+						Protocol:      d.Service.Name,
+						Web:           ddout.WebInfo{},
+						Finger:        nil,
+						Domain:        "",
+						GoPoc:         ddout.GoPocsResultType{},
+						URI:           "",
+						City:          "",
+						Show:          u,
+						AdditionalMsg: "",
+					})
 				}
-			}else{
+			} else {
 				for _, u := range d.Service.HTTP.URL {
 					if utils.GetItemInArray(results, u) == -1 {
 						if !isCDN || structs.GlobalConfig.AllowCDNAssets {
-							gologger.Silent().Msgf("[Quake] %s", u)
+							// gologger.Silent().Msgf("[Quake] %s", u)
+							ddout.FormatOutput(ddout.OutputMessage{
+								Type:          "Quake",
+								IP:            d.IP,
+								IPs:           nil,
+								Port:          strconv.Itoa(d.Port),
+								Protocol:      d.Service.Name,
+								Web:           ddout.WebInfo{},
+								Finger:        nil,
+								Domain:        "",
+								GoPoc:         ddout.GoPocsResultType{},
+								URI:           u,
+								City:          "",
+								Show:          u,
+								AdditionalMsg: "",
+							})
 							results = append(results, u)
 						}
 					}

@@ -98,15 +98,17 @@ func (l *Logger) Log(event *Event) {
 		l.writer.Write(data, event.level)
 	}
 
-	loc, err := time.LoadLocation("Asia/Shanghai")
-	currentTime := ""
-	if err != nil {
-		currentTime = time.Now().String()
-	} else {
-		currentTime = time.Now().In(loc).String()
-	}
+	if Audit {
+		loc, err := time.LoadLocation("Asia/Shanghai")
+		currentTime := ""
+		if err != nil {
+			currentTime = time.Now().String()
+		} else {
+			currentTime = time.Now().In(loc).String()
+		}
 
-	WriteFile("[ "+currentTime+" ] "+string(data), AuditLogFileName)
+		WriteFile("[ "+currentTime+" ] "+string(data), AuditLogFileName)
+	}
 
 	if event.level == levels.LevelFatal {
 		os.Exit(1)

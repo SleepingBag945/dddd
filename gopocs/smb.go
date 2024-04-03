@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"context"
+	"dddd/ddout"
 	"dddd/structs"
 	_ "embed"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"time"
 )
 
+//go:embed dict/smb.txt
 var smbUserPasswdDict string
 
 func SmbScan(info *structs.HostInfo) (tmperr error) {
@@ -71,9 +73,28 @@ func SmblConn(info *structs.HostInfo, user string, pass string) (flag bool, err 
 	}
 
 	var result string
-	result = fmt.Sprintf("[GoPoc] SMB://%v:%v:%v %v", info.Host, info.Ports, user, pass)
-	gologger.Silent().Msg(result)
+	result = fmt.Sprintf("SMB://%v:%v:%v %v", info.Host, info.Ports, user, pass)
+	// gologger.Silent().Msg(result)
 	showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", info.Host, info.Ports, user, pass)
+
+	ddout.FormatOutput(ddout.OutputMessage{
+		Type:     "GoPoc",
+		IP:       "",
+		IPs:      nil,
+		Port:     "",
+		Protocol: "",
+		Web:      ddout.WebInfo{},
+		Finger:   nil,
+		Domain:   "",
+		GoPoc: ddout.GoPocsResultType{PocName: "SMB-Login",
+			Security:    "CRITICAL",
+			Target:      info.Host + ":" + info.Ports,
+			InfoLeft:    showData,
+			InfoRight:   showShare,
+			Description: "SMB弱口令",
+			ShowMsg:     result},
+		AdditionalMsg: "",
+	})
 
 	GoPocWriteResult(structs.GoPocsResultType{
 		PocName:     "SMB-Login",

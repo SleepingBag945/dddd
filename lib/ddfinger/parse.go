@@ -3,16 +3,15 @@ package ddfinger
 import (
 	"bytes"
 	"container/list"
+	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
 	"encoding/base64"
 	"fmt"
-	"github.com/logrusorgru/aurora"
 	"github.com/projectdiscovery/gologger"
-	"gopkg.in/yaml.v3"
 	"net/url"
-	"os"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -200,16 +199,6 @@ func boolEval(expression string) bool {
 
 }
 
-func readFingerYaml() map[string]interface{} {
-	data, err := os.ReadFile("config/finger.yaml")
-	fps := make(map[string]interface{})
-	err = yaml.Unmarshal(data, &fps)
-	if err != nil {
-		gologger.Fatal().Msg(err.Error())
-	}
-	return fps
-}
-
 func getRuleData(rule string) structs.RuleData {
 	if !strings.Contains(rule, "=\"") {
 		return structs.RuleData{}
@@ -255,7 +244,7 @@ func getRuleData(rule string) structs.RuleData {
 	return structs.RuleData{Start: start, End: end, Op: int16(op), Key: key, Value: value, All: all}
 }
 
-func parseRule(rule string) []structs.RuleData {
+func ParseRule(rule string) []structs.RuleData {
 	var result []structs.RuleData
 	empty := structs.RuleData{}
 
@@ -266,18 +255,6 @@ func parseRule(rule string) []structs.RuleData {
 		}
 		result = append(result, data)
 		rule = rule[:data.Start] + "T" + rule[data.End:]
-	}
-	return result
-}
-
-func ParseFingerYaml() []structs.FingerPEntity {
-	var result []structs.FingerPEntity
-	fingerprintYaml := readFingerYaml()
-	for productName, rulesInterface := range fingerprintYaml {
-		for _, ruleInterface := range rulesInterface.([]interface{}) {
-			ruleL := ruleInterface.(string)
-			result = append(result, structs.FingerPEntity{ProductName: productName, Rule: parseRule(ruleL), AllString: ruleL})
-		}
 	}
 	return result
 }
@@ -366,7 +343,7 @@ func checkPath(Path string,
 		headerString = string(headerBytes)
 	}
 
-	workers := 100
+	workers := runtime.NumCPU() * 2
 	inputChan := make(chan structs.FingerPEntity, len(structs.FingerprintDB))
 	defer close(inputChan)
 	results := make(chan string, len(structs.FingerprintDB))
@@ -520,12 +497,26 @@ func FingerprintIdentification() {
 			Url := fmt.Sprintf("%s://%s", protocol, hostPort)
 			structs.GlobalResultMap[Url] = results
 
-			msg := "[Finger] " + Url + " ["
-			for _, r := range results {
-				msg += aurora.Cyan(r).String() + ","
-			}
-			msg = msg[:len(msg)-1] + "]"
-			gologger.Silent().Msg(msg)
+			//msg := "[Finger] " + Url + " ["
+			//for _, r := range results {
+			//	msg += aurora.Cyan(r).String() + ","
+			//}
+			//msg = msg[:len(msg)-1] + "]"
+			//gologger.Silent().Msg(msg)
+
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:          "Finger",
+				IP:            "",
+				IPs:           nil,
+				Port:          "",
+				Protocol:      "",
+				Web:           ddout.WebInfo{},
+				Finger:        results,
+				Domain:        "",
+				GoPoc:         ddout.GoPocsResultType{},
+				URI:           Url,
+				AdditionalMsg: "",
+			})
 
 		}
 
@@ -551,16 +542,32 @@ func FingerprintIdentification() {
 
 			if len(results) > 0 {
 				structs.GlobalResultMap[fullURL] = results
-				msg := "[Finger] " + fullURL + " "
-				msg += fmt.Sprintf("[%d] [", pathEntity.StatusCode)
-				for _, r := range results {
-					msg += aurora.Cyan(r).String() + ","
-				}
-				msg = msg[:len(msg)-1] + "]"
-				if pathEntity.Title != "" {
-					msg += fmt.Sprintf(" [%s]", pathEntity.Title)
-				}
-				gologger.Silent().Msg(msg)
+				//msg := "[Finger] " + fullURL + " "
+				//msg += fmt.Sprintf("[%d] [", pathEntity.StatusCode)
+				//for _, r := range results {
+				//	msg += aurora.Cyan(r).String() + ","
+				//}
+				//msg = msg[:len(msg)-1] + "]"
+				//if pathEntity.Title != "" {
+				//	msg += fmt.Sprintf(" [%s]", pathEntity.Title)
+				//}
+				//gologger.Silent().Msg(msg)
+				ddout.FormatOutput(ddout.OutputMessage{
+					Type:     "Finger",
+					IP:       "",
+					IPs:      nil,
+					Port:     "",
+					Protocol: "",
+					Web: ddout.WebInfo{
+						Status: strconv.Itoa(pathEntity.StatusCode),
+						Title:  pathEntity.Title,
+					},
+					Finger:        results,
+					Domain:        "",
+					GoPoc:         ddout.GoPocsResultType{},
+					URI:           fullURL,
+					AdditionalMsg: "",
+				})
 			} else {
 				structs.GlobalResultMap[fullURL] = []string{}
 			}

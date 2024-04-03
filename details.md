@@ -45,13 +45,9 @@
 
 ##### 从Hunter开始扫描
 
-先配置./config/subfinder-config.yaml中的Hunter API。
+先运行`./dddd -hunter`或`./dddd -fofa`生成配置文件模板`api-config.yaml`，或通过`-acf`参数指定API配置文件
 
-```yaml
-hunter: ["ffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
-```
-
-配置完成后打开命令行
+打开配置文件写入Hunter API。配置完成后打开命令行
 
 ```shell
 # 从Hunter中获取备案机构为 带带弟弟 的目标进入扫描 默认最大1000条
@@ -64,13 +60,9 @@ hunter: ["ffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
 
 ##### 从Fofa开始扫描
 
-先配置./config/subfinder-config.yaml中的FOFA 邮箱和KEY。
+先运行`./dddd -hunter`或`./dddd -fofa`生成配置文件模板`api-config.yaml`，或通过`-acf`参数指定API配置文件
 
-```yaml
-fofa: ["xxxx@qq.com:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
-```
-
-配置完成后打开命令行
+打开配置文件写入fofa API。配置完成后打开命令行
 
 ```shell
 ./dddd -t "domain=\"baidu.com\"" -fofa (从fofa取100个baidu.com域名的目标)
@@ -79,9 +71,9 @@ fofa: ["xxxx@qq.com:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
 
 ##### 从Quake开始扫描
 
-先配置./config/subfinder-config.yaml中的Quake api。
+先运行`./dddd -hunter`或`./dddd -fofa`生成配置文件模板`api-config.yaml`，或通过`-acf`参数指定API配置文件
 
-配置完成后打开命令行
+打开配置文件写入Quake./ API。配置完成后打开命令行
 
 ```shell
 ./dddd -t 'ip:"127.0.0.1"' -quake
@@ -151,12 +143,18 @@ icp.name="带带弟弟"
 ./dddd -t 127.0.0.1 -tcpp
 ```
 
+##### 指定密码
 
+读配置文件得到了账号admin,密码dddd@123456，想进行密码喷洒。
+
+```
+./dddd -t 192.168.0.0/16 -up 'admin : dddd@123456'
+```
 
 # 详细参数
 
 ```shell
-coco@Mac dddd % ./dddd -h
+dddd@Mac updater % ./dddd -h
 
      _       _       _       _   
   __| |   __| |   __| |   __| |  
@@ -164,106 +162,130 @@ coco@Mac dddd % ./dddd -h
  \__,_|  \__,_|  \__,_|  \__,_|  
 _|"""""|_|"""""|_|"""""|_|"""""| 
 "`-0-0-'"`-0-0-'"`-0-0-`"`-0-0-'
-dddd.version: 1.9
+dddd.version: 2.0
 
-Usage of ./dddd:
-  -Pn
-        禁用主机发现功能(icmp,tcp)
-  -a    开启审计日志
-  -ac
-        允许扫描带CDN的资产，默认略过
-  -alf string
-        审计日志文件名称 (default "audit.log")
-  -ffmc int
-        Fofa 查询资产条数 Max:10000 (default 100)
-  -fofa
-        从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词
-  -gopt int
-        GoPoc运行线程 (default 50)
-  -htpc int
-        Hunter 最大查询页数 (default 10)
-  -htps int
-        Hunter 每页资产条数 (default 100)
-  -hunter
-        从hunter中获取资产,开启此选项后-t参数变更为需要在hunter中搜索的关键词
-  -ld
-        允许域名解析到局域网
-  -lpm
-        低感知模式 (当前只支持Hunter,且默认选择Hunter)
-  -mp string
-        指定masscan路径 (default "masscan")
-  -nd
-        关闭主动指纹探测
-  -ngp
-        关闭Golang Poc探测
-  -nh
-        禁用域名绑定资产探测
-  -ni
-        禁用Interactsh服务器，排除反连模版
-  -nicmp
-        当启用主机发现功能时，禁用ICMP主机发现功能
-  -npoc
-        关闭漏洞探测
-  -nsbf
-        关闭子域名爆破
-  -nsf
-        关闭被动子域名枚举
-  -o string
-        html格式输出报告
-  -oip
-        从网络空间搜索引擎中以IP:Port的形式拉取资产，而不是Domain(IP):Port
-  -p string
-        目标IP扫描的端口。 默认扫描Top1000
-  -pc int
-        一个IP的端口数量阈值,当一个端口的IP数量超过此数量，此IP将会被抛弃 (default 300)
-  -poc string
-        模糊匹配Poc名称
-  -proxy string
-        HTTP代理，在外网可利用云函数/代理池的多出口特性恶心防守。socks代理建议配合proxychains等工具 例: http://127.0.0.1:8080
-  -psto int
-        TCP扫描超时时间(秒) (default 6)
-  -pt
-        测试HTTP代理 (default true)
-  -ptu string
-        测试HTTP代理的url，需要url返回200 (default "https://www.baidu.com")
-  -qkmc int
-        Quake 查询资产条数 (default 100)
-  -quake
-        从Quake中获取资产,开启此选项后-t参数变更为需要在quake中搜索的关键词
-  -rod string
-        Set the default value of options used by rod.
-  -sbft int
-        爆破子域名协程数量 (default 150)
-  -sd
-        开启子域名枚举
-  -st string
-        端口扫描方式 tcp使用TCP扫描(慢),syn为调用masscan进行扫描(需要masscan依赖) (default "tcp")
-  -synt int
-        SYN扫描线程(masscan) (default 10000)
-  -t string
-        被扫描的目标。 192.168.0.1 192.168.0.0/16 192.168.0.1:80 baidu.com:80 target.txt
-  -tc int
-        TCP全连接获取Banner的线程数量 (default 30)
-  -tcpp
-        当启用主机发现功能时，启用TCP主机发现功能
-  -tcpt int
-        TCP扫描线程 (default 600)
-  -wt int
-        Web探针线程,根据网络环境调整 (default 100)
-  -wto int
-        Web探针超时时间,根据网络环境调整 (default 12)
+dddd是一款使用简单的批量信息收集,供应链漏洞探测工具。旨在优化红队工作流，减少伤肝、枯燥、乏味的机械性操作。
+
+Usage:
+  ./dddd [flags]
+
+Flags:
+扫描目标:
+   -t, -target string  被扫描的目标。 192.168.0.1 192.168.0.0/16 192.168.0.1:80 baidu.com:80 file.txt(一行一个) result.txt(fscan/dddd)
+
+端口扫描:
+   -p, -port string              端口设置。 默认扫描Top1000
+   -st, -scan-type string        端口扫描方式 | "-st tcp"设置TCP扫描 | "-st syn"设置SYN扫描 (default "tcp")
+   -tst, -tcp-scan-threads int   TCP扫描线程 | Windows/Mac默认1000线程 Linux默认4000 (default 1000)
+   -sst, -syn-scan-threads int   SYN扫描线程 (default 10000)
+   -mp, -masscan-path string     指定masscan程序路径 | SYN扫描依赖 (default "masscan")
+   -pmc, -ports-max-count int    IP端口数量阈值 | 当一个端口的IP数量超过此数量，此IP将会被抛弃 (default 300)
+   -pst, -port-scan-timeout int  TCP端口扫描超时(秒) (default 6)
+
+主机发现:
+   -Pn                  禁用主机发现功能(icmp,tcp)
+   -nip, -no-icmp-ping  当启用主机发现功能时，禁用ICMP主机发现功能
+   -tp, -tcp-ping       当启用主机发现功能时，启用TCP主机发现功能
+
+协议识别:
+   -tc, -nmap-threads int   Nmap协议识别线程 (default 500)
+   -nto, -nmap-timeout int  Nmap协议识别超时时间(秒) (default 5)
+
+探索子域名:
+   -sd, -subdomain                     开启子域名枚举，默认关闭
+   -nsb, -no-subdomain-brute           关闭子域名爆破
+   -ns, -no-subfinder                  关闭被动子域名枚举
+   -sbt, -subdomain-brute-threads int  子域名爆破线程数量 (default 150)
+   -ld, -local-domain                  允许域名解析到局域网
+   -ac, -allow-cdn                     允许扫描带CDN的资产 | 默认略过
+   -nhb, -no-host-bind                 禁用域名绑定资产探测
+
+WEB探针配置:
+   -wt, -web-threads int   Web探针线程,根据网络环境调整 (default 200)
+   -wto, -web-timeout int  Web探针超时时间,根据网络环境调整 (default 10)
+   -nd, -no-dir            关闭主动Web指纹探测
+
+HTTP代理配置:
+   -proxy string                 HTTP代理
+   -pt, -proxy-test              启动前测试HTTP代理 (default true)
+   -ptu, -proxy-test-url string  测试HTTP代理的url，需要url返回200 (default "https://www.baidu.com")
+
+网络空间搜索引擎:
+   -hunter                            从hunter中获取资产,开启此选项后-t参数变更为需要在hunter中搜索的关键词
+   -hps, -hunter-page-size int        Hunter查询每页资产条数 (default 100)
+   -hmpc, -hunter-max-page-count int  Hunter 最大查询页数 (default 10)
+   -lpm, -low-perception-mode         Hunter低感知模式 | 从Hunter直接取响应判断指纹，直接进入漏洞扫描阶段
+   -oip                               从网络空间搜索引擎中以IP:Port的形式拉取资产，而不是Domain(IP):Port
+   -fofa                              从Fofa中获取资产,开启此选项后-t参数变更为需要在fofa中搜索的关键词
+   -fmc, -fofa-max-count int          Fofa 查询资产条数 Max:10000 (default 100)
+   -quake                             从Quake中获取资产,开启此选项后-t参数变更为需要在quake中搜索的关键词
+   -qmc, -quake-max-count int         Quake 查询资产条数 (default 100)
+
+输出:
+   -o, -output string        结果输出文件 (default "result.txt")
+   -ot, -output-type string  结果输出格式 text,json (default "text")
+   -ho, -html-output string  html漏洞报告的名称
+
+漏洞探测:
+   -npoc                          关闭漏洞探测,只进行信息收集
+   -poc, -poc-name string         模糊匹配Poc名称
+   -ni, -no-interactsh            禁用Interactsh服务器，排除反连模版
+   -gpt, -golang-poc-threads int  GoPoc运行线程 (default 50)
+   -ngp, -no-golang-poc           关闭Golang Poc探测
+   -dgp, -disable-general-poc     禁用无视指纹的漏洞映射
+
+配置文件:
+   -acf, -api-config-file string      API配置文件 (default "config/api-config.yaml")
+   -nt, -nuclei-template string       指定存放Nuclei Poc的文件夹路径 (default "config/pocs")
+   -wy, -workflow-yaml string         指定存放workflow.yaml (指纹=>漏洞映射) 的路径 (default "config/workflow.yaml")
+   -dy, -dir-yaml string              主动指纹数据库路径 (default "config/dir.yaml")
+   -swl, -subdomain-word-list string  子域名字典文件路径 (default "config/subdomains.txt")
+
+爆破密码配置:
+   -up, -username-password string        设置爆破凭证，设置后将禁用内置字典 | 凭证格式 'admin : password'
+   -upf, -username-password-file string  设置爆破凭证文件(一行一个)，设置后将禁用内置字典 | 凭证格式 'admin : password'
+
+审计日志 | 敏感环境必备:
+   -a                                开启审计日志，记录程序运行日志，收发包详细信息，避免背黑锅。
+   -alf, -audit-log-filename string  审计日志文件名称 (default "audit.log")
 
 ```
 
 
 
-# 指纹/Poc拓展
+# 拓展
 
-若您想让dddd作为您的指纹/漏洞库，或者作为漏洞知识沉淀的工具，请务必详细观看此节。
+若您想让dddd作为您的指纹/漏洞库，或者作为您沉淀漏洞知识的工具，请务必详细观看此节。
+
+### 漏洞探测
+
+资产->指纹->Poc->漏洞
+
+在dddd中，dddd会通过指纹数据库的配置进行指纹识别，再通过workflow(指纹->漏洞映射)数据库的配置选定指纹对应的漏洞打出Poc。这么做虽然一个漏洞需要写poc，写指纹、写workflow、工作量更大，但在实际使用时能尽量减少无效发包（对着vcenter一顿输出wordpress的洞那没用啊），大幅降低大范围探测时发包的时间、网络成本，比别人更快知道薄弱点。
+
+
+
+**那为什么说dddd适合作为您沉淀漏洞知识的工具？**
+
+当您把漏洞配置进dddd后，虽然配置的过程稍显繁琐（编写Nuclei Poc、找资产指纹、写workflow），但您下次使用dddd扫描时dddd就能自动帮您找出这个漏洞，大大降低发现漏洞的门槛。
+
+
+
+**主动指纹探测是什么？**
+
+当一个应用不暴露在根路径时就需要主动去访问，这个时候需要配置主动指纹数据库。
+
+比如Nacos，druid，geoserver这种不去主动访问特定的url是不容易被发现的。
+
+
 
 ### 指纹
 
-指纹数据库存于 ./config/finger.yaml
+dddd内置了一份指纹，若您有拓展的需求，请往下看。
+
+指纹数据库默认路径为`config/finger.yaml`，但您可以使用`-fy`参数指定您喜欢的路径。
+
+
 
 支持的指纹基础规则如下
 
@@ -304,21 +326,32 @@ banner!="123" // TCP banner中不含123
 
 各类规则支持与(&&)或(||)非(!)任意组合。可使用括号。与fofa搜索语法类似。
 
-![image-20230817180845323](assets/image-20230817180845323.png)
+![image-20240403043346223](assets/image-20240403043346223.png)
+
+
 
 这里拿Fortinet-sslvpn举例。
 
-需要Web响应体中包含fgt_lang，编写规则body="fgt_lang"
+```yaml
+Fortinet-sslvpn:
+  - 'body="fgt_lang" && body="/sslvpn/portal.html"'
+```
 
-需要Web响应体中包含/sslvpn/portal.html，编写规则body="/sslvpn/portal.html"
+1. Web响应体中包含fgt_lang，编写规则body="fgt_lang"
 
-需要同时满足这两个条件才会被判定为Fortinet-sslvpn的资产，将两个规则使用与(&&)连接就得到了这条指纹。
+2. Web响应体中包含/sslvpn/portal.html，编写规则body="/sslvpn/portal.html"
+
+3. 需要同时满足这两个条件才会被判定为Fortinet-sslvpn的资产，将两个规则使用与(&&)连接就得到了这条指纹。
 
 
 
 ### API
 
-若有被动枚举子域名、请求fofa、hunter等需求。请在./config/subfinder-config.yaml中配置API。
+若有被动枚举子域名、请求fofa、hunter等需求。请在./config/api-config.yaml中配置API。
+
+当然您可以使用`-acf`参数指定您喜欢的路径。
+
+若没有api模板文件，请运行`./dddd -hunter`或`./dddd -fofa`生成模板。
 
 
 
@@ -326,11 +359,35 @@ banner!="123" // TCP banner中不含123
 
 子域名字典位于./config/subdomains.txt
 
+当然您可以使用`-swl`参数指定您喜欢的路径。
+
 
 
 ### 服务爆破字典
 
-字典路径为./config/dict/
+dddd内置了一份弱口令字典。
+
+若您有密码喷洒的需求，请看`-up`或`-upf`参数。
+
+当然您也可以分门别类自己定制字典。
+
+字典路径如下config/dict/ + 下列文件名
+
+```
+ftp.txt
+mysql.txt
+postgresql.txt
+redis.txt
+smb.txt
+telnet.txt
+mssql.txt
+oracle.txt
+rdp.txt
+shirokeys.txt
+ssh.txt
+```
+
+其中shirokeys.txt为shiro key字典。
 
 每行以"空格:空格"分割账号密码
 
@@ -340,27 +397,34 @@ root : admin
 root : admin123
 ```
 
-其中shirokeys.txt为shiro key字典
-
-
+**当config/dict/*.txt存在文件时，会覆盖dddd内置的字典，优先使用config/dict路径内的字典**
 
 
 
 ### 主动指纹
 
-当一个应用不暴露在根路径时就需要主动去访问，这个时候需要配置主动指纹数据库。
+dddd内置了一份主动指纹数据库，若您有拓展的需求，请往下看。
 
-路径在./config/dir.yaml
-
-![image-20230817182401928](assets/image-20230817182401928.png)
-
-配置也很简单，照着上边写就行。
-
-这里拿Alibaba-Nacos举例子。当访问到http://host:port/nacos/，且访问后识别到Alibaba-Nacos指纹后就被判断有效。
+主动指纹数据库默认路径为`config/dir.yaml`，但您可以使用`-fy`参数指定您喜欢的路径。
 
 
 
-### 漏洞Poc编写
+路径在`config/dir.yaml`
+
+```yaml
+Alibaba-Nacos:
+  - "/nacos/"
+Alibaba-Druid:
+  - "/druid/index.html"
+```
+
+这里拿Alibaba-Nacos举例子：
+
+当访问到http://host:port/nacos/，且访问后识别到Alibaba-Nacos指纹后就被判断有效。
+
+
+
+### Poc
 
 编写参考nuclei poc编写
 
@@ -368,45 +432,53 @@ https://nuclei.projectdiscovery.io/templating-guide/
 
 
 
-Poc存放路径
+dddd内置了2400+ poc，如果需要添加poc可以将新增poc存放在`config/pocs/*`，dddd会自动使用外置的poc补充内置的poc。
 
-./config/pocs
+当然，您也可以使用`-nt`参数指定一个喜欢的文件夹。
 
+PS: 当外置的poc和内置的poc发生冲突时，dddd会优先使用外置的。
 
+### 工作流(workflow)
 
-将poc写好后放入./config/pocs即可识别。
+工作流（workflow）可以理解成指纹与Poc的映射。
 
-
-
-### 工作流
-
-仅仅编写Poc并放入./config/pocs是不会正常运行Poc的。需要为此Poc配置指定的指纹，本工具只有在匹配到目标指纹后才会调用这个Poc。
+仅编写Poc并Poc文件夹内是不会正常运行Poc的。需要为此Poc配置指定的指纹，本工具只有在匹配到目标指纹后才会调用对应的Poc。
 
 
 
-工作流存放目录
+dddd内置了一份工作流，如果需要拓展，可以新建一个工作流文件在`config/workflow.yaml`，dddd会自动识别并用于补充内置的工作流。
 
-./config/workflow.yaml
+当然，您也可以使用`-wy`参数指定一个您喜欢的工作流数据库路径。
 
 
 
-![image-20230817183151312](assets/image-20230817183151312.png)
+```yaml
+APACHE-Solr:
+  type:
+    - root
+  pocs:
+    - CVE-2017-12629
+    - CVE-2019-0193
+		...
+```
 
-以solr为例。
+以`APACHE-Solr`为例。
 
-当dddd识别到目标指纹为APACHE-Solr时，就会在./config/pocs中寻找路径以
+当dddd识别到目标指纹为`APACHE-Solr`时，就会在工作流数据库中寻找路径以
 
-cves/2017/CVE-2017-12629.yaml
+CVE-2017-12629
+
+CVE-2019-0193
 
 ....
 
-apache-solr-log4j-rce.yaml
-
-结尾的poc调用。
+结尾的poc调用（可以不写.yaml）。
 
 
 
-如果我写好一个名为solr-rce.yaml的nuclei poc，则应该在workflow.yaml的对应指纹的pocs下添加一行solr-rce.yaml或者solr-rce。这样才能在识别到solr时调用到此poc。
+假设您写好一个名为`solr-0day.yaml`的nuclei poc。
+
+则应该在指纹数据库的对应指纹的pocs下添加一行`solr-0day.yaml`或者`solr-0day`。这样才能在识别到solr时调用到此poc。
 
 
 
@@ -426,7 +498,7 @@ nginx:
 
 
 
-type是拿来干什么的呢？
+而指纹数据库中的type用于指定poc与路径的对应关系，看下边的一个例子就能明白。
 
 比如这里有一个nacos，他的路径是http://host:port/aaa/bbb/nacos/a.js
 
@@ -444,7 +516,9 @@ http://host:port/aaa/bbb/nacos/
 
 如果有base标签，在http://host:port/aaa/bbb/nacos/a.js下打一次poc
 
-一般情况下，root就能用，若应用部署在二级目录下，但poc是一级目录的poc，就需要dir参数才能探测到二级目录下的洞。
+一般情况下，root就能用。
+
+若应用部署在二级目录下，但poc是一级目录的poc，就需要dir参数才能探测到二级目录下的洞。
 
 
 
@@ -467,8 +541,7 @@ MONGODB 暴力破解
 MEMCACHED 未授权访问
 MS17-010
 Java调试接口远程命令执行
-
-
+ADB未授权访问
 
 
 

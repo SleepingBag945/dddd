@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	"encoding/binary"
 	"encoding/hex"
@@ -137,8 +138,26 @@ func MS17010Scan(info *structs.HostInfo) error {
 	gologger.AuditTimeLogger("[Go] [MS17-010] [4/4] Dumped TCP response for %s\n\n%s\n", ip+":445", hex.Dump(reply[:n]))
 
 	if reply[9] == 0x05 && reply[10] == 0x02 && reply[11] == 0x00 && reply[12] == 0xc0 {
-		result := fmt.Sprintf("[GoPoc] MS17-010 %s (%s)", ip, os)
-		gologger.Silent().Msg(result)
+		result := fmt.Sprintf("MS17-010 %s (%s)", ip, os)
+		// gologger.Silent().Msg(result)
+
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type:     "GoPoc",
+			IP:       "",
+			IPs:      nil,
+			Port:     "",
+			Protocol: "",
+			Web:      ddout.WebInfo{},
+			Finger:   nil,
+			Domain:   "",
+			GoPoc: ddout.GoPocsResultType{PocName: "MS17-010",
+				Security:    "CRITICAL",
+				Target:      ip,
+				InfoLeft:    os,
+				Description: "MS17-010 远程命令执行漏洞",
+				ShowMsg:     result},
+			AdditionalMsg: "",
+		})
 
 		GoPocWriteResult(structs.GoPocsResultType{
 			PocName:     "MS17-010",

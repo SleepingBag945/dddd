@@ -1,6 +1,7 @@
 package structs
 
 import (
+	"embed"
 	"github.com/lcvvvv/gonmap"
 	"github.com/projectdiscovery/hmap/store/hybrid"
 	"net"
@@ -28,6 +29,7 @@ type Config struct {
 	SkipHostDiscovery          bool
 	PortScanType               string
 	GetBannerThreads           int
+	GetBannerTimeout           int
 	TCPPortScanThreads         int
 	SYNPortScanThreads         int
 	PortsThreshold             int
@@ -35,7 +37,8 @@ type Config struct {
 	MasscanPath                string
 	AllowLocalAreaDomain       bool
 	AllowCDNAssets             bool
-	NoHostBind bool
+	NoHostBind                 bool
+	SubdomainWordListFile      string
 	HTTPProxy                  string
 	HTTPProxyTest              bool
 	HTTPProxyTestURL           string
@@ -45,7 +48,13 @@ type Config struct {
 	Fofa                       bool
 	FofaMaxCount               int
 	NoDirSearch                bool
+	DirSearchYaml              string
 	NoGolangPoc                bool
+	DisableGeneralPoc          bool
+	NucleiTemplate             string
+	ExcludeTags                string
+	Severities                 string
+	WorkflowYamlPath           string
 	ReportName                 string
 	GoPocThreads               int
 	WebThreads                 int
@@ -59,6 +68,12 @@ type Config struct {
 	TCPPing                    bool
 	NoInteractsh               bool
 	OnlyIPPort                 bool
+	OutputFile                 string
+	OutputType                 string
+	APIConfigFilePath          string
+	FingerConfigFilePath       string
+	PasswordFile               string
+	Password                   string
 }
 
 type CDNResult struct {
@@ -69,6 +84,8 @@ type CDNResult struct {
 }
 
 var GlobalConfig Config
+
+var GlobalEmbedPocs embed.FS
 
 var GlobalBannerHMap *hybrid.HybridMap
 
@@ -181,5 +198,3 @@ type HostInfo struct {
 
 var AddScanNum int
 var AddScanEnd int
-
-var ShiroKeys []string

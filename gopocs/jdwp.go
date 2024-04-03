@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	"encoding/hex"
 	"fmt"
@@ -76,8 +77,26 @@ func JDWPScan(info *structs.HostInfo) (err error) {
 	}
 
 	javaInfo := data[15:]
-	result := fmt.Sprintf("[GoPoc] JDWP://%s Unauthorized", realhost)
-	gologger.Silent().Msg(result)
+	result := fmt.Sprintf("JDWP://%s Unauthorized", realhost)
+	// gologger.Silent().Msg(result)
+
+	ddout.FormatOutput(ddout.OutputMessage{
+		Type:     "GoPoc",
+		IP:       "",
+		IPs:      nil,
+		Port:     "",
+		Protocol: "",
+		Web:      ddout.WebInfo{},
+		Finger:   nil,
+		Domain:   "",
+		GoPoc: ddout.GoPocsResultType{PocName: "JDWP-Unauthorized",
+			Security:    "CRITICAL",
+			Target:      realhost,
+			InfoLeft:    javaInfo,
+			Description: "JDWP未授权访问,可尝试RCE",
+			ShowMsg:     result},
+		AdditionalMsg: "",
+	})
 
 	GoPocWriteResult(structs.GoPocsResultType{
 		PocName:     "JDWP-Unauthorized",

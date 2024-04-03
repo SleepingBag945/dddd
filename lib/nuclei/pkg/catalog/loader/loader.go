@@ -1,6 +1,7 @@
 package loader
 
 import (
+	"embed"
 	"fmt"
 	"io"
 	"net/url"
@@ -381,8 +382,9 @@ func (store *Store) LoadWorkflows(workflowsList []string) []*templates.Template 
 // LoadTemplatesWithTags takes a list of templates and extra tags
 // returning templates that match.
 func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) []*templates.Template {
-	includedTemplates, errs := store.config.Catalog.GetTemplatesPath(templatesList)
-	store.logErroredTemplates(errs)
+	includedTemplates, _ := store.config.Catalog.GetTemplatesPath(templatesList)
+
+	// tore.logErroredTemplates(errs)
 	templatePathMap := store.pathFilter.Match(includedTemplates)
 
 	loadedTemplates := make([]*templates.Template, 0, len(templatePathMap))
@@ -492,52 +494,75 @@ func (s *Store) logErroredTemplates(erred map[string]error) {
 	}
 }
 
-func (store *Store) LoadTemplatesWithName(templatesList []string, pocName string) []*templates.Template {
-	includedTemplates, errs := store.config.Catalog.GetTemplatesPath(templatesList)
-	store.logErroredTemplates(errs)
-	templatePathMap := store.pathFilter.Match(includedTemplates)
-
-	loadedTemplates := make([]*templates.Template, 0, len(templatePathMap))
-	for templatePath := range templatePathMap {
-		flag := false
-		changePocName := strings.ToLower(strings.ReplaceAll(pocName, "\\", "/"))
-		if strings.Contains(strings.ToLower(templatePath), strings.ToLower(pocName)) {
-			flag = true
-		}
-		if strings.Contains(strings.ToLower(templatePath), changePocName) {
-			flag = true
-		}
-
-		if flag {
-			parsed, err := templates.Parse(templatePath, store.preprocessor, store.config.ExecutorOptions)
-			if err != nil {
-				stats.Increment(parsers.RuntimeWarningsStats)
-				gologger.Warning().Msgf("Could not parse template %s: %s\n", templatePath, err)
-			} else if parsed != nil {
-				if len(parsed.RequestsHeadless) > 0 && !store.config.ExecutorOptions.Options.Headless {
-					gologger.Warning().Msgf("Headless flag is required for headless template %s\n", templatePath)
-				} else {
-					loadedTemplates = append(loadedTemplates, parsed)
-				}
-			}
-		}
+func splitPathAndFileName(path string) (string, string) {
+	p := strings.ReplaceAll(path, "\\", "/")
+	if !strings.Contains(path, "/") {
+		return "", p
 	}
-	return loadedTemplates
+	t := strings.Split(p, "/")
+	return strings.Join(t[:len(t)-1], "/"), t[len(t)-1]
 }
 
-func (store *Store) LoadTemplatesWithNames(templatesList, pocNames []string) []*templates.Template {
-	includedTemplates, errs := store.config.Catalog.GetTemplatesPath(templatesList)
-	store.logErroredTemplates(errs)
-	templatePathMap := store.pathFilter.Match(includedTemplates)
+func (store *Store) LoadTemplatesWithNames(f embed.FS, templatesList []string,
+	pocNames []string, excludeTags []string, enableSeverities []string) []*templates.Template {
+	loadedTemplatesName := make(map[string]struct{})
 
-	loadedTemplates := make([]*templates.Template, 0, len(templatePathMap))
-	for templatePath := range templatePathMap {
+	//includedTemplates, _ := store.config.Catalog.GetTemplatesPath(templatesList)
+	//// store.logErroredTemplates(errs)
+	//templatePathMap := store.pathFilter.Match(includedTemplates)
+
+	loadedTemplates := make([]*templates.Template, 0, len(templatesList))
+	for _, templatePath := range templatesList {
+		_, fileName := splitPathAndFileName(templatePath)
+		_, ok := loadedTemplatesName[fileName]
+		if ok {
+			continue
+		}
 		parsed, err := templates.Parse(templatePath, store.preprocessor, store.config.ExecutorOptions)
+		if err != nil {
+			parsed, err = templates.EmbedParse(f, templatePath, store.preprocessor, store.config.ExecutorOptions)
+		}
+
 		if err != nil {
 			stats.Increment(parsers.RuntimeWarningsStats)
 			gologger.Warning().Msgf("Could not parse template %s: %s\n", templatePath, err)
 			continue
 		}
+		if len(excludeTags) > 0 {
+			isExclude := false
+			for _, tag := range parsed.Info.Tags.ToSlice() {
+				for _, t := range excludeTags {
+					if t == tag {
+						isExclude = true
+						break
+					}
+				}
+				if isExclude {
+					break
+				}
+			}
+			if isExclude {
+				// 排除指定tags的模板
+				continue
+			}
+		}
+
+		if len(enableSeverities) > 0 {
+			isExclude := true
+
+			for _, s := range enableSeverities {
+				if strings.ToLower(s) == strings.ToLower(parsed.Info.SeverityHolder.Severity.String()) {
+					isExclude = false
+					break
+				}
+			}
+			if isExclude {
+				// 不允许的严重程度
+				continue
+			}
+		}
+
+		loadedTemplatesName[fileName] = struct{}{}
 		tags := parsed.Info.Tags.ToSlice()
 		flag := false
 		for _, pocName := range pocNames {

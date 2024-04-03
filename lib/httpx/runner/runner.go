@@ -592,6 +592,8 @@ func getJumpPath(Raw string) string {
 
 // RunEnumeration on targets for httpx client
 func (r *Runner) RunEnumeration() {
+	allCount := len(r.options.InputTargetHost)
+
 	// Try to create output folders if it doesn't exist
 	if r.options.StoreResponse && !fileutil.FolderExists(r.options.StoreResponseDir) {
 		// main folder
@@ -916,6 +918,8 @@ func (r *Runner) RunEnumeration() {
 
 	wg := sizedwaitgroup.New(r.options.Threads)
 
+	currentCount := 0
+
 	processItem := func(k string) error {
 		if r.options.resumeCfg != nil {
 			r.options.resumeCfg.current = k
@@ -952,6 +956,11 @@ func (r *Runner) RunEnumeration() {
 		}
 	} else {
 		r.hm.Scan(func(k, _ []byte) error {
+			currentCount += 1
+			if currentCount%1000 == 0 {
+				gologger.Info().Msgf("[Web] 当前进度: %v [%v/%v]", string(k), currentCount, allCount)
+			}
+
 			return processItem(string(k))
 		})
 	}

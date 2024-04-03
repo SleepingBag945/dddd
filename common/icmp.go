@@ -2,6 +2,7 @@ package common
 
 import (
 	"bytes"
+	"dddd/ddout"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
 	"golang.org/x/net/icmp"
@@ -37,7 +38,12 @@ func CheckLive(hostslist []string, Ping bool) []string {
 		for ip := range chanHosts {
 			if _, ok := ExistHosts[ip]; !ok && IsContain(hostslist, ip) {
 				ExistHosts[ip] = struct{}{}
-				gologger.Silent().Msgf("[ICMP-Alive] %v", ip)
+				// gologger.Silent().Msgf("[ICMP-Alive] %v", ip)
+				ddout.FormatOutput(ddout.OutputMessage{
+					Type:          "IPAlive",
+					IP:            ip,
+					AdditionalMsg: "ICMP",
+				})
 				AliveHosts = append(AliveHosts, ip)
 			}
 			livewg.Done()

@@ -1,6 +1,7 @@
 package gopocs
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
 	_ "embed"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"time"
 )
 
+//go:embed dict/ftp.txt
 var ftpUserPasswdDict string
 
 func FtpScan(info *structs.HostInfo) (tmperr error) {
@@ -76,7 +78,23 @@ func FtpConn(info *structs.HostInfo, user string, pass string) (flag bool, err e
 				}
 			}
 
-			gologger.Silent().Msgf("[GoPoc] " + result)
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "GoPoc",
+				IP:       "",
+				IPs:      nil,
+				Port:     "",
+				Protocol: "",
+				Web:      ddout.WebInfo{},
+				Finger:   nil,
+				Domain:   "",
+				GoPoc: ddout.GoPocsResultType{PocName: "FTP-Login",
+					Security:    "HIGH",
+					Target:      fmt.Sprintf("%v:%v", Host, Port),
+					InfoLeft:    result,
+					Description: "FTP未授权访问或弱口令",
+					ShowMsg:     result},
+				AdditionalMsg: "",
+			})
 
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "FTP-Login",

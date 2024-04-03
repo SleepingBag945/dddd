@@ -3,6 +3,7 @@ package gopocs
 import (
 	"bytes"
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	"encoding/hex"
 	"errors"
@@ -24,9 +25,26 @@ func NetBIOS(info *structs.HostInfo) error {
 		realhost := fmt.Sprintf("%s:%v", info.Host, info.Ports)
 		result := fmt.Sprintf("NetBios: %s %s ", info.Host, output)
 
-		gologger.Silent().Msg("[GoPoc] " + result)
-
 		showData := fmt.Sprintf("Host: %v\nInfo: %v", realhost, output)
+
+		// gologger.Silent().Msg("[GoPoc] " + result)
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type:     "GoPoc",
+			IP:       "",
+			IPs:      nil,
+			Port:     "",
+			Protocol: "",
+			Web:      ddout.WebInfo{},
+			Finger:   nil,
+			Domain:   "",
+			GoPoc: ddout.GoPocsResultType{PocName: "NetBIOS-Leak",
+				Security:    "INFO",
+				Target:      realhost,
+				InfoLeft:    showData,
+				Description: "NetBIOS服务泄露了主机名、网卡信息",
+				ShowMsg:     result},
+			AdditionalMsg: "",
+		})
 
 		GoPocWriteResult(structs.GoPocsResultType{
 			PocName:     "NetBIOS-Leak",

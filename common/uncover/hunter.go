@@ -1,6 +1,7 @@
 package uncover
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
 	"dddd/utils/cdn"
@@ -50,9 +51,9 @@ type hunterData struct {
 
 func getHunterKeys() []string {
 	var apiKeys []string
-	f, err := os.Open("config/subfinder-config.yaml")
+	f, err := os.Open(structs.GlobalConfig.APIConfigFilePath)
 	if err != nil {
-		gologger.Fatal().Msg("打开API Key配置文件config/subfinder-config.yaml失败")
+		gologger.Fatal().Msgf("打开API Key配置文件 %v 失败", structs.GlobalConfig.APIConfigFilePath)
 		return []string{}
 	}
 	defer f.Close()
@@ -241,7 +242,24 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 					if utils.GetItemInArray(results, p) == -1 {
 						if !isCDN || structs.GlobalConfig.AllowCDNAssets {
 							results = append(results, p)
-							gologger.Silent().Msgf("[Hunter] [%d] %s [%s] [%s] [%s]", v.Code, p, v.Title, v.City, v.Company)
+							// gologger.Silent().Msgf("[Hunter] [%d] %s [%s] [%s] [%s]", v.Code, p, v.Title, v.City, v.Company)
+							ddout.FormatOutput(ddout.OutputMessage{
+								Type:     "Hunter",
+								IP:       v.IP,
+								IPs:      nil,
+								Port:     strconv.Itoa(v.Port),
+								Protocol: v.Protocol,
+								Web: ddout.WebInfo{
+									Title:  v.Title,
+									Status: strconv.Itoa(v.Code),
+								},
+								Finger:        nil,
+								Domain:        v.Domain,
+								GoPoc:         ddout.GoPocsResultType{},
+								URI:           p,
+								City:          v.City,
+								AdditionalMsg: v.Company,
+							})
 						}
 					}
 				}
@@ -264,7 +282,21 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 					if utils.GetItemInArray(results, p) == -1 {
 						if !isCDN || structs.GlobalConfig.AllowCDNAssets {
 							results = append(results, p)
-							gologger.Silent().Msgf("[Hunter] %s://%s:%d", v.Protocol, v.IP, v.Port)
+							// gologger.Silent().Msgf("[Hunter] %s://%s:%d", v.Protocol, v.IP, v.Port)
+							ddout.FormatOutput(ddout.OutputMessage{
+								Type:          "Hunter",
+								IP:            v.IP,
+								IPs:           nil,
+								Port:          strconv.Itoa(v.Port),
+								Protocol:      v.Protocol,
+								Web:           ddout.WebInfo{},
+								Finger:        nil,
+								Domain:        v.Domain,
+								GoPoc:         ddout.GoPocsResultType{},
+								URI:           "",
+								City:          v.City,
+								AdditionalMsg: v.Company,
+							})
 						}
 					}
 				}

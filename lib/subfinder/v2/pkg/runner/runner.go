@@ -4,17 +4,23 @@ import (
 	"bufio"
 	"context"
 	"io"
+	"math"
 	"os"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
 
 	"github.com/projectdiscovery/gologger"
+	contextutil "github.com/projectdiscovery/utils/context"
+	fileutil "github.com/projectdiscovery/utils/file"
+	mapsutil "github.com/projectdiscovery/utils/maps"
 
 	"github.com/projectdiscovery/subfinder/v2/pkg/passive"
 	"github.com/projectdiscovery/subfinder/v2/pkg/resolve"
+	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping"
 )
 
 // Runner is an instance of the subdomain enumeration
@@ -23,6 +29,7 @@ type Runner struct {
 	options        *Options
 	passiveAgent   *passive.Agent
 	resolverClient *resolve.Resolver
+	rateLimit      *subscraping.CustomRateLimit
 }
 
 // NewRunner creates a new runner struct instance by parsing
@@ -30,6 +37,16 @@ type Runner struct {
 // and setting up loggers, etc.
 func NewRunner(options *Options) (*Runner, error) {
 	runner := &Runner{options: options}
+
+	// Check if the application loading with any provider configuration, then take it
+	// Otherwise load the default provider config
+	if fileutil.FileExists(options.ProviderConfig) {
+		// gologger.Info().Msgf("Loading provider config from %s", options.ProviderConfig)
+		options.loadProvidersFrom(options.ProviderConfig)
+	} else {
+		// gologger.Info().Msgf("Loading provider config from the default location: %s", defaultProviderConfigLocation)
+		options.loadProvidersFrom(defaultProviderConfigLocation)
+	}
 
 	// Initialize the passive subdomain enumeration engine
 	runner.initializePassiveEngine()
@@ -40,12 +57,26 @@ func NewRunner(options *Options) (*Runner, error) {
 		return nil, err
 	}
 
+	// Initialize the custom rate limit
+	runner.rateLimit = &subscraping.CustomRateLimit{
+		Custom: mapsutil.SyncLockMap[string, uint]{
+			Map: make(map[string]uint),
+		},
+	}
+
+	for source, sourceRateLimit := range options.RateLimits.AsMap() {
+		if sourceRateLimit.MaxCount > 0 && sourceRateLimit.MaxCount <= math.MaxUint {
+			_ = runner.rateLimit.Custom.Set(source, sourceRateLimit.MaxCount)
+		}
+	}
+
 	return runner, nil
 }
 
 // RunEnumeration wraps RunEnumerationWithCtx with an empty context
 func (r *Runner) RunEnumeration() error {
-	return r.RunEnumerationWithCtx(context.Background())
+	ctx, _ := contextutil.WithValues(context.Background(), contextutil.ContextArg("All"), contextutil.ContextArg(strconv.FormatBool(r.options.All)))
+	return r.RunEnumerationWithCtx(ctx)
 }
 
 // RunEnumerationWithCtx runs the subdomain enumeration flow on the targets specified
@@ -77,7 +108,8 @@ func (r *Runner) RunEnumerationWithCtx(ctx context.Context) error {
 
 // EnumerateMultipleDomains wraps EnumerateMultipleDomainsWithCtx with an empty context
 func (r *Runner) EnumerateMultipleDomains(reader io.Reader, writers []io.Writer) error {
-	return r.EnumerateMultipleDomainsWithCtx(context.Background(), reader, writers)
+	ctx, _ := contextutil.WithValues(context.Background(), contextutil.ContextArg("All"), contextutil.ContextArg(strconv.FormatBool(r.options.All)))
+	return r.EnumerateMultipleDomainsWithCtx(ctx, reader, writers)
 }
 
 // EnumerateMultipleDomainsWithCtx enumerates subdomains for multiple domains
@@ -86,7 +118,7 @@ func (r *Runner) EnumerateMultipleDomainsWithCtx(ctx context.Context, reader io.
 	scanner := bufio.NewScanner(reader)
 	ip, _ := regexp.Compile(`^([0-9\.]+$)`)
 	for scanner.Scan() {
-		domain, err := sanitize(scanner.Text())
+		domain, err := normalizeLowercase(scanner.Text())
 		isIp := ip.MatchString(domain)
 		if errors.Is(err, ErrEmptyInput) || (r.options.ExcludeIps && isIp) {
 			continue

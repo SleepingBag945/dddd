@@ -2,33 +2,12 @@ package subscraping
 
 import (
 	"math/rand"
-	"regexp"
 	"strings"
-	"sync"
-	"time"
 
 	"github.com/projectdiscovery/gologger"
 )
 
 const MultipleKeyPartsLength = 2
-
-var subdomainExtractorMutex = &sync.Mutex{}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-// NewSubdomainExtractor creates a new regular expression to extract
-// subdomains from text based on the given domain.
-func NewSubdomainExtractor(domain string) (*regexp.Regexp, error) {
-	subdomainExtractorMutex.Lock()
-	defer subdomainExtractorMutex.Unlock()
-	extractor, err := regexp.Compile(`(?i)[a-zA-Z0-9\*_.-]+\.` + domain)
-	if err != nil {
-		return nil, err
-	}
-	return extractor, nil
-}
 
 func PickRandom[T any](v []T, sourceName string) T {
 	var result T

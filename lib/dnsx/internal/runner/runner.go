@@ -46,6 +46,8 @@ type Runner struct {
 	stats               clistats.StatisticsClient
 	tmpStdinFile        string
 	subdomainResults    []string
+	DNSxCallback        func(subdomain string)
+	DefaultDict         []string
 }
 
 func New(options *Options) (*Runner, error) {
@@ -313,15 +315,23 @@ func (r *Runner) prepareInput() error {
 			numHosts += r.addHostsToHMapFromList(hosts)
 		case r.options.WordList != "":
 			// prepare wordlist
-			prefixes, err := r.preProcessArgument(r.options.WordList)
-			if err != nil {
-				return err
+			if fileutil.FileExists(r.options.WordList) {
+				prefixes, err := r.preProcessArgument(r.options.WordList)
+				if err == nil {
+					for prefix := range prefixes {
+						// domains Cartesian product with wordlist
+						subdomain := strings.TrimSpace(prefix) + "." + item
+						hosts = append(hosts, subdomain)
+					}
+				}
+			} else {
+				for _, prefix := range r.DefaultDict {
+					// domains Cartesian product with wordlist
+					subdomain := strings.TrimSpace(prefix) + "." + item
+					hosts = append(hosts, subdomain)
+				}
 			}
-			for prefix := range prefixes {
-				// domains Cartesian product with wordlist
-				subdomain := strings.TrimSpace(prefix) + "." + item
-				hosts = append(hosts, subdomain)
-			}
+
 			numHosts += r.addHostsToHMapFromList(hosts)
 		case iputil.IsCIDR(item):
 			hostC, err := mapcidr.IPAddressesAsStream(item)
@@ -625,7 +635,8 @@ func (r *Runner) HandleOutput() {
 		}
 		r.subdomainResults = append(r.subdomainResults, item)
 		// writes sequentially to stdout
-		gologger.Silent().Msgf("[Brute] %s\n", item)
+		// gologger.Silent().Msgf("[Brute] %s\n", item)
+		r.DNSxCallback(item)
 	}
 }
 

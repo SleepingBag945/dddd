@@ -1,6 +1,8 @@
 package catalog
 
-import "io"
+import (
+	"io"
+)
 
 // Catalog is a catalog storage implementations
 type Catalog interface {

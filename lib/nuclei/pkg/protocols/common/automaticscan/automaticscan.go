@@ -1,6 +1,8 @@
 package automaticscan
 
 import (
+	"embed"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -47,6 +49,21 @@ type Options struct {
 
 const mappingFilename = "wappalyzer-mapping.yml"
 
+func getTemplatePathByFS(f embed.FS) ([]string, error) {
+	files := []string{}
+
+	err := fs.WalkDir(f, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() && (strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml")) {
+			files = append(files, path)
+		}
+		return nil
+	})
+	return files, err
+}
+
 // New takes options and returns a new automatic scan service
 func New(opts Options) (*Service, error) {
 	wappalyzer, err := wappalyzer.New()
@@ -74,13 +91,29 @@ func New(opts Options) (*Service, error) {
 	}
 	// Collect path for default directories we want to look for templates in
 	var allTemplates []string
+
 	for _, directory := range defaultTemplatesDirectories {
-		templates, err := opts.ExecuterOpts.Catalog.GetTemplatePath(directory)
-		if err != nil {
-			return nil, errors.Wrap(err, "could not get templates in directory")
-		}
-		allTemplates = append(allTemplates, templates...)
+		tps, _ := opts.ExecuterOpts.Catalog.GetTemplatePath(directory)
+		allTemplates = append(allTemplates, tps...)
 	}
+
+	tps, err := getTemplatePathByFS(opts.ExecuterOpts.EmbedPocs)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get templates in embed directory")
+	}
+	for _, v := range tps {
+		flag := false
+		for _, a := range allTemplates {
+			if a == v {
+				flag = true
+				break
+			}
+		}
+		if !flag {
+			allTemplates = append(allTemplates, v)
+		}
+	}
+
 	childExecuter := opts.Engine.ChildExecuter()
 
 	httpclient, err := httpclientpool.Get(opts.ExecuterOpts.Options, &httpclientpool.Configuration{
@@ -150,14 +183,15 @@ func (s *Service) executeWappalyzerTechDetection() error {
 func (s *Service) processWappalyzerInputPair(input *contextargs.MetaInput) {
 	var templatesList []*templates.Template
 	if s.opts.Options.PocNameForSearch != "" {
-		templatesList = s.store.LoadTemplatesWithName(s.allTemplates, s.opts.Options.PocNameForSearch)
+		templatesList = s.store.LoadTemplatesWithNames(s.opts.EmbedPocs, s.allTemplates,
+			[]string{s.opts.Options.PocNameForSearch}, s.opts.Options.ExcludeTags, s.opts.EnableSeverities)
 	} else {
 		pocs, ok := s.opts.TargetAndPocsName[input.Input]
 		if !ok || len(pocs) == 0 {
 			return
 		}
 		uniquePocs := sliceutil.Dedupe(pocs)
-		templatesList = s.store.LoadTemplatesWithNames(s.allTemplates, uniquePocs)
+		templatesList = s.store.LoadTemplatesWithNames(s.opts.EmbedPocs, s.allTemplates, uniquePocs, s.opts.Options.ExcludeTags, s.opts.EnableSeverities)
 	}
 
 	// gologger.Info().Msgf("Executing tags (%v) for host %s (%d templates)", strings.Join(uniquePocs, ","), input, len(templatesList))

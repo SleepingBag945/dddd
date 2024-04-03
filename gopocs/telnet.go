@@ -1,17 +1,20 @@
 package gopocs
 
 import (
+	"dddd/ddout"
 	"dddd/gopocs/telnetlib"
 	"dddd/structs"
 	"dddd/utils"
 	_ "embed"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
+//go:embed dict/telnet.txt
 var telnetUserPasswdDict string
 
 func GetTelnetServerType(ip string, port int) int {
@@ -38,9 +41,27 @@ func TelnetScan(info *structs.HostInfo) (tmperr error) {
 	gologger.AuditTimeLogger("[Go] [TelnetScan] start try %s:%v Type: %v", info.Host, info.Ports, serverType)
 	if serverType == telnetlib.UnauthorizedAccess {
 		result := fmt.Sprintf("Telnet://%v:%v Unauthorized", info.Host, info.Ports)
-		gologger.Silent().Msg("[GoPoc] " + result)
+		// gologger.Silent().Msg("[GoPoc] " + result)
 
 		showData := fmt.Sprintf("Host: %v:%v\nUnauthorized\n", info.Host, info.Ports)
+
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type:     "GoPoc",
+			IP:       "",
+			IPs:      nil,
+			Port:     "",
+			Protocol: "",
+			Web:      ddout.WebInfo{},
+			Finger:   nil,
+			Domain:   "",
+			GoPoc: ddout.GoPocsResultType{PocName: "Telnet-Login",
+				Security:    "CRITICAL",
+				Target:      info.Host + ":" + info.Ports,
+				InfoLeft:    showData,
+				Description: "Telnet未授权/弱口令",
+				ShowMsg:     result},
+			AdditionalMsg: "",
+		})
 
 		GoPocWriteResult(structs.GoPocsResultType{
 			PocName:     "Telnet-Login",
@@ -52,11 +73,27 @@ func TelnetScan(info *structs.HostInfo) (tmperr error) {
 
 		return tmperr
 	}
-
-	upList := info.UserPass
-	for _, v := range strings.Split(telnetUserPasswdDict, "\n") {
-		upList = append(upList, v)
+	var upList []string
+	if structs.GlobalConfig.Password != "" {
+		upList = append(upList, structs.GlobalConfig.Password)
+	} else if structs.GlobalConfig.PasswordFile != "" {
+		b, err := os.ReadFile(structs.GlobalConfig.PasswordFile)
+		if err == nil {
+			t := strings.ReplaceAll(string(b), "\r\n", "\n")
+			for _, v := range strings.Split(t, "\n") {
+				if !strings.Contains(v, " : ") {
+					continue
+				}
+				upList = append(upList, v)
+			}
+		}
+	} else {
+		upList = info.UserPass
+		for _, v := range strings.Split(strings.ReplaceAll(telnetUserPasswdDict, "\r\n", "\n"), "\n") {
+			upList = append(upList, v)
+		}
 	}
+
 	upList = utils.RemoveDuplicateElement(upList)
 
 	// Telnet爆破
@@ -79,9 +116,27 @@ func TelnetScan(info *structs.HostInfo) (tmperr error) {
 			if err == nil {
 				if serverType == telnetlib.OnlyPassword {
 					result := fmt.Sprintf("Telnet://%v:%v %s", info.Host, info.Ports, pass)
-					gologger.Silent().Msg("[GoPoc] " + result)
+					// gologger.Silent().Msg("[GoPoc] " + result)
 
 					showData := fmt.Sprintf("Host: %v:%v\nPass: %v\n", info.Host, info.Ports, pass)
+
+					ddout.FormatOutput(ddout.OutputMessage{
+						Type:     "GoPoc",
+						IP:       "",
+						IPs:      nil,
+						Port:     "",
+						Protocol: "",
+						Web:      ddout.WebInfo{},
+						Finger:   nil,
+						Domain:   "",
+						GoPoc: ddout.GoPocsResultType{PocName: "Telnet-Login",
+							Security:    "CRITICAL",
+							Target:      info.Host + ":" + info.Ports,
+							InfoLeft:    showData,
+							Description: "Telnet未授权/弱口令",
+							ShowMsg:     result},
+						AdditionalMsg: "",
+					})
 
 					GoPocWriteResult(structs.GoPocsResultType{
 						PocName:     "Telnet-Login",
@@ -97,6 +152,24 @@ func TelnetScan(info *structs.HostInfo) (tmperr error) {
 					gologger.Silent().Msg("[GoPoc] " + result)
 
 					showData := fmt.Sprintf("Host: %v:%v\nUser: %v\nPass: %v\n", info.Host, info.Ports, user, pass)
+
+					ddout.FormatOutput(ddout.OutputMessage{
+						Type:     "GoPoc",
+						IP:       "",
+						IPs:      nil,
+						Port:     "",
+						Protocol: "",
+						Web:      ddout.WebInfo{},
+						Finger:   nil,
+						Domain:   "",
+						GoPoc: ddout.GoPocsResultType{PocName: "Telnet-Login",
+							Security:    "CRITICAL",
+							Target:      info.Host + ":" + info.Ports,
+							InfoLeft:    showData,
+							Description: "Telnet未授权/弱口令",
+							ShowMsg:     result},
+						AdditionalMsg: "",
+					})
 
 					GoPocWriteResult(structs.GoPocsResultType{
 						PocName:     "Telnet-Login",

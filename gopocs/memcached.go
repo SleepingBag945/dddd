@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	"encoding/hex"
 	"fmt"
@@ -29,8 +30,26 @@ func MemcachedScan(info *structs.HostInfo) (err error) {
 				if errRead == nil {
 					gologger.AuditTimeLogger("[Go] [Memcached] Dumped TCP response for %s\n\n%s\n", realhost, hex.Dump(rev[:n]))
 					if strings.Contains(string(rev[:n]), "STAT") {
-						result := fmt.Sprintf("[GoPoc] Memcached://%s Unauthorized", realhost)
-						gologger.Silent().Msg(result)
+						result := fmt.Sprintf("Memcached://%s Unauthorized", realhost)
+						// gologger.Silent().Msg(result)
+
+						ddout.FormatOutput(ddout.OutputMessage{
+							Type:     "GoPoc",
+							IP:       "",
+							IPs:      nil,
+							Port:     "",
+							Protocol: "",
+							Web:      ddout.WebInfo{},
+							Finger:   nil,
+							Domain:   "",
+							GoPoc: ddout.GoPocsResultType{PocName: "Memcached-Unauthorized",
+								Security:    "HIGH",
+								Target:      realhost,
+								InfoLeft:    string(rev[:n]),
+								Description: "Memcached未授权访问",
+								ShowMsg:     result},
+							AdditionalMsg: "",
+						})
 
 						GoPocWriteResult(structs.GoPocsResultType{
 							PocName:     "Memcached-Unauthorized",

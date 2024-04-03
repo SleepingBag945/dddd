@@ -3,6 +3,7 @@ package gopocs
 import (
 	"bytes"
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	"encoding/hex"
 	"fmt"
@@ -139,7 +140,24 @@ func read(text []byte, host string) error {
 	for _, v := range ipInfo {
 		result += " => " + v
 	}
-	gologger.Silent().Msg("[GoPoc] RPC:" + result)
+	// gologger.Silent().Msg("[GoPoc] RPC:" + result)
+	ddout.FormatOutput(ddout.OutputMessage{
+		Type:     "GoPoc",
+		IP:       "",
+		IPs:      nil,
+		Port:     "",
+		Protocol: "",
+		Web:      ddout.WebInfo{},
+		Finger:   nil,
+		Domain:   "",
+		GoPoc: ddout.GoPocsResultType{PocName: "WMI-Leak",
+			Security:    "INFO",
+			Target:      host,
+			InfoLeft:    strings.ReplaceAll(result, "=>", "\n"),
+			Description: "WMI服务泄露了主机名、网卡信息",
+			ShowMsg:     result},
+		AdditionalMsg: "",
+	})
 
 	GoPocWriteResult(structs.GoPocsResultType{
 		PocName:     "WMI-Leak",

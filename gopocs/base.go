@@ -32,6 +32,7 @@ var PluginList = map[string]interface{}{
 	"Memcache-Crack":      MemcachedScan,
 	"JDWP-Scan":           JDWPScan,
 	"Shiro-Key-Crack":     ShiroKeyCheck,
+	"ADB-Scan":            ADBScan,
 }
 
 var WriteResultLock sync.Mutex
@@ -136,13 +137,27 @@ func splitUserPass(userPasswd string) (user string, oriPass string) {
 
 func sortUserPassword(info *structs.HostInfo, UserPasswdDict string, DefaultKeys []string) []structs.UserPasswd {
 	var userPasswdList []structs.UserPasswd
-
-	upList := info.UserPass
-
-	// 兼容Windows
-	UserPasswdDict = strings.ReplaceAll(UserPasswdDict, "\r\n", "\n")
-	for _, v := range strings.Split(UserPasswdDict, "\n") {
-		upList = append(upList, v)
+	var upList []string
+	if structs.GlobalConfig.Password != "" {
+		upList = append(upList, structs.GlobalConfig.Password)
+	} else if structs.GlobalConfig.PasswordFile != "" {
+		b, err := os.ReadFile(structs.GlobalConfig.PasswordFile)
+		if err == nil {
+			t := strings.ReplaceAll(string(b), "\r\n", "\n")
+			for _, v := range strings.Split(t, "\n") {
+				if !strings.Contains(v, " : ") {
+					continue
+				}
+				upList = append(upList, v)
+			}
+		}
+	} else {
+		upList = info.UserPass
+		// 兼容Windows
+		UserPasswdDict = strings.ReplaceAll(UserPasswdDict, "\r\n", "\n")
+		for _, v := range strings.Split(UserPasswdDict, "\n") {
+			upList = append(upList, v)
+		}
 	}
 	upList = utils.RemoveDuplicateElement(upList)
 
@@ -222,17 +237,52 @@ func readDict(name string) string {
 	return string(bt)
 }
 
+func fileExists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
 // initDic 初始化用于爆破的字典
 func initDic() {
 	basePath := "config/dict/"
-	ftpUserPasswdDict = readDict(basePath + "ftp.txt")
-	mssqlUserPasswdDict = readDict(basePath + "mssql.txt")
-	mysqlUserPasswdDict = readDict(basePath + "mysql.txt")
-	oracleUserPasswdDict = readDict(basePath + "oracle.txt")
-	postgreSQLUserPasswdDict = readDict(basePath + "postgresql.txt")
-	rdpUserPasswdDict = readDict(basePath + "rdp.txt")
-	redisUserPasswdDict = readDict(basePath + "redis.txt")
-	smbUserPasswdDict = readDict(basePath + "smb.txt")
-	sshUserPasswdDict = readDict(basePath + "ssh.txt")
-	telnetUserPasswdDict = readDict(basePath + "telnet.txt")
+
+	if fileExists(basePath + "ftp.txt") {
+		ftpUserPasswdDict = readDict(basePath + "ftp.txt")
+	}
+	if fileExists(basePath + "") {
+		mssqlUserPasswdDict = readDict(basePath + "mssql.txt")
+	}
+	if fileExists(basePath + "") {
+		mysqlUserPasswdDict = readDict(basePath + "mysql.txt")
+	}
+	if fileExists(basePath + "") {
+		oracleUserPasswdDict = readDict(basePath + "oracle.txt")
+	}
+	if fileExists(basePath + "") {
+		postgreSQLUserPasswdDict = readDict(basePath + "postgresql.txt")
+	}
+	if fileExists(basePath + "") {
+		rdpUserPasswdDict = readDict(basePath + "rdp.txt")
+	}
+	if fileExists(basePath + "") {
+		redisUserPasswdDict = readDict(basePath + "redis.txt")
+	}
+	if fileExists(basePath + "") {
+		smbUserPasswdDict = readDict(basePath + "smb.txt")
+	}
+	if fileExists(basePath + "") {
+		sshUserPasswdDict = readDict(basePath + "ssh.txt")
+	}
+	if fileExists(basePath + "") {
+		telnetUserPasswdDict = readDict(basePath + "telnet.txt")
+	}
+	if fileExists(basePath + "") {
+		ShiroKeys = readDict(basePath + "shirokeys.txt")
+	}
+
 }

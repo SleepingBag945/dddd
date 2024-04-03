@@ -1,7 +1,9 @@
 package report
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
+	"encoding/json"
 	"fmt"
 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
@@ -56,6 +58,19 @@ func AddResultByResultEvent(result output.ResultEvent) {
 	if structs.GlobalConfig.ReportName == "" {
 		return
 	}
+
+	b, e := json.Marshal(result)
+	if e == nil {
+		show := fmt.Sprintf("[%s] [%s] %v", result.TemplateID,
+			result.Info.SeverityHolder.Severity.String(),
+			result.Matched)
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type:   "Nuclei",
+			Nuclei: string(b),
+			Show:   show,
+		})
+	}
+
 	severityString := getSeverity(result.Info.SeverityHolder.Severity)
 
 	title := fmt.Sprintf(`<table>
@@ -85,14 +100,12 @@ func AddResultByResultEvent(result output.ResultEvent) {
 			<td colspan="3">%s</td>
 		</tr>`, info)
 
-
 	fullurl := xssfilter(result.Matched)
-
 
 	footer := "</tbody></table>"
 	d := title + header + bodyinfo
 
-	urlShow :=`<tr>
+	urlShow := `<tr>
 		<td colspan="3"  style="border-top:1px solid #60786F"><a href="` + fullurl + `" target="_blank">` + fullurl + `</a></td>
 	</tr><tr>`
 
@@ -112,21 +125,20 @@ func AddResultByResultEvent(result output.ResultEvent) {
 		</tr>
 	`
 
-	if len(result.Packet) == 0{
-		body := urlShow + fmt.Sprintf(bodyHeader, result.Request , result.Response)
+	if len(result.Packet) == 0 {
+		body := urlShow + fmt.Sprintf(bodyHeader, result.Request, result.Response)
 		d += body
-	}else{
-		for index,v := range result.Packet{
-			if index == 1{
+	} else {
+		for index, v := range result.Packet {
+			if index == 1 {
 				d += urlShow
-			}else{
+			} else {
 				d += "<tr><td colspan=\"3\"  style=\"border-top:1px solid #60786F\"></td></tr>"
 			}
 			body := fmt.Sprintf(bodyHeader, v.Request, v.Response)
 			d += body
 		}
 	}
-
 
 	d += footer
 

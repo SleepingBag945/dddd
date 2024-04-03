@@ -1,6 +1,7 @@
 package common
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
 	"fmt"
@@ -12,7 +13,7 @@ import (
 	"time"
 )
 
-func GetProtocol(hostPorts []string, threads int) {
+func GetProtocol(hostPorts []string, threads int, timeout int) {
 	if len(hostPorts) == 0 {
 		return
 	}
@@ -39,6 +40,12 @@ func GetProtocol(hostPorts []string, threads int) {
 				continue
 			}
 			if found.Status == gonmap.Open || found.Response == nil {
+				ddout.FormatOutput(ddout.OutputMessage{
+					Type:     "Nmap",
+					IP:       found.IP,
+					Port:     strconv.Itoa(found.Port),
+					Protocol: "tcp",
+				})
 				wg.Done()
 				continue
 			}
@@ -56,9 +63,17 @@ func GetProtocol(hostPorts []string, threads int) {
 				structs.GlobalIPPortMap[hostPort] = found.Response.FingerPrint.Service
 				structs.GlobalIPPortMapLock.Unlock()
 			}
-			if found.Response.FingerPrint.Service != "" {
-				gologger.Silent().Msgf("[Nmap] %v://%v:%v", found.Response.FingerPrint.Service, found.IP, found.Port)
+			proto := found.Response.FingerPrint.Service
+			if proto == "" {
+				proto = "tcp"
 			}
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "Nmap",
+				IP:       found.IP,
+				Port:     strconv.Itoa(found.Port),
+				Protocol: proto,
+			})
+
 			wg.Done()
 		}
 	}()
@@ -67,6 +82,7 @@ func GetProtocol(hostPorts []string, threads int) {
 	for i := 0; i < workers; i++ {
 		go func() {
 			scanner := gonmap.New()
+			scanner.SetTimeout(time.Duration(timeout) * time.Second)
 			for addr := range Addrs {
 				t := strings.Split(addr, ":")
 				if len(t) < 2 {
@@ -77,7 +93,7 @@ func GetProtocol(hostPorts []string, threads int) {
 				if err != nil || port > 65535 {
 					continue
 				}
-				status, response := scanner.ScanTimeout(ip, port, time.Second*10)
+				status, response := scanner.Scan(ip, port)
 				var data structs.ProtocolResult
 				data.IP = ip
 				data.Port = port

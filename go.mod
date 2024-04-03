@@ -8,7 +8,7 @@ require (
 	github.com/hirochachacha/go-smb2 v1.1.0
 	github.com/jlaffaye/ftp v0.2.0
 	github.com/lib/pq v1.10.9
-	github.com/projectdiscovery/dnsx v1.1.5
+	github.com/projectdiscovery/dnsx v1.1.6
 	github.com/projectdiscovery/gologger v1.1.12
 	github.com/satori/go.uuid v1.2.0
 	github.com/sijms/go-ora/v2 v2.7.9
@@ -23,7 +23,6 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.1.0 // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.0.0 // indirect
-	github.com/DataDog/gostackparse v0.6.0 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Mzack9999/gcache v0.0.0-20230410081825-519e28eab057 // indirect
@@ -138,7 +137,6 @@ require (
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/klauspost/compress v1.17.3 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
-	github.com/klauspost/pgzip v1.2.5 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/libdns/libdns v0.2.1 // indirect
@@ -148,18 +146,16 @@ require (
 	github.com/mackerelio/go-osstat v0.2.4 // indirect
 	github.com/mfonda/simhash v0.0.0-20151007195837-79f94a1100d6 // indirect
 	github.com/mholt/acmez v1.2.0 // indirect
-	github.com/mholt/archiver/v3 v3.5.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
-	github.com/pierrec/lz4/v4 v4.1.2 // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/praetorian-inc/fingerprintx v1.1.9 // indirect
 	github.com/projectdiscovery/chaos-client v0.5.1 // indirect
 	github.com/projectdiscovery/dsl v0.0.35 // indirect
-	github.com/projectdiscovery/fastdialer v0.0.55 // indirect
+	github.com/projectdiscovery/fastdialer v0.0.56 // indirect
 	github.com/projectdiscovery/fasttemplate v0.0.2 // indirect
 	github.com/projectdiscovery/fdmax v0.0.4 // indirect
 	github.com/projectdiscovery/go-smb2 v0.0.0-20240129202741-052cc450c6cb // indirect
@@ -271,14 +267,14 @@ require (
 	github.com/projectdiscovery/clistats v0.0.20 // indirect
 	github.com/projectdiscovery/freeport v0.0.5 // indirect
 	github.com/projectdiscovery/goconfig v0.0.1 // indirect
-	github.com/projectdiscovery/goflags v0.1.29
-	github.com/projectdiscovery/hmap v0.0.35
+	github.com/projectdiscovery/goflags v0.1.34
+	github.com/projectdiscovery/hmap v0.0.36
 	github.com/projectdiscovery/httpx v1.3.5
 	github.com/projectdiscovery/mapcidr v1.1.16 // indirect
-	github.com/projectdiscovery/ratelimit v0.0.20 // indirect
-	github.com/projectdiscovery/retryabledns v1.0.52 // indirect
+	github.com/projectdiscovery/ratelimit v0.0.26 // indirect
+	github.com/projectdiscovery/retryabledns v1.0.53 // indirect
 	github.com/projectdiscovery/retryablehttp-go v1.0.44
-	github.com/projectdiscovery/subfinder/v2 v2.5.8
+	github.com/projectdiscovery/subfinder/v2 v2.6.5
 	github.com/projectdiscovery/utils v0.0.76
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rs/xid v1.5.0 // indirect
@@ -323,10 +319,10 @@ require (
 
 replace (
 	github.com/lcvvvv/gonmap v1.3.4 => ./lib/gonmap
-	github.com/projectdiscovery/dnsx v1.1.5 => ./lib/dnsx
+	github.com/projectdiscovery/dnsx v1.1.6 => ./lib/dnsx
 	github.com/projectdiscovery/gologger v1.1.12 => ./lib/gologger
 	github.com/projectdiscovery/httpx v1.3.5 => ./lib/httpx
 	github.com/projectdiscovery/nuclei/v3 v3.0.2 => ./lib/nuclei
-	github.com/projectdiscovery/subfinder/v2 v2.5.8 => ./lib/subfinder/v2
+	github.com/projectdiscovery/subfinder/v2 v2.6.5 => ./lib/subfinder/v2
 	github.com/tomatome/grdp v0.1.0 => github.com/shadow1ng/grdp v1.0.3
 )

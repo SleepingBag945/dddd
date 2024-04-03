@@ -1,6 +1,7 @@
 package uncover
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
 	"dddd/utils/cdn"
@@ -30,9 +31,9 @@ type FOFAResponseJson struct {
 
 func getFOFAKeys() []string {
 	var apiKeys []string
-	f, err := os.Open("config/subfinder-config.yaml")
+	f, err := os.Open(structs.GlobalConfig.APIConfigFilePath)
 	if err != nil {
-		gologger.Fatal().Msg("打开API Key配置文件config/subfinder-config.yaml失败")
+		gologger.Fatal().Msgf("打开API Key配置文件 %v 失败", structs.GlobalConfig.APIConfigFilePath)
 		return []string{}
 	}
 	defer f.Close()
@@ -213,7 +214,22 @@ func SearchFOFACore(keyword string, pageSize int) []string {
 			if !isCDN || structs.GlobalConfig.AllowCDNAssets {
 				results = append(results, addTarget)
 			}
-			gologger.Silent().Msg(show)
+			// gologger.Silent().Msg(show)
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:          "Fofa",
+				IP:            ip,
+				IPs:           nil,
+				Port:          port,
+				Protocol:      protocol,
+				Web:           ddout.WebInfo{},
+				Finger:        nil,
+				Domain:        domain,
+				GoPoc:         ddout.GoPocsResultType{},
+				URI:           host,
+				City:          "",
+				Show:          show,
+				AdditionalMsg: "",
+			})
 		}
 
 	}

@@ -1,6 +1,7 @@
 package gopocs
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
 	_ "embed"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"time"
 )
 
+//go:embed dict/ssh.txt
 var sshUserPasswdDict string
 
 func SshScan(info *structs.HostInfo) (tmperr error) {
@@ -66,7 +68,7 @@ func SshConn(info *structs.HostInfo, user string, pass string) (flag bool, err e
 			flag = true
 			var result string
 			result = fmt.Sprintf("SSH://%v:%v:%v %v", Host, Port, Username, Password)
-			gologger.Silent().Msg("[GoPoc] " + result)
+			// gologger.Silent().Msg("[GoPoc] " + result)
 
 			shellInfo := "bash$ whoami&id&ifconfig\n"
 			combo, sshErr := session.CombinedOutput("whoami&id&ifconfig")
@@ -75,6 +77,25 @@ func SshConn(info *structs.HostInfo, user string, pass string) (flag bool, err e
 			}
 
 			showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", Host, Port, Username, Password)
+
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "GoPoc",
+				IP:       "",
+				IPs:      nil,
+				Port:     "",
+				Protocol: "",
+				Web:      ddout.WebInfo{},
+				Finger:   nil,
+				Domain:   "",
+				GoPoc: ddout.GoPocsResultType{PocName: "SSH-Login",
+					Security:    "CRITICAL",
+					Target:      Host + ":" + Port,
+					InfoLeft:    showData,
+					InfoRight:   shellInfo,
+					Description: "SSH弱口令",
+					ShowMsg:     result},
+				AdditionalMsg: "",
+			})
 
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "SSH-Login",

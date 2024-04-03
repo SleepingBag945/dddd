@@ -27,8 +27,6 @@ type Nmap struct {
 	sslProbeMap        ProbeList
 }
 
-//扫描类
-
 func (n *Nmap) ScanTimeout(ip string, port int, timeout time.Duration) (status Status, response *Response) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	var resChan = make(chan bool)
@@ -76,11 +74,12 @@ func (n *Nmap) Scan(ip string, port int) (status Status, response *Response) {
 		return status, response
 	}
 	otherProbes := probeNames[1:]
-	return n.getRealResponse(ip, port, 3*time.Second, otherProbes...)
+	status, response = n.getRealResponse(ip, port, n.timeout, otherProbes...)
+	return status, response
 }
 
 func (n *Nmap) getRealResponse(host string, port int, timeout time.Duration, probes ...string) (status Status, response *Response) {
-	status, response = n.getResponseByProbes(host, port, timeout, probes...)
+	status, response = n.getResponseByProbes(host, port, timeout, probes)
 	if status != Matched {
 		return status, response
 	}
@@ -94,7 +93,7 @@ func (n *Nmap) getRealResponse(host string, port int, timeout time.Duration, pro
 }
 
 func (n *Nmap) getResponseBySSLSecondProbes(host string, port int, timeout time.Duration) (status Status, response *Response) {
-	status, response = n.getResponseByProbes(host, port, timeout, n.sslSecondProbeMap...)
+	status, response = n.getResponseByProbes(host, port, timeout, n.sslSecondProbeMap)
 	if status != Matched || response.FingerPrint.Service == "ssl" {
 		status, response = n.getResponseByHTTPS(host, port, timeout)
 	}
@@ -112,7 +111,7 @@ func (n *Nmap) getResponseByHTTPS(host string, port int, timeout time.Duration) 
 	return n.getResponse(host, port, true, timeout, httpRequest)
 }
 
-func (n *Nmap) getResponseByProbes(host string, port int, timeout time.Duration, probes ...string) (status Status, response *Response) {
+func (n *Nmap) getResponseByProbes(host string, port int, timeout time.Duration, probes []string) (status Status, response *Response) {
 	var responseNotMatch *Response
 	for _, requestName := range probes {
 		if n.probeUsed.exist(requestName) {
@@ -189,6 +188,16 @@ func (n *Nmap) getFinger(responseRaw string, tls bool, requestName string) *Fing
 
 	finger := probe.match(data)
 
+	// 沙雕正则匹配adb失败，暴力判断
+	if requestName == "TCP_adbConnect" && finger.Service == "" {
+		if (strings.HasPrefix(responseRaw, "CNXN\x01\x00\x00\x01\x00\x10\x00") || strings.HasPrefix(responseRaw, "AUTH\x01\x00\x00\x01\x00\x10\x00")) &&
+			strings.Contains(responseRaw, "\xbc\xb1\xa7\xb1") {
+			return &FingerPrint{
+				ProbeName: requestName,
+				Service:   "adb",
+			}
+		}
+	}
 	if tls == true {
 		if finger.Service == "http" {
 			finger.Service = "https"

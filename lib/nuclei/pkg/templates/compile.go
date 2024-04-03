@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -45,6 +46,38 @@ func init() {
 		SignatureStats[verifier.Identifier()] = &atomic.Uint64{}
 	}
 	SignatureStats[Unsigned] = &atomic.Uint64{}
+}
+
+func EmbedParse(f embed.FS, filePath string, preprocessor Preprocessor, options protocols.ExecutorOptions) (*Template, error) {
+	if !options.DoNotCache {
+		if value, err := parsedTemplatesCache.Has(filePath); value != nil {
+			return value.(*Template), err
+		}
+	}
+
+	reader, err := f.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+	options.TemplatePath = filePath
+	template, err := ParseTemplateFromReader(reader, preprocessor, options.Copy())
+	if err != nil {
+		return nil, err
+	}
+	// Compile the workflow request
+	if len(template.Workflows) > 0 {
+		compiled := &template.Workflow
+
+		compileWorkflow(filePath, preprocessor, &options, compiled, options.WorkflowLoader)
+		template.CompiledWorkflow = compiled
+		template.CompiledWorkflow.Options = &options
+	}
+	template.Path = filePath
+	if !options.DoNotCache {
+		parsedTemplatesCache.Store(filePath, template, err)
+	}
+	return template, nil
 }
 
 // Parse parses a yaml request template file

@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"database/sql"
+	"dddd/ddout"
 	"dddd/structs"
 	_ "embed"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 	"time"
 )
 
+//go:embed dict/oracle.txt
 var oracleUserPasswdDict string
 
 func OracleScan(info *structs.HostInfo) (tmperr error) {
@@ -50,9 +52,28 @@ func OracleConn(info *structs.HostInfo, user string, pass string) (flag bool, er
 		err = db.Ping()
 		if err == nil {
 			result := fmt.Sprintf("Oracle://%v:%v:%v %v", Host, Port, Username, Password)
-			gologger.Silent().Msg("[GoPoc] " + result)
+			// gologger.Silent().Msg("[GoPoc] " + result)
 
 			showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", Host, Port, Username, Password)
+
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "GoPoc",
+				IP:       "",
+				IPs:      nil,
+				Port:     "",
+				Protocol: "",
+				Web:      ddout.WebInfo{},
+				Finger:   nil,
+				Domain:   "",
+				GoPoc: ddout.GoPocsResultType{PocName: "Oracle-Login",
+					Security:    "High",
+					Target:      Host + ":" + Port,
+					InfoLeft:    showData,
+					Description: "Oracle弱口令",
+					ShowMsg:     result},
+				AdditionalMsg: "",
+			})
+
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "Oracle-Login",
 				Security:    "High",

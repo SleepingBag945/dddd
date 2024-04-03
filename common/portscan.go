@@ -2,6 +2,7 @@ package common
 
 import (
 	"bytes"
+	"dddd/ddout"
 	"dddd/lib/masscan"
 	"dddd/structs"
 	"dddd/utils"
@@ -116,9 +117,20 @@ func PortConnect(addr Addr, respondingHosts chan<- string, adjustedTimeout int, 
 	if err == nil {
 		address := host + ":" + strconv.Itoa(port)
 		if PortScan {
-			gologger.Silent().Msgf("[PortScan] %v", address)
+			// gologger.Silent().Msgf("[PortScan] %v", address)
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type: "PortScan",
+				IP:   host,
+				Port: strconv.Itoa(port),
+			})
+
 		} else {
-			gologger.Silent().Msgf("[TCP-Alive] %v", address)
+			// gologger.Silent().Msgf("[TCP-Alive] %v", address)
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:          "IPAlive",
+				IP:            host,
+				AdditionalMsg: "TCP:" + strconv.Itoa(port),
+			})
 		}
 		wg.Add(1)
 		respondingHosts <- address
@@ -157,7 +169,13 @@ func PortScanSYN(IPs []string) []string {
 	}
 	results = utils.RemoveDuplicateElement(results)
 	for _, each := range results {
-		gologger.Silent().Msg("[PortScan] " + each)
+		// gologger.Silent().Msg("[PortScan] " + each)
+		t := strings.Split(each, ":")
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type: "PortScan",
+			IP:   t[0],
+			Port: t[1],
+		})
 	}
 	return results
 }

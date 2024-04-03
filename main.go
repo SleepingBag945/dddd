@@ -20,9 +20,9 @@ import (
 
 func main() {
 	common.Flag()
+
 	workflow()
 }
-
 func workflow() {
 	var domains []string
 	var urls []string
@@ -156,7 +156,9 @@ func workflow() {
 		getProtocalInput = append(getProtocalInput, each)
 	}
 	if len(getProtocalInput) > 0 {
-		common.GetProtocol(getProtocalInput, structs.GlobalConfig.GetBannerThreads)
+		common.GetProtocol(getProtocalInput,
+			structs.GlobalConfig.GetBannerThreads,
+			structs.GlobalConfig.GetBannerTimeout)
 	}
 
 	// 获取http响应
@@ -176,7 +178,7 @@ func workflow() {
 
 	// 非CDN域名 探测域名绑定资产
 	// 把只允许域名访问的资产扒拉出来
-	if !structs.GlobalConfig.NoHostBind{
+	if !structs.GlobalConfig.NoHostBind {
 		common.HostBindCheck()
 	}
 
@@ -197,7 +199,9 @@ func workflow() {
 			structs.GlobalConfig.HTTPProxy,
 			report.AddResultByResultEvent,
 			structs.GlobalConfig.PocNameForSearch,
-			structs.GlobalConfig.NoInteractsh)
+			structs.GlobalConfig.NoInteractsh,
+			structs.GlobalEmbedPocs, structs.GlobalConfig.NucleiTemplate, strings.Split(structs.GlobalConfig.ExcludeTags, ","),
+			strings.Split(structs.GlobalConfig.Severities, ","))
 		utils.DeleteReportWithNoResult()
 		return
 	}
@@ -243,7 +247,9 @@ func workflow() {
 		nucleiResults = callnuclei.CallNuclei(TargetAndPocsName,
 			structs.GlobalConfig.HTTPProxy,
 			report.AddResultByResultEvent,
-			"", structs.GlobalConfig.NoInteractsh)
+			"", structs.GlobalConfig.NoInteractsh, structs.GlobalEmbedPocs,
+			structs.GlobalConfig.NucleiTemplate, strings.Split(structs.GlobalConfig.ExcludeTags, ","),
+			strings.Split(structs.GlobalConfig.Severities, ","))
 	}
 
 	// GoPoc引擎

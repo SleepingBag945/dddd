@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -80,6 +81,8 @@ type Runner struct {
 	pprofServer       *http.Server
 	// pdcp auto-save options
 	pdcpUploadErrMsg string
+	EmbedPocsFS      embed.FS
+	EnableSeverities []string
 }
 
 const pprofServerAddress = "127.0.0.1:8086"
@@ -416,6 +419,8 @@ func (r *Runner) RunEnumeration(TargetAndPocsName map[string][]string) error {
 		ExcludeMatchers:   excludematchers.New(r.options.ExcludeMatchers),
 		InputHelper:       input.NewHelper(),
 		TargetAndPocsName: TargetAndPocsName,
+		EmbedPocs:         r.EmbedPocsFS,
+		EnableSeverities:  r.EnableSeverities,
 	}
 
 	if r.options.ShouldUseHostError() {

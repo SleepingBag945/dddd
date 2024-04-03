@@ -13,6 +13,7 @@ import (
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/bevigil"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/binaryedge"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/bufferover"
+	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/builtwith"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/c99"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/censys"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/certspotter"
@@ -24,6 +25,7 @@ import (
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/dnsdb"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/dnsdumpster"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/dnsrepo"
+	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/facebook"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/fofa"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/fullhunt"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/github"
@@ -31,10 +33,11 @@ import (
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/hunter"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/intelx"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/leakix"
+	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/netlas"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/passivetotal"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/quake"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/rapiddns"
-	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/riddler"
+	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/redhuntlabs"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/robtex"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/securitytrails"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/shodan"
@@ -43,8 +46,8 @@ import (
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/virustotal"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/waybackarchive"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/whoisxmlapi"
-	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/zoomeye"
 	"github.com/projectdiscovery/subfinder/v2/pkg/subscraping/sources/zoomeyeapi"
+	mapsutil "github.com/projectdiscovery/utils/maps"
 )
 
 var AllSources = [...]subscraping.Source{
@@ -70,11 +73,13 @@ var AllSources = [...]subscraping.Source{
 	&hackertarget.Source{},
 	&hunter.Source{},
 	&intelx.Source{},
+	&netlas.Source{},
 	&leakix.Source{},
 	&passivetotal.Source{},
 	&quake.Source{},
 	&rapiddns.Source{},
-	&riddler.Source{},
+	&redhuntlabs.Source{},
+	// &riddler.Source{}, // failing due to cloudfront protection
 	&robtex.Source{},
 	&securitytrails.Source{},
 	&shodan.Source{},
@@ -83,11 +88,17 @@ var AllSources = [...]subscraping.Source{
 	&virustotal.Source{},
 	&waybackarchive.Source{},
 	&whoisxmlapi.Source{},
-	&zoomeye.Source{},
 	&zoomeyeapi.Source{},
+	&facebook.Source{},
 	// &threatminer.Source{}, // failing  api
 	// &reconcloud.Source{}, // failing due to cloudflare bot protection
+	&builtwith.Source{},
 }
+
+var sourceWarnings = mapsutil.NewSyncLockMap[string, string](
+	mapsutil.WithMap(mapsutil.Map[string, string]{
+		"passivetotal": "New API credentials for PassiveTotal can't be generated, but existing user account credentials are still functional. Please ensure your integrations are using valid credentials.",
+	}))
 
 var NameSourceMap = make(map[string]subscraping.Source, len(AllSources))
 
@@ -143,6 +154,12 @@ func New(sourceNames, excludedSourceNames []string, useAllSources, useSourcesSup
 	}
 
 	gologger.Debug().Msgf(fmt.Sprintf("Selected source(s) for this search: %s", strings.Join(maps.Keys(sources), ", ")))
+
+	for _, currentSource := range sources {
+		if warning, ok := sourceWarnings.Get(strings.ToLower(currentSource.Name())); ok {
+			gologger.Warning().Msg(warning)
+		}
+	}
 
 	// Create the agent, insert the sources and remove the excluded sources
 	agent := &Agent{sources: maps.Values(sources)}

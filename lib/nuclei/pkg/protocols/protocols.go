@@ -1,6 +1,7 @@
 package protocols
 
 import (
+	"embed"
 	"encoding/base64"
 	"sync/atomic"
 
@@ -108,6 +109,8 @@ type ExecutorOptions struct {
 	// environment for javascript templates
 	JsCompiler        *compiler.Compiler
 	TargetAndPocsName map[string][]string
+	EmbedPocs         embed.FS
+	EnableSeverities  []string
 }
 
 // CreateTemplateCtxStore creates template context store (which contains templateCtx for every scan)

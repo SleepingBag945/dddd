@@ -42,7 +42,7 @@ func initWithFilter(filter int) {
 		probeUsed:          emptyProbeList,
 		bypassAllProbePort: []int{161, 137, 139, 135, 389, 443, 548, 1433, 6379, 1883, 5432, 1521, 3389, 3388, 3389, 33890, 33900},
 		sslSecondProbeMap:  []string{"TCP_TerminalServerCookie", "TCP_TerminalServer"},
-		allProbeMap:        []string{"TCP_GetRequest", "TCP_NULL", "TCP_JDWP", "TCP_redis-server"},
+		allProbeMap:        []string{"TCP_GetRequest", "TCP_NULL", "TCP_JDWP", "TCP_redis-server", "TCP_ms-sql-s", "TCP_adbConnect"},
 		sslProbeMap:        []string{"TCP_TLSSessionReq", "TCP_SSLSessionReq", "TCP_SSLv23SessionReq"},
 	}
 	for i := 0; i <= 65535; i++ {
@@ -157,6 +157,7 @@ func optimizeNMAPProbes() {
 	nmap.portProbeMap[2022] = append(nmap.portProbeMap[2022], "TCP_Socks5")
 	nmap.portProbeMap[6000] = append(nmap.portProbeMap[6000], "TCP_Socks5")
 	nmap.portProbeMap[7000] = append(nmap.portProbeMap[7000], "TCP_Socks5")
+
 	//将TCP_GetRequest的fallback参数设置为NULL探针，避免漏资产
 	nmap.probeNameMap["TCP_GenericLines"].fallback = "TCP_NULL"
 	nmap.probeNameMap["TCP_GetRequest"].fallback = "TCP_NULL"

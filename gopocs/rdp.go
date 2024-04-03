@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	_ "embed"
 	"errors"
@@ -23,6 +24,7 @@ import (
 	"time"
 )
 
+//go:embed dict/rdp.txt
 var rdpUserPasswdDict string
 
 type Brutelist struct {
@@ -82,8 +84,26 @@ func worker(host, domain string, port int, wg *sync.WaitGroup, brlist chan Brute
 				result = fmt.Sprintf("RDP://%v:%v:%v %v", host, port, user, pass)
 			}
 
-			gologger.Silent().Msg("[GoPoc] " + result)
+			// gologger.Silent().Msg("[GoPoc] " + result)
 			showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", host, port, user, pass)
+
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "GoPoc",
+				IP:       "",
+				IPs:      nil,
+				Port:     "",
+				Protocol: "",
+				Web:      ddout.WebInfo{},
+				Finger:   nil,
+				Domain:   "",
+				GoPoc: ddout.GoPocsResultType{PocName: "RDP-Login",
+					Security:    "CRITICAL",
+					Target:      fmt.Sprintf("%v:%v", host, port),
+					InfoLeft:    showData,
+					Description: "RDP弱口令",
+					ShowMsg:     result},
+				AdditionalMsg: "",
+			})
 
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "RDP-Login",

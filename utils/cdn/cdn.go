@@ -1,9 +1,9 @@
 package cdn
 
 import (
+	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
-	"fmt"
 	"github.com/miekg/dns"
 	"github.com/projectdiscovery/gologger"
 	"net"
@@ -120,8 +120,24 @@ func CheckCDNs(domains []string, threads int) (rCDNDomains []string, normalDomai
 	//接收结果
 	go func() {
 		for result := range results {
+			if result.Domain == "" {
+				wg.Done()
+				continue
+			}
+
 			if result.IsCDN {
-				gologger.Silent().Msgf("[CDN-Domain] %v [%v]", result.Domain, result.CDNName)
+				// gologger.Silent().Msgf("[CDN-Domain] %v [%v]", result.Domain, result.CDNName)
+				ddout.FormatOutput(ddout.OutputMessage{
+					Type:          "CDN-Domain",
+					IP:            "",
+					IPs:           nil,
+					Port:          "",
+					Protocol:      "",
+					Web:           ddout.WebInfo{},
+					Finger:        nil,
+					Domain:        result.Domain,
+					AdditionalMsg: result.CDNName,
+				})
 				rCDNDomainsLock.Lock()
 				rCDNDomains = append(rCDNDomains, result.Domain)
 				rCDNDomainsLock.Unlock()
@@ -135,40 +151,53 @@ func CheckCDNs(domains []string, threads int) (rCDNDomains []string, normalDomai
 					rIPs = append(rIPs, each.String())
 					rIPsLock.Unlock()
 				}
-
-				show := fmt.Sprintf("[RealIP] %v => ", result.Domain)
-				for _, ip := range result.IPs {
-					show += ip.String() + ","
-
-					structs.GlobalIPDomainMapLock.Lock()
-					_, ok := structs.GlobalIPDomainMap[ip.String()]
-					structs.GlobalIPDomainMapLock.Unlock()
-					if ok {
-						// 存在于这个Map中
+				var ips []string
+				if len(result.IPs) != 0 {
+					// show := fmt.Sprintf("[RealIP] %v => ", result.Domain)
+					for _, ip := range result.IPs {
+						ips = append(ips, ip.String())
 						structs.GlobalIPDomainMapLock.Lock()
-						dms, _ := structs.GlobalIPDomainMap[ip.String()]
+						_, ok := structs.GlobalIPDomainMap[ip.String()]
 						structs.GlobalIPDomainMapLock.Unlock()
-						flag := false
-						for _, dm := range dms {
-							if dm == result.Domain {
-								flag = true
-								break
-							}
-						}
-						if !flag { // 没有这个域名
+						if ok {
+							// 存在于这个Map中
 							structs.GlobalIPDomainMapLock.Lock()
-							structs.GlobalIPDomainMap[ip.String()] = append(structs.GlobalIPDomainMap[ip.String()],
-								result.Domain)
+							dms, _ := structs.GlobalIPDomainMap[ip.String()]
+							structs.GlobalIPDomainMapLock.Unlock()
+							flag := false
+							for _, dm := range dms {
+								if dm == result.Domain {
+									flag = true
+									break
+								}
+							}
+							if !flag { // 没有这个域名
+								structs.GlobalIPDomainMapLock.Lock()
+								structs.GlobalIPDomainMap[ip.String()] = append(structs.GlobalIPDomainMap[ip.String()],
+									result.Domain)
+								structs.GlobalIPDomainMapLock.Unlock()
+							}
+						} else {
+							structs.GlobalIPDomainMapLock.Lock()
+							structs.GlobalIPDomainMap[ip.String()] = []string{result.Domain}
 							structs.GlobalIPDomainMapLock.Unlock()
 						}
-					} else {
-						structs.GlobalIPDomainMapLock.Lock()
-						structs.GlobalIPDomainMap[ip.String()] = []string{result.Domain}
-						structs.GlobalIPDomainMapLock.Unlock()
 					}
+
+					ddout.FormatOutput(ddout.OutputMessage{
+						Type:          "RealIP",
+						IP:            "",
+						IPs:           ips,
+						Port:          "",
+						Protocol:      "",
+						Web:           ddout.WebInfo{},
+						Finger:        nil,
+						Domain:        result.Domain,
+						AdditionalMsg: "",
+					})
+
 				}
-				show = show[:len(show)-1]
-				gologger.Silent().Msg(show)
+
 			}
 			wg.Done()
 		}

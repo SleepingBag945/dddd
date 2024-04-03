@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"database/sql"
+	"dddd/ddout"
 	"dddd/structs"
 	_ "embed"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 	"time"
 )
 
+//go:embed dict/mysql.txt
 var mysqlUserPasswdDict string
 
 func MysqlScan(info *structs.HostInfo) (tmperr error) {
@@ -50,7 +52,7 @@ func MysqlConn(info *structs.HostInfo, user string, pass string) (flag bool, err
 		err = db.Ping()
 		if err == nil {
 			result := fmt.Sprintf("Mysql://%v:%v:%v %v", Host, Port, Username, Password)
-			gologger.Silent().Msg("[GoPoc] " + result)
+			// gologger.Silent().Msg("[GoPoc] " + result)
 
 			showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", Host, Port, Username, Password)
 
@@ -90,6 +92,26 @@ func MysqlConn(info *structs.HostInfo, user string, pass string) (flag bool, err
 				}
 			}
 			gologger.AuditLogger("[Go] [MYSQL-Brute] %s Result:\n%s", showData, msg)
+
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "GoPoc",
+				IP:       "",
+				IPs:      nil,
+				Port:     "",
+				Protocol: "",
+				Web:      ddout.WebInfo{},
+				Finger:   nil,
+				Domain:   "",
+				GoPoc: ddout.GoPocsResultType{PocName: "Mysql-Login",
+					Security:    "High",
+					Target:      Host + ":" + Port,
+					InfoLeft:    showData,
+					InfoRight:   msg,
+					Description: "Mysql弱口令",
+					ShowMsg:     result},
+				AdditionalMsg: "",
+			})
+
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "Mysql-Login",
 				Security:    "High",

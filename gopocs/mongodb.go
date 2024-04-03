@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	"encoding/hex"
 	"fmt"
@@ -83,8 +84,26 @@ func MongodbUnauth(info *structs.HostInfo) (flag bool, err error) {
 	if strings.Contains(reply, "totalLinesWritten") {
 		flag = true
 
-		result := fmt.Sprintf("[GoPoc] Mongodb://%s Unauthorized", realhost)
-		gologger.Silent().Msg(result)
+		result := fmt.Sprintf("Mongodb://%s Unauthorized", realhost)
+		// gologger.Silent().Msg(result)
+
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type:     "GoPoc",
+			IP:       "",
+			IPs:      nil,
+			Port:     "",
+			Protocol: "",
+			Web:      ddout.WebInfo{},
+			Finger:   nil,
+			Domain:   "",
+			GoPoc: ddout.GoPocsResultType{PocName: "Mongodb-Unauthorized",
+				Security:    "HIGH",
+				Target:      realhost,
+				InfoLeft:    reply,
+				Description: "Mongodb未授权访问",
+				ShowMsg:     result},
+			AdditionalMsg: "",
+		})
 
 		GoPocWriteResult(structs.GoPocsResultType{
 			PocName:     "Mongodb-Unauthorized",

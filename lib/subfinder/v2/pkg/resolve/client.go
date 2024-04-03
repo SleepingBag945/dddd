@@ -6,13 +6,16 @@ import (
 
 // DefaultResolvers contains the default list of resolvers known to be good
 var DefaultResolvers = []string{
-	"223.5.5.5:53",       // Cloudflare primary
-	"223.6.6.6:53",       // Cloudflare secondary
-	"114.114.114.114:53", // Google primary
-	"114.114.115.115:53", // Google secondary
-	"180.76.76.76:53",    // Quad9 Primary
-	"119.29.29.29:53",    // Quad9 Secondary
-	"182.254.116.116:53", // Yandex Primary
+	"1.1.1.1:53",        // Cloudflare primary
+	"1.0.0.1:53",        // Cloudflare secondary
+	"8.8.8.8:53",        // Google primary
+	"8.8.4.4:53",        // Google secondary
+	"9.9.9.9:53",        // Quad9 Primary
+	"9.9.9.10:53",       // Quad9 Secondary
+	"77.88.8.8:53",      // Yandex Primary
+	"77.88.8.1:53",      // Yandex Secondary
+	"208.67.222.222:53", // OpenDNS Primary
+	"208.67.220.220:53", // OpenDNS Secondary
 }
 
 // Resolver is a struct for resolving DNS names

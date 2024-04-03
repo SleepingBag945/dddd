@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"database/sql"
+	"dddd/ddout"
 	"dddd/structs"
 	_ "embed"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 	"time"
 )
 
+//go:embed dict/mssql.txt
 var mssqlUserPasswdDict string
 
 func MssqlScan(info *structs.HostInfo) (tmperr error) {
@@ -111,12 +113,32 @@ func MssqlConn(info *structs.HostInfo, user string, pass string) (flag bool, err
 		defer db.Close()
 		err = db.Ping()
 		if err == nil {
-			result := fmt.Sprintf("[GoPoc] Mssql://%v:%v:%v %v", Host, Port, Username, Password)
-			gologger.Silent().Msg(result)
+			result := fmt.Sprintf("Mssql://%v:%v:%v %v", Host, Port, Username, Password)
+			// gologger.Silent().Msg(result)
 
 			showData := fmt.Sprintf("Host: %v:%v\nUsername: %v\nPassword: %v\n", Host, Port, Username, Password)
 			r := verifyMssql(db)
 			gologger.AuditLogger("[Go] [MSSQL-Brute] %s Result:\n%s", showData, r)
+
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "GoPoc",
+				IP:       "",
+				IPs:      nil,
+				Port:     "",
+				Protocol: "",
+				Web:      ddout.WebInfo{},
+				Finger:   nil,
+				Domain:   "",
+				GoPoc: ddout.GoPocsResultType{PocName: "Mssql-Login",
+					Security:    "CRITICAL",
+					Target:      Host + ":" + Port,
+					InfoLeft:    showData,
+					InfoRight:   r,
+					Description: "Mssql弱口令",
+					ShowMsg:     result},
+				AdditionalMsg: "",
+			})
+
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "Mssql-Login",
 				Security:    "CRITICAL",

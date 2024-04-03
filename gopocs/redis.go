@@ -2,6 +2,7 @@ package gopocs
 
 import (
 	"dddd/common"
+	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
 	_ "embed"
@@ -9,10 +10,12 @@ import (
 	"fmt"
 	"github.com/projectdiscovery/gologger"
 	"net"
+	"os"
 	"strings"
 	"time"
 )
 
+//go:embed dict/redis.txt
 var redisUserPasswdDict string
 
 func RedisScan(info *structs.HostInfo) (tmperr error) {
@@ -23,13 +26,30 @@ func RedisScan(info *structs.HostInfo) (tmperr error) {
 	}
 
 	var upList []string
-	for _, v := range info.UserPass {
-		_, p := splitUserPass(v)
-		upList = append(upList, p)
+
+	if structs.GlobalConfig.Password != "" {
+		upList = append(upList, structs.GlobalConfig.Password)
+	} else if structs.GlobalConfig.PasswordFile != "" {
+		b, err := os.ReadFile(structs.GlobalConfig.PasswordFile)
+		if err == nil {
+			t := strings.ReplaceAll(string(b), "\r\n", "\n")
+			for _, v := range strings.Split(t, "\n") {
+				if !strings.Contains(v, " : ") {
+					continue
+				}
+				upList = append(upList, v)
+			}
+		}
+	} else {
+		for _, v := range info.UserPass {
+			_, p := splitUserPass(v)
+			upList = append(upList, p)
+		}
+		for _, v := range strings.Split(strings.ReplaceAll(redisUserPasswdDict, "\r\n", "\n"), "\n") {
+			upList = append(upList, v)
+		}
 	}
-	for _, v := range strings.Split(redisUserPasswdDict, "\n") {
-		upList = append(upList, v)
-	}
+
 	upList = utils.RemoveDuplicateElement(upList)
 
 	var passwdList []string
@@ -105,9 +125,28 @@ func RedisConn(info *structs.HostInfo, pass string) (flag bool, err error) {
 		flag = true
 
 		result := fmt.Sprintf("Redis:%s %s", realhost, pass)
-		gologger.Silent().Msg("[GoPoc] " + result)
+		// gologger.Silent().Msg("[GoPoc] " + result)
 
 		showData := fmt.Sprintf("Host: %v\nPassword: %v\n", realhost, pass)
+
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type:     "GoPoc",
+			IP:       "",
+			IPs:      nil,
+			Port:     "",
+			Protocol: "",
+			Web:      ddout.WebInfo{},
+			Finger:   nil,
+			Domain:   "",
+			GoPoc: ddout.GoPocsResultType{PocName: "Redis-Login",
+				Security:    "HIGH",
+				Target:      realhost,
+				InfoLeft:    showData,
+				InfoRight:   reply,
+				Description: "Redis未授权/弱口令",
+				ShowMsg:     result},
+			AdditionalMsg: "",
+		})
 
 		GoPocWriteResult(structs.GoPocsResultType{
 			PocName:     "Redis-Login",
@@ -152,9 +191,28 @@ func RedisUnauth(info *structs.HostInfo) (flag bool, err error) {
 		flag = true
 
 		result := fmt.Sprintf("Redis:%s %s", realhost, "Unauthorized")
-		gologger.Silent().Msg("[GoPoc] " + result)
+		// gologger.Silent().Msg("[GoPoc] " + result)
 
 		showData := fmt.Sprintf("Host: %v\nUnauthorized\n", realhost)
+
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type:     "GoPoc",
+			IP:       "",
+			IPs:      nil,
+			Port:     "",
+			Protocol: "",
+			Web:      ddout.WebInfo{},
+			Finger:   nil,
+			Domain:   "",
+			GoPoc: ddout.GoPocsResultType{PocName: "Redis-Login",
+				Security:    "HIGH",
+				Target:      realhost,
+				InfoLeft:    showData,
+				InfoRight:   reply,
+				Description: "Redis未授权/弱口令",
+				ShowMsg:     result},
+			AdditionalMsg: "",
+		})
 
 		GoPocWriteResult(structs.GoPocsResultType{
 			PocName:     "Redis-Login",

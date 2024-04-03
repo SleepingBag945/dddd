@@ -5,7 +5,9 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"dddd/ddout"
 	"dddd/structs"
+	_ "embed"
 	"encoding/base64"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
@@ -17,6 +19,9 @@ import (
 )
 
 var CheckContent = "rO0ABXNyADJvcmcuYXBhY2hlLnNoaXJvLnN1YmplY3QuU2ltcGxlUHJpbmNpcGFsQ29sbGVjdGlvbqh/WCXGowhKAwABTAAPcmVhbG1QcmluY2lwYWxzdAAPTGphdmEvdXRpbC9NYXA7eHBwdwEAeA=="
+
+//go:embed dict/shirokeys.txt
+var ShiroKeys string
 
 func Randcase(len int) string {
 	var container string
@@ -133,14 +138,34 @@ func ShiroKeyCheck(info *structs.HostInfo) {
 	}
 
 	content, _ := base64.StdEncoding.DecodeString(CheckContent)
-
-	for _, key := range structs.ShiroKeys {
+	t := strings.ReplaceAll(ShiroKeys, "\r\n", "\n")
+	ks := strings.Split(t, "\n")
+	for _, key := range ks {
 		gologger.AuditTimeLogger("[Go] [Shiro] try %v key: %v", url, key)
 		ok, tp := checkKey(url, key, content)
 		if ok && tp != "" {
-			gologger.Silent().Msgf("[GoPoc] %v [%v] [%v]", url, key, tp)
+			// gologger.Silent().Msgf("%v [%v] [%v]", url, key, tp)
 
 			showData := fmt.Sprintf("Host: %v\nkey: %v\nmode: %v\n", url, key, tp)
+
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type:     "GoPoc",
+				IP:       "",
+				IPs:      nil,
+				Port:     "",
+				Protocol: "",
+				Web:      ddout.WebInfo{},
+				Finger:   nil,
+				Domain:   "",
+				GoPoc: ddout.GoPocsResultType{PocName: "Shiro Weak Key",
+					Security:    "CRITICAL",
+					Target:      url,
+					InfoLeft:    showData,
+					InfoRight:   "",
+					Description: "shiro Key",
+					ShowMsg:     fmt.Sprintf("%v [%v] [%v]", url, key, tp)},
+				AdditionalMsg: "",
+			})
 
 			GoPocWriteResult(structs.GoPocsResultType{
 				PocName:     "Shiro Weak Key",

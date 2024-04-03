@@ -1,6 +1,7 @@
 package http
 
 import (
+	"dddd/ddout"
 	"dddd/lib/ddfinger"
 	"dddd/structs"
 	"dddd/utils"
@@ -54,11 +55,17 @@ func UrlCallBack(resp runner.Result) {
 			}
 			structs.GlobalURLMapLock.Unlock()
 
-			if resp.Title != "" {
-				gologger.Silent().Msgf("[Web] [%v] %s [%s]\n", resp.StatusCode, resp.URL, resp.Title)
-			} else {
-				gologger.Silent().Msgf("[Web] [%v] %s\n", resp.StatusCode, resp.URL)
-			}
+			ddout.FormatOutput(ddout.OutputMessage{
+				Type: "Web",
+				IP:   "",
+				Port: "",
+				URI:  resp.URL,
+				Web: ddout.WebInfo{
+					Status: strconv.Itoa(resp.StatusCode),
+					Title:  resp.Title,
+				},
+			})
+
 		}
 	} else {
 		// 没有这个url
@@ -98,11 +105,16 @@ func UrlCallBack(resp runner.Result) {
 		structs.GlobalURLMap[rootURL] = urlE
 		structs.GlobalURLMapLock.Unlock()
 
-		if resp.Title != "" {
-			gologger.Silent().Msgf("[Web] [%v] %s [%s]\n", resp.StatusCode, resp.URL, resp.Title)
-		} else {
-			gologger.Silent().Msgf("[Web] [%v] %s\n", resp.StatusCode, resp.URL)
-		}
+		ddout.FormatOutput(ddout.OutputMessage{
+			Type: "Web",
+			IP:   "",
+			Port: "",
+			URI:  resp.URL,
+			Web: ddout.WebInfo{
+				Status: strconv.Itoa(resp.StatusCode),
+				Title:  resp.Title,
+			},
+		})
 	}
 
 }
@@ -169,12 +181,14 @@ func GetPocs(workflowDB map[string]structs.WorkFlowEntity) (map[string][]string,
 	count := 0
 
 	var generalKeys []string
-	for k, workflowEntity := range workflowDB {
-		if strings.Contains(k, "General-Poc-") {
-			if len(workflowEntity.PocsName) == 0 {
-				continue
+	if !structs.GlobalConfig.DisableGeneralPoc {
+		for k, workflowEntity := range workflowDB {
+			if strings.Contains(k, "General-Poc-") {
+				if len(workflowEntity.PocsName) == 0 {
+					continue
+				}
+				generalKeys = append(generalKeys, k)
 			}
-			generalKeys = append(generalKeys, k)
 		}
 	}
 
@@ -325,7 +339,20 @@ func DirBruteCallBack(resp runner.Result) {
 								structs.GlobalURLMapLock.Unlock()
 							}
 
-							gologger.Silent().Msgf("[Active-Finger] %s [%s]", resp.URL, productName)
+							ddout.FormatOutput(ddout.OutputMessage{
+								Type:          "Active-Finger",
+								IP:            "",
+								IPs:           nil,
+								Port:          "",
+								Protocol:      "",
+								Web:           ddout.WebInfo{},
+								Finger:        []string{productName},
+								Domain:        "",
+								GoPoc:         ddout.GoPocsResultType{},
+								URI:           resp.URL,
+								AdditionalMsg: "",
+							})
+							// gologger.Silent().Msgf("[Active-Finger] %s [%s]", resp.URL, productName)
 						}
 					}
 				}
@@ -372,11 +399,28 @@ func HostBindHTTPxCallBack(resp runner.Result) {
 	if !newWeb {
 		return
 	}
-	if resp.Title != "" {
-		gologger.Silent().Msgf("[Domain-Bind] [%v] %v [%v]", resp.StatusCode, resp.URL, resp.Title)
-	} else {
-		gologger.Silent().Msgf("[Domain-Bind] [%v] %v", resp.StatusCode, resp.URL)
-	}
+
+	ddout.FormatOutput(ddout.OutputMessage{
+		Type:     "Domain-Bind",
+		IP:       "",
+		IPs:      nil,
+		Port:     "",
+		Protocol: "",
+		Web: ddout.WebInfo{
+			Status: strconv.Itoa(resp.StatusCode),
+		},
+		Finger:        nil,
+		Domain:        "",
+		GoPoc:         ddout.GoPocsResultType{},
+		URI:           resp.URL,
+		AdditionalMsg: resp.Title,
+	})
+
+	//if resp.Title != "" {
+	//	gologger.Silent().Msgf("[Domain-Bind] [%v] %v [%v]", resp.StatusCode, resp.URL, resp.Title)
+	//} else {
+	//	gologger.Silent().Msgf("[Domain-Bind] [%v] %v", resp.StatusCode, resp.URL)
+	//}
 
 	finalUrl := ""
 	if resp.FinalURL != "" {

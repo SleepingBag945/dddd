@@ -39,3 +39,5 @@ MINIO-Browser:
   - "/minio/"
 Tomcat-Login:
   - "/manager/html"
+Jenkins:
+  - "/jenkins/login"

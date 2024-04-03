@@ -1,12 +1,14 @@
 package callnuclei
 
 import (
+	"embed"
 	"fmt"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
 	"os"
 	"os/signal"
 	"runtime"
 	"runtime/pprof"
+	"strings"
 	"time"
 
 	"github.com/projectdiscovery/goflags"
@@ -30,7 +32,11 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 	proxy string,
 	callBack func(result output.ResultEvent),
 	nameForSearch string,
-	NoInteractsh bool) []output.ResultEvent {
+	NoInteractsh bool,
+	fs embed.FS,
+	np string,
+	excludeTags []string,
+	severities []string) []output.ResultEvent {
 
 	// 设置结果回调
 	output.AddResultCallback = callBack
@@ -38,7 +44,7 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 		gologger.Fatal().Msgf("Could not initialize options: %s\n", err)
 	}
 
-	readConfig(TargetAndPocsName, proxy, nameForSearch, NoInteractsh)
+	readConfig(TargetAndPocsName, proxy, nameForSearch, NoInteractsh, np, excludeTags)
 	// configPath, _ := flagSet.GetConfigFilePath()
 
 	if options.ListDslSignatures {
@@ -75,6 +81,9 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 		return []output.ResultEvent{}
 	}
 
+	nucleiRunner.EmbedPocsFS = fs
+	nucleiRunner.EnableSeverities = severities
+
 	// Setup graceful exits
 	resumeFileName := types.DefaultResumeFilePath()
 	c := make(chan os.Signal, 1)
@@ -103,7 +112,12 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 	return output.Results
 }
 
-func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSearch string, NoInteractsh bool) {
+func readConfig(TargetAndPocsName map[string][]string,
+	proxy string,
+	nameForSearch string,
+	NoInteractsh bool,
+	np string,
+	excludeTags []string) {
 
 	pwd, _ := os.Getwd()
 
@@ -149,8 +163,16 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 
 	// list of template or template directory to run (comma-separated, file)
 	// 要运行的模板或模板目录列表(逗号分隔，文件)   -t 指定的模板目录
-	// 不嵌入可执行文件是为了方便增删poc。内网版本嵌入
-	options.Templates = []string{pwd + "/config/pocs/"}
+	// 不嵌入可执行文件是为了方便增删poc。
+	// dddd v2.0开始默认支持内嵌，此文件夹内的pocs做补充处理
+
+	if strings.HasPrefix(np, "/") || np[1] == ':' {
+		// unix绝对路径，windows绝对路径
+		options.Templates = []string{np}
+	} else {
+		// 相对路径转绝对路径
+		options.Templates = []string{pwd + "/" + np}
+	}
 
 	// list of template urls to run (comma-separated, file)
 	// 要运行的模板url列表(逗号分隔，文件)
@@ -194,7 +216,7 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 
 	// templates to exclude based on tags (comma-separated, file)
 	// 排除执行带有标记的模板（逗号分隔，文件）
-	options.ExcludeTags = nil
+	options.ExcludeTags = excludeTags
 
 	// tags to be executed even if they are excluded either by default or configuration
 	// 执行默认或者配置排除的标记模板
@@ -222,6 +244,7 @@ func readConfig(TargetAndPocsName map[string][]string, proxy string, nameForSear
 
 	// templates to run based on severity
 	// 根据严重程度运行模板，可候选的值有：info,low,medium,high,critical
+	// 不好使，不走这里了
 	options.Severities = nil
 
 	// templates to exclude based on severity

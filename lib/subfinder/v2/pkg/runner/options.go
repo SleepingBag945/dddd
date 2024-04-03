@@ -4,28 +4,26 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math/rand"
+	"math"
 	"os"
-	"os/user"
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
-
-	"gopkg.in/yaml.v3"
 
 	"github.com/projectdiscovery/goflags"
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/subfinder/v2/pkg/passive"
 	"github.com/projectdiscovery/subfinder/v2/pkg/resolve"
 	fileutil "github.com/projectdiscovery/utils/file"
+	folderutil "github.com/projectdiscovery/utils/folder"
 	logutil "github.com/projectdiscovery/utils/log"
 	updateutils "github.com/projectdiscovery/utils/update"
 )
 
 var (
-	defaultConfigLocation         = filepath.Join(userHomeDir(), ".config/subfinder/config.yaml")
-	defaultProviderConfigLocation = filepath.Join(userHomeDir(), ".config/subfinder/provider-config.yaml")
+	configDir                     = folderutil.AppConfigDirOrDefault(".", "subfinder")
+	defaultConfigLocation         = filepath.Join(configDir, "config.yaml")
+	defaultProviderConfigLocation = "config/api-config.yaml"
 )
 
 // Options contains the configuration options for tuning
@@ -50,16 +48,17 @@ type Options struct {
 	Domain             goflags.StringSlice // Domain is the domain to find subdomains for
 	DomainsFile        string              // DomainsFile is the file containing list of domains to find subdomains for
 	Output             io.Writer
-	OutputFile         string              // Output is the file to write found subdomains to.
-	OutputDirectory    string              // OutputDirectory is the directory to write results to in case list of domains is given
-	Sources            goflags.StringSlice `yaml:"sources,omitempty"`         // Sources contains a comma-separated list of sources to use for enumeration
-	ExcludeSources     goflags.StringSlice `yaml:"exclude-sources,omitempty"` // ExcludeSources contains the comma-separated sources to not include in the enumeration process
-	Resolvers          goflags.StringSlice `yaml:"resolvers,omitempty"`       // Resolvers is the comma-separated resolvers to use for enumeration
-	ResolverList       string              // ResolverList is a text file containing list of resolvers to use for enumeration
-	Config             string              // Config contains the location of the config file
-	ProviderConfig     string              // ProviderConfig contains the location of the provider config file
-	Proxy              string              // HTTP proxy
-	RateLimit          int                 // Maximum number of HTTP requests to send per second
+	OutputFile         string               // Output is the file to write found subdomains to.
+	OutputDirectory    string               // OutputDirectory is the directory to write results to in case list of domains is given
+	Sources            goflags.StringSlice  `yaml:"sources,omitempty"`         // Sources contains a comma-separated list of sources to use for enumeration
+	ExcludeSources     goflags.StringSlice  `yaml:"exclude-sources,omitempty"` // ExcludeSources contains the comma-separated sources to not include in the enumeration process
+	Resolvers          goflags.StringSlice  `yaml:"resolvers,omitempty"`       // Resolvers is the comma-separated resolvers to use for enumeration
+	ResolverList       string               // ResolverList is a text file containing list of resolvers to use for enumeration
+	Config             string               // Config contains the location of the config file
+	ProviderConfig     string               // ProviderConfig contains the location of the provider config file
+	Proxy              string               // HTTP proxy
+	RateLimit          int                  // Global maximum number of HTTP requests to send per second
+	RateLimits         goflags.RateLimitMap // Maximum number of HTTP requests to send per second
 	ExcludeIps         bool
 	Match              goflags.StringSlice
 	Filter             goflags.StringSlice
@@ -75,20 +74,6 @@ type OnResultCallback func(result *resolve.HostEntry)
 // ParseOptions parses the command line flags provided by a user
 func ParseOptions() *Options {
 	logutil.DisableDefaultLogger()
-	// Seed default random number generator
-	rand.Seed(time.Now().UnixNano())
-
-	// Migrate config to provider config
-	if fileutil.FileExists(defaultConfigLocation) && !fileutil.FileExists(defaultProviderConfigLocation) {
-		gologger.Info().Msgf("Detected old %s config file, trying to migrate providers to %s\n", defaultConfigLocation, defaultProviderConfigLocation)
-		if err := migrateToProviderConfig(defaultConfigLocation, defaultProviderConfigLocation); err != nil {
-			gologger.Warning().Msgf("Could not migrate providers from existing config %s to provider config %s: %s\n", defaultConfigLocation, defaultProviderConfigLocation, err)
-		} else {
-			// cleanup the existing config file post migration
-			_ = os.Remove(defaultConfigLocation)
-			gologger.Info().Msgf("Migration successful from %s to %s.\n", defaultConfigLocation, defaultProviderConfigLocation)
-		}
-	}
 
 	options := &Options{}
 
@@ -96,34 +81,35 @@ func ParseOptions() *Options {
 	flagSet := goflags.NewFlagSet()
 	flagSet.SetDescription(`Subfinder is a subdomain discovery tool that discovers subdomains for websites by using passive online sources.`)
 
-	createGroup(flagSet, "input", "Input",
-		flagSet.StringSliceVarP(&options.Domain, "domain", "d", []string{}, "domains to find subdomains for", goflags.NormalizedStringSliceOptions),
+	flagSet.CreateGroup("input", "Input",
+		flagSet.StringSliceVarP(&options.Domain, "domain", "d", nil, "domains to find subdomains for", goflags.NormalizedStringSliceOptions),
 		flagSet.StringVarP(&options.DomainsFile, "list", "dL", "", "file containing list of domains for subdomain discovery"),
 	)
 
-	createGroup(flagSet, "source", "Source",
-		flagSet.StringSliceVarP(&options.Sources, "sources", "s", []string{}, "specific sources to use for discovery (-s crtsh,github). Use -ls to display all available sources.", goflags.NormalizedStringSliceOptions),
+	flagSet.CreateGroup("source", "Source",
+		flagSet.StringSliceVarP(&options.Sources, "sources", "s", nil, "specific sources to use for discovery (-s crtsh,github). Use -ls to display all available sources.", goflags.NormalizedStringSliceOptions),
 		flagSet.BoolVar(&options.OnlyRecursive, "recursive", false, "use only sources that can handle subdomains recursively (e.g. subdomain.domain.tld vs domain.tld)"),
 		flagSet.BoolVar(&options.All, "all", false, "use all sources for enumeration (slow)"),
-		flagSet.StringSliceVarP(&options.ExcludeSources, "exclude-sources", "es", []string{}, "sources to exclude from enumeration (-es alienvault,zoomeye)", goflags.NormalizedStringSliceOptions),
+		flagSet.StringSliceVarP(&options.ExcludeSources, "exclude-sources", "es", nil, "sources to exclude from enumeration (-es alienvault,zoomeyeapi)", goflags.NormalizedStringSliceOptions),
 	)
 
-	createGroup(flagSet, "filter", "Filter",
-		flagSet.StringSliceVarP(&options.Match, "match", "m", []string{}, "subdomain or list of subdomain to match (file or comma separated)", goflags.FileNormalizedStringSliceOptions),
-		flagSet.StringSliceVarP(&options.Filter, "filter", "f", []string{}, " subdomain or list of subdomain to filter (file or comma separated)", goflags.FileNormalizedStringSliceOptions),
+	flagSet.CreateGroup("filter", "Filter",
+		flagSet.StringSliceVarP(&options.Match, "match", "m", nil, "subdomain or list of subdomain to match (file or comma separated)", goflags.FileNormalizedStringSliceOptions),
+		flagSet.StringSliceVarP(&options.Filter, "filter", "f", nil, " subdomain or list of subdomain to filter (file or comma separated)", goflags.FileNormalizedStringSliceOptions),
 	)
 
-	createGroup(flagSet, "rate-limit", "Rate-limit",
-		flagSet.IntVarP(&options.RateLimit, "rate-limit", "rl", 0, "maximum number of http requests to send per second"),
+	flagSet.CreateGroup("rate-limit", "Rate-limit",
+		flagSet.IntVarP(&options.RateLimit, "rate-limit", "rl", 0, "maximum number of http requests to send per second (global)"),
+		flagSet.RateLimitMapVarP(&options.RateLimits, "rate-limits", "rls", defaultRateLimits, "maximum number of http requests to send per second four providers in key=value format (-rls hackertarget=10/m)", goflags.NormalizedStringSliceOptions),
 		flagSet.IntVar(&options.Threads, "t", 10, "number of concurrent goroutines for resolving (-active only)"),
 	)
 
 	flagSet.CreateGroup("update", "Update",
 		flagSet.CallbackVarP(GetUpdateCallback(), "update", "up", "update subfinder to latest version"),
 		flagSet.BoolVarP(&options.DisableUpdateCheck, "disable-update-check", "duc", false, "disable automatic subfinder update check"),
-	) 
+	)
 
-	createGroup(flagSet, "output", "Output",
+	flagSet.CreateGroup("output", "Output",
 		flagSet.StringVarP(&options.OutputFile, "output", "o", "", "file to write output to"),
 		flagSet.BoolVarP(&options.JSON, "json", "oJ", false, "write output in JSONL(ines) format"),
 		flagSet.StringVarP(&options.OutputDirectory, "output-dir", "oD", "", "directory to write output (-dL only)"),
@@ -131,17 +117,17 @@ func ParseOptions() *Options {
 		flagSet.BoolVarP(&options.HostIP, "ip", "oI", false, "include host IP in output (-active only)"),
 	)
 
-	createGroup(flagSet, "configuration", "Configuration",
+	flagSet.CreateGroup("configuration", "Configuration",
 		flagSet.StringVar(&options.Config, "config", defaultConfigLocation, "flag config file"),
 		flagSet.StringVarP(&options.ProviderConfig, "provider-config", "pc", defaultProviderConfigLocation, "provider config file"),
-		flagSet.StringSliceVar(&options.Resolvers, "r", []string{}, "comma separated list of resolvers to use", goflags.NormalizedStringSliceOptions),
+		flagSet.StringSliceVar(&options.Resolvers, "r", nil, "comma separated list of resolvers to use", goflags.NormalizedStringSliceOptions),
 		flagSet.StringVarP(&options.ResolverList, "rlist", "rL", "", "file containing list of resolvers to use"),
 		flagSet.BoolVarP(&options.RemoveWildcard, "active", "nW", false, "display active subdomains only"),
 		flagSet.StringVar(&options.Proxy, "proxy", "", "http proxy to use with subfinder"),
 		flagSet.BoolVarP(&options.ExcludeIps, "exclude-ip", "ei", false, "exclude IPs from the list of domains"),
 	)
 
-	createGroup(flagSet, "debug", "Debug",
+	flagSet.CreateGroup("debug", "Debug",
 		flagSet.BoolVar(&options.Silent, "silent", false, "show only subdomains in output"),
 		flagSet.BoolVar(&options.Version, "version", false, "show version of subfinder"),
 		flagSet.BoolVar(&options.Verbose, "v", false, "show verbose output"),
@@ -150,7 +136,7 @@ func ParseOptions() *Options {
 		flagSet.BoolVar(&options.Statistics, "stats", false, "report source statistics"),
 	)
 
-	createGroup(flagSet, "optimization", "Optimization",
+	flagSet.CreateGroup("optimization", "Optimization",
 		flagSet.IntVar(&options.Timeout, "timeout", 30, "seconds to wait before timing out"),
 		flagSet.IntVar(&options.MaxEnumerationTime, "max-time", 10, "minutes to wait for enumeration results"),
 	)
@@ -158,6 +144,12 @@ func ParseOptions() *Options {
 	if err := flagSet.Parse(); err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
+	}
+
+	if exists := fileutil.FileExists(defaultProviderConfigLocation); !exists {
+		if err := createProviderConfigYAML(defaultProviderConfigLocation); err != nil {
+			gologger.Error().Msgf("Could not create provider config file: %s\n", err)
+		}
 	}
 
 	if options.Config != defaultConfigLocation {
@@ -178,6 +170,7 @@ func ParseOptions() *Options {
 
 	if options.Version {
 		gologger.Info().Msgf("Current Version: %s\n", version)
+		gologger.Info().Msgf("Subfinder Config Directory: %s", configDir)
 		os.Exit(0)
 	}
 
@@ -198,15 +191,6 @@ func ParseOptions() *Options {
 		}
 	}
 
-	// Check if the application loading with any provider configuration, then take it
-	// Otherwise load the default provider config
-	if fileutil.FileExists(options.ProviderConfig) {
-		gologger.Info().Msgf("Loading provider config from %s", options.ProviderConfig)
-		options.loadProvidersFrom(options.ProviderConfig)
-	} else {
-		gologger.Info().Msgf("Loading provider config from the default location: %s", defaultProviderConfigLocation)
-		options.loadProvidersFrom(defaultProviderConfigLocation)
-	}
 	if options.ListSources {
 		listSources(options)
 		os.Exit(0)
@@ -231,52 +215,9 @@ func (options *Options) loadProvidersFrom(location string) {
 
 	// We skip bailing out if file doesn't exist because we'll create it
 	// at the end of options parsing from default via goflags.
-	if err := UnmarshalFrom(location); isFatalErr(err) && !errors.Is(err, os.ErrNotExist) {
-		gologger.Fatal().Msgf("Could not read providers from %s: %s\n", location, err)
+	if err := UnmarshalFrom(location); err != nil && (!strings.Contains(err.Error(), "file doesn't exist") || errors.Is(os.ErrNotExist, err)) {
+		gologger.Error().Msgf("Could not read providers from %s: %s\n", location, err)
 	}
-}
-
-func migrateToProviderConfig(defaultConfigLocation, defaultProviderLocation string) error {
-	configs, err := unMarshalToLowerCaseMap(defaultConfigLocation)
-	if err != nil {
-		return err
-	}
-
-	sourcesRequiringApiKeysMap := make(map[string][]string)
-	for _, source := range passive.AllSources {
-		if source.NeedsKey() {
-			sourceName := strings.ToLower(source.Name())
-			if sourceKeys, ok := configs[sourceName]; ok {
-				sourcesRequiringApiKeysMap[sourceName] = sourceKeys
-			} else {
-				sourcesRequiringApiKeysMap[sourceName] = []string{}
-			}
-		}
-	}
-
-	return CreateProviderConfigYAML(defaultProviderLocation, sourcesRequiringApiKeysMap)
-}
-
-func unMarshalToLowerCaseMap(defaultConfigLocation string) (map[string][]string, error) {
-	defaultConfigFile, err := os.Open(defaultConfigLocation)
-	if err != nil {
-		return nil, err
-	}
-	defer defaultConfigFile.Close()
-
-	configs := map[string][]string{}
-	if err := yaml.NewDecoder(defaultConfigFile).Decode(configs); isFatalErr(err) {
-		return nil, err
-	}
-
-	for k, v := range configs {
-		configs[strings.ToLower(k)] = v
-	}
-	return configs, nil
-}
-
-func isFatalErr(err error) bool {
-	return err != nil && !errors.Is(err, io.EOF)
 }
 
 func listSources(options *Options) {
@@ -294,23 +235,23 @@ func listSources(options *Options) {
 	}
 }
 
-func createGroup(flagSet *goflags.FlagSet, groupName, description string, flags ...*goflags.FlagData) {
-	flagSet.SetGroup(groupName, description)
-	for _, currentFlag := range flags {
-		currentFlag.Group(groupName)
-	}
-}
-
 func (options *Options) preProcessOptions() {
 	for i, domain := range options.Domain {
 		options.Domain[i], _ = sanitize(domain)
 	}
 }
 
-func userHomeDir() string {
-	usr, err := user.Current()
-	if err != nil {
-		gologger.Fatal().Msgf("Could not get user home directory: %s\n", err)
-	}
-	return usr.HomeDir
+var defaultRateLimits = []string{
+	"github=30/m",
+	// "gitlab=2000/m",
+	"fullhunt=60/m",
+	fmt.Sprintf("robtex=%d/ms", uint(math.MaxUint)),
+	"securitytrails=1/s",
+	"shodan=1/s",
+	"virustotal=4/m",
+	"hackertarget=2/s",
+	// "threatminer=10/m",
+	"waybackarchive=15/m",
+	"whoisxmlapi=50/s",
+	"securitytrails=2/s",
 }
