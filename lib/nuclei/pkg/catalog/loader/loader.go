@@ -511,6 +511,22 @@ func (store *Store) LoadTemplatesWithNames(f embed.FS, templatesList []string,
 	//// store.logErroredTemplates(errs)
 	//templatePathMap := store.pathFilter.Match(includedTemplates)
 
+	var enableSeveritiesOK []string
+	var excludeTagsOK []string
+
+	for _, v := range enableSeverities {
+		if v == "" {
+			continue
+		}
+		enableSeveritiesOK = append(enableSeveritiesOK, v)
+	}
+	for _, v := range excludeTagsOK {
+		if v == "" {
+			continue
+		}
+		excludeTagsOK = append(excludeTagsOK, v)
+	}
+
 	loadedTemplates := make([]*templates.Template, 0, len(templatesList))
 	for _, templatePath := range templatesList {
 		_, fileName := splitPathAndFileName(templatePath)
@@ -528,7 +544,7 @@ func (store *Store) LoadTemplatesWithNames(f embed.FS, templatesList []string,
 			gologger.Warning().Msgf("Could not parse template %s: %s\n", templatePath, err)
 			continue
 		}
-		if len(excludeTags) > 0 {
+		if len(excludeTagsOK) > 0 {
 			isExclude := false
 			for _, tag := range parsed.Info.Tags.ToSlice() {
 				for _, t := range excludeTags {
@@ -547,7 +563,7 @@ func (store *Store) LoadTemplatesWithNames(f embed.FS, templatesList []string,
 			}
 		}
 
-		if len(enableSeverities) > 0 {
+		if len(enableSeveritiesOK) > 0 {
 			isExclude := true
 
 			for _, s := range enableSeverities {
