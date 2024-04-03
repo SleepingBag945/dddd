@@ -151,6 +151,24 @@ icp.name="带带弟弟"
 ./dddd -t 192.168.0.0/16 -up 'admin : dddd@123456'
 ```
 
+##### 从fscan导入结果
+
+如果主机中存在别人的fscan结果，想用dddd进行深层扫描，可以用下列命令使用dddd复用fscan的端口扫描结果。
+
+```
+./dddd -t result.txt
+```
+
+##### 从dddd的result导入结果
+
+导入dddd指纹识别历史(json/text均可)，直接开始漏洞扫描
+
+```
+./dddd -t result.txt
+```
+
+
+
 # 详细参数
 
 ```shell
