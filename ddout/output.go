@@ -113,7 +113,7 @@ func (o *OutputMessage) ToString() (string, error) {
 		if o.URI == "" {
 			r += o.Protocol + "://" + o.IP + ":" + o.Port
 		} else {
-			r += fmt.Sprintf("[%d] %s [%s] [%s]", o.Web.Status, o.URI, o.Web.Title, o.City)
+			r += fmt.Sprintf("[%v] %s [%s] [%s]", o.Web.Status, o.URI, o.Web.Title, o.City)
 		}
 	} else if o.Type == "Fofa" {
 		r = o.Show
