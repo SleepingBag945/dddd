@@ -184,14 +184,14 @@ func (s *Service) processWappalyzerInputPair(input *contextargs.MetaInput) {
 	var templatesList []*templates.Template
 	if s.opts.Options.PocNameForSearch != "" {
 		templatesList = s.store.LoadTemplatesWithNames(s.opts.EmbedPocs, s.allTemplates,
-			[]string{s.opts.Options.PocNameForSearch}, s.opts.Options.ExcludeTags, s.opts.EnableSeverities)
+			[]string{s.opts.Options.PocNameForSearch}, s.opts.Options.ExcludeTags, s.opts.EnableSeverities, true)
 	} else {
 		pocs, ok := s.opts.TargetAndPocsName[input.Input]
 		if !ok || len(pocs) == 0 {
 			return
 		}
 		uniquePocs := sliceutil.Dedupe(pocs)
-		templatesList = s.store.LoadTemplatesWithNames(s.opts.EmbedPocs, s.allTemplates, uniquePocs, s.opts.Options.ExcludeTags, s.opts.EnableSeverities)
+		templatesList = s.store.LoadTemplatesWithNames(s.opts.EmbedPocs, s.allTemplates, uniquePocs, s.opts.Options.ExcludeTags, s.opts.EnableSeverities, false)
 	}
 
 	// gologger.Info().Msgf("Executing tags (%v) for host %s (%d templates)", strings.Join(uniquePocs, ","), input, len(templatesList))

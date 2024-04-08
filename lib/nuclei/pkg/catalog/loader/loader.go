@@ -504,7 +504,8 @@ func splitPathAndFileName(path string) (string, string) {
 }
 
 func (store *Store) LoadTemplatesWithNames(f embed.FS, templatesList []string,
-	pocNames []string, excludeTags []string, enableSeverities []string) []*templates.Template {
+	pocNames []string, excludeTags []string, enableSeverities []string,
+	fuzzyMatching bool) []*templates.Template {
 	loadedTemplatesName := make(map[string]struct{})
 
 	//includedTemplates, _ := store.config.Catalog.GetTemplatesPath(templatesList)
@@ -582,27 +583,36 @@ func (store *Store) LoadTemplatesWithNames(f embed.FS, templatesList []string,
 		tags := parsed.Info.Tags.ToSlice()
 		flag := false
 		for _, pocName := range pocNames {
+
 			changePocName := strings.ToLower(strings.ReplaceAll(pocName, "/", "\\"))
-			if strings.HasSuffix(strings.ToLower(templatePath), strings.ToLower(pocName)) {
-				flag = true
-				break
-			}
-			if strings.HasSuffix(strings.ToLower(templatePath), changePocName) {
-				flag = true
-				break
-			}
-			if strings.HasPrefix(pocName, "Tags@") {
-				tagName := pocName[5 : len(pocName)-5]
-				for _, t := range tags {
-					if strings.ToLower(t) == strings.ToLower(tagName) {
-						flag = true
+			if fuzzyMatching {
+				if strings.Contains(strings.ToLower(templatePath), strings.ToLower(pocName)) {
+					flag = true
+					break
+				}
+			} else {
+				if strings.HasSuffix(strings.ToLower(templatePath), strings.ToLower(pocName)) {
+					flag = true
+					break
+				}
+				if strings.HasSuffix(strings.ToLower(templatePath), changePocName) {
+					flag = true
+					break
+				}
+				if strings.HasPrefix(pocName, "Tags@") {
+					tagName := pocName[5 : len(pocName)-5]
+					for _, t := range tags {
+						if strings.ToLower(t) == strings.ToLower(tagName) {
+							flag = true
+							break
+						}
+					}
+					if flag {
 						break
 					}
 				}
-				if flag {
-					break
-				}
 			}
+
 		}
 		if flag {
 			if len(parsed.RequestsHeadless) > 0 && !store.config.ExecutorOptions.Options.Headless {
