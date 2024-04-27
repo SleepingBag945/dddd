@@ -1,12 +1,10 @@
 package ddfinger
 
 import (
-	"bytes"
 	"container/list"
 	"dddd/ddout"
 	"dddd/structs"
 	"dddd/utils"
-	"encoding/base64"
 	"fmt"
 	"github.com/projectdiscovery/gologger"
 	"net/url"
@@ -16,53 +14,6 @@ import (
 	"strings"
 	"sync"
 )
-
-// 检测指纹
-// 指纹支持如下格式:
-// header="123" 返回头中包含123
-// header!="123" 返回头中不包含123
-// body="123" body中包含123
-// body!="123" body中不包含123
-// body=="123" body为123
-// server="Sundray" 返回头server字段中包含Sundray
-// server!="Sundray" 返回头server字段中不包含Sundray
-// server=="Sundray" server字段为Sundray
-// title="123" 标题包含123
-// title!="123" 标题不包含123
-// title=="123" 标题为123
-// cert="123" 证书中包含123
-// cert!="123" 证书中不包含123
-// port="80" 服务端口为80
-// port!="80" 服务端口不为80
-// port>="80" 服务端口大于等于80
-// port<="80" 服务端口小于等于80
-// protocol="mysql" 协议为mysql
-// protocol!="mysql" 协议不为mysql
-// path="123/123.html" 爬虫结果中包含 123/123.html
-// body_hash="619335048" 响应体mmh3 hash为619335048
-// icon_hash="619335048"  icon mmh3 hash
-// status="200" 页面返回码为200
-// status!="200" 页面返回码不为200
-// content_type="text/html" content_type包含text/html
-// content_type!="text/html" content_type不包含text/html
-// banner="123"
-// banner!="123"
-// 永真
-// type="service"
-
-func stdBase64(braw []byte) []byte {
-	bckd := base64.StdEncoding.EncodeToString(braw)
-	var buffer bytes.Buffer
-	for i := 0; i < len(bckd); i++ {
-		ch := bckd[i]
-		buffer.WriteByte(ch)
-		if (i+1)%76 == 0 {
-			buffer.WriteByte('\n')
-		}
-	}
-	buffer.WriteByte('\n')
-	return buffer.Bytes()
-}
 
 // 判断优先级 非运算符返回0
 func advance(ch int) int {
@@ -83,7 +34,7 @@ func advance(ch int) int {
 
 // 计算纯bool表达式，支持 ! && & || | ( )
 func boolEval(expression string) bool {
-	// 左右括号相等
+	// 左右括号数量相等
 	if strings.Count(expression, "(") != strings.Count(expression, ")") {
 		gologger.Fatal().Msg(fmt.Sprintf("[-] 纯布尔表达式 [%s] 左右括号不匹配", expression))
 	}
@@ -131,7 +82,7 @@ func boolEval(expression string) bool {
 
 		} else if ch == 40 {
 			operator_stack.PushBack(int(ch))
-		} else if ch == 40 {
+		} else if ch == 41 {
 			for operator_stack.Back().Value.(int) != 40 {
 				e := operator_stack.Back()
 				expr.PushBack(e.Value.(int))
