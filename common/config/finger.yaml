@@ -3726,6 +3726,7 @@ grentech - SGR-W500:
   - 'banner="SGR-W500"'
 kingdee-EAS:
   - 'body="easSessionId" || header="easportal" || header="eassso/login" || banner="eassso/login" || body="/eassso/common" || (title="EAS系统登录" && body="金蝶")'
+  - 'header="EASSESSIONID"'
 Inspur-NF5270M4:
   - 'banner="NF5270M4"'
 ZEROF-Web-Server:
