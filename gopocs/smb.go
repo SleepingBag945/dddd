@@ -16,6 +16,9 @@ import (
 var smbUserPasswdDict string
 
 func SmbScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	starttime := time.Now().Unix()
 	gologger.AuditTimeLogger("[Go] [SMB-Brute] start try %s:%v", info.Host, info.Ports)
 	defer gologger.AuditTimeLogger("[Go] [SMB-Brute] SmbScan return %s:%v", info.Host, info.Ports)

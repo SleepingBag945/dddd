@@ -33,6 +33,9 @@ type Brutelist struct {
 }
 
 func RdpScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	userPasswdList := sortUserPassword(info, rdpUserPasswdDict, []string{})
 	gologger.AuditTimeLogger("[Go] [RDP-Brute] start try %s:%v", info.Host, info.Ports)
 	defer gologger.AuditTimeLogger("[Go] [RDP-Brute] RdpScan return %s:%v", info.Host, info.Ports)

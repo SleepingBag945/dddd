@@ -14,6 +14,9 @@ import (
 var ftpUserPasswdDict string
 
 func FtpScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	starttime := time.Now().Unix()
 
 	// 先检测匿名访问

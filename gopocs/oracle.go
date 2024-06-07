@@ -15,6 +15,9 @@ import (
 var oracleUserPasswdDict string
 
 func OracleScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	starttime := time.Now().Unix()
 
 	userPasswdList := sortUserPassword(info, oracleUserPasswdDict, []string{"oracle"})

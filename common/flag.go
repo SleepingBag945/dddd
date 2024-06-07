@@ -41,7 +41,7 @@ func GC() {
 	debug.FreeOSMemory()
 }
 
-var version = "2.0.1"
+var version = "2.0.2"
 
 func showBanner() {
 	banner := fmt.Sprintf(`
@@ -575,6 +575,7 @@ func Flag() {
 
 	flagSet.CreateGroup("portscan", "端口扫描",
 		flagSet.StringVarP(&PortString, "port", "p", "", "端口设置。 默认扫描Top1000"),
+		flagSet.StringVarP(&structs.GlobalConfig.NoPortString, "no-port", "np", "", "禁止扫描的端口"),
 		flagSet.StringVarP(&structs.GlobalConfig.PortScanType, "scan-type", "st", "tcp", "端口扫描方式 | \"-st tcp\"设置TCP扫描 | \"-st syn\"设置SYN扫描"),
 		flagSet.IntVarP(&structs.GlobalConfig.TCPPortScanThreads, "tcp-scan-threads", "tst", 1000, "TCP扫描线程 | Windows/Mac默认1000线程 Linux默认4000"),
 		flagSet.IntVarP(&structs.GlobalConfig.SYNPortScanThreads, "syn-scan-threads", "sst", 10000, "SYN扫描线程"),
@@ -637,12 +638,18 @@ func Flag() {
 	flagSet.CreateGroup("vuln-detect", "漏洞探测",
 		flagSet.BoolVar(&structs.GlobalConfig.NoPoc, "npoc", false, "关闭漏洞探测,只进行信息收集"),
 		flagSet.StringVarP(&structs.GlobalConfig.PocNameForSearch, "poc-name", "poc", "", "模糊匹配Poc名称"),
-		flagSet.BoolVarP(&structs.GlobalConfig.NoInteractsh, "no-interactsh", "ni", false, "禁用Interactsh服务器，排除反连模版"),
 		flagSet.IntVarP(&structs.GlobalConfig.GoPocThreads, "golang-poc-threads", "gpt", 50, "GoPoc运行线程"),
 		flagSet.BoolVarP(&structs.GlobalConfig.NoGolangPoc, "no-golang-poc", "ngp", false, "关闭Golang Poc探测"),
 		flagSet.BoolVarP(&structs.GlobalConfig.DisableGeneralPoc, "disable-general-poc", "dgp", false, "禁用无视指纹的漏洞映射"),
 		flagSet.StringVarP(&structs.GlobalConfig.ExcludeTags, "exclude-tags", "et", "", "通过tags排除模版 | 多个tags请用,连接"),
 		flagSet.StringVarP(&structs.GlobalConfig.Severities, "severity", "s", "", "只允许指定严重程度的模板运行 | 多参数用,连接 | 允许的值: "+strings.ReplaceAll(severity.GetSupportedSeverities().String(), " ", "")),
+		flagSet.BoolVarP(&structs.GlobalConfig.NoServiceBruteForce, "no-brute", "nb", false, "禁用服务爆破 | 不包括Shiro Keys"),
+	)
+
+	flagSet.CreateGroup("interact-sh", "反连配置",
+		flagSet.BoolVarP(&structs.GlobalConfig.NoInteractsh, "no-interactsh", "ni", false, "禁用Interactsh服务器，排除反连模版"),
+		flagSet.StringVarP(&structs.GlobalConfig.InteractshURL, "interactsh-server", "iserver", "", "指定Interactsh服务器 | http://xxx.com | 默认使用Nuclei自带的服务"),
+		flagSet.StringVarP(&structs.GlobalConfig.InteractshToken, "interactsh-token", "itoken", "", "Interactsh Token"),
 	)
 
 	flagSet.CreateGroup("config", "配置文件",

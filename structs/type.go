@@ -54,6 +54,7 @@ type Config struct {
 	NucleiTemplate             string
 	ExcludeTags                string
 	Severities                 string
+	NoServiceBruteForce        bool
 	WorkflowYamlPath           string
 	ReportName                 string
 	GoPocThreads               int
@@ -74,6 +75,9 @@ type Config struct {
 	FingerConfigFilePath       string
 	PasswordFile               string
 	Password                   string
+	InteractshURL              string
+	InteractshToken            string
+	NoPortString               string
 }
 
 type CDNResult struct {

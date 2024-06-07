@@ -112,6 +112,7 @@ func workflow() {
 				gologger.Info().Msg("TCP存活探测")
 				common.PortScan = false
 				tcpAliveIPPort := common.PortScanTCP(uncheck, "80,443,3389,445,22",
+					structs.GlobalConfig.NoPortString,
 					structs.GlobalConfig.TCPPortScanTimeout)
 				for _, tIPPort := range tcpAliveIPPort {
 					t := strings.Split(tIPPort, ":")
@@ -139,6 +140,7 @@ func workflow() {
 		} else {
 			common.PortScan = true
 			tmpIPPort = common.PortScanTCP(ips, structs.GlobalConfig.Ports,
+				structs.GlobalConfig.NoPortString,
 				structs.GlobalConfig.TCPPortScanTimeout)
 		}
 
@@ -163,9 +165,8 @@ func workflow() {
 
 	// 获取http响应
 	for hostPort, service := range structs.GlobalIPPortMap {
-		if service == "http" {
+		if strings.Contains(service, "http") {
 			urls = append(urls, "http://"+hostPort)
-		} else if service == "https" {
 			urls = append(urls, "https://"+hostPort)
 		}
 	}
@@ -195,13 +196,21 @@ func workflow() {
 			TargetAndPocsName[url] = []string{}
 		}
 		report.GenerateHTMLReportHeader()
-		callnuclei.CallNuclei(TargetAndPocsName,
-			structs.GlobalConfig.HTTPProxy,
-			report.AddResultByResultEvent,
-			structs.GlobalConfig.PocNameForSearch,
-			structs.GlobalConfig.NoInteractsh,
-			structs.GlobalEmbedPocs, structs.GlobalConfig.NucleiTemplate, strings.Split(structs.GlobalConfig.ExcludeTags, ","),
-			strings.Split(structs.GlobalConfig.Severities, ","))
+
+		param := callnuclei.NucleiParams{
+			TargetAndPocsName: TargetAndPocsName,
+			Proxy:             structs.GlobalConfig.HTTPProxy,
+			CallBack:          report.AddResultByResultEvent,
+			NameForSearch:     structs.GlobalConfig.PocNameForSearch,
+			NoInteractsh:      structs.GlobalConfig.NoInteractsh,
+			Fs:                structs.GlobalEmbedPocs,
+			NP:                structs.GlobalConfig.NucleiTemplate,
+			ExcludeTags:       strings.Split(structs.GlobalConfig.ExcludeTags, ","),
+			Severities:        strings.Split(structs.GlobalConfig.Severities, ","),
+			InteractshServer:  structs.GlobalConfig.InteractshURL,
+			InteractshToken:   structs.GlobalConfig.InteractshToken,
+		}
+		callnuclei.CallNuclei(param)
 		utils.DeleteReportWithNoResult()
 		return
 	}
@@ -244,12 +253,22 @@ func workflow() {
 	var nucleiResults []output.ResultEvent
 	TargetAndPocsName, count := http.GetPocs(structs.WorkFlowDB)
 	if count > 0 {
-		nucleiResults = callnuclei.CallNuclei(TargetAndPocsName,
-			structs.GlobalConfig.HTTPProxy,
-			report.AddResultByResultEvent,
-			"", structs.GlobalConfig.NoInteractsh, structs.GlobalEmbedPocs,
-			structs.GlobalConfig.NucleiTemplate, strings.Split(structs.GlobalConfig.ExcludeTags, ","),
-			strings.Split(structs.GlobalConfig.Severities, ","))
+		param := callnuclei.NucleiParams{
+			TargetAndPocsName: TargetAndPocsName,
+			Proxy:             structs.GlobalConfig.HTTPProxy,
+			CallBack:          report.AddResultByResultEvent,
+			NameForSearch:     "",
+			NoInteractsh:      structs.GlobalConfig.NoInteractsh,
+			Fs:                structs.GlobalEmbedPocs,
+			NP:                structs.GlobalConfig.NucleiTemplate,
+			ExcludeTags:       strings.Split(structs.GlobalConfig.ExcludeTags, ","),
+			Severities:        strings.Split(structs.GlobalConfig.Severities, ","),
+			InteractshServer:  structs.GlobalConfig.InteractshURL,
+			InteractshToken:   structs.GlobalConfig.InteractshToken,
+		}
+
+		nucleiResults = callnuclei.CallNuclei(param)
+
 	}
 
 	// GoPoc引擎

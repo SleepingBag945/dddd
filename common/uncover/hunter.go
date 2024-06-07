@@ -144,6 +144,7 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 
 		if responseJson.Data.Total == 0 {
 			gologger.Error().Msgf("[Hunter] %s 无结果。", keyword)
+			time.Sleep(time.Second * 3)
 			return results, ipResult
 		}
 

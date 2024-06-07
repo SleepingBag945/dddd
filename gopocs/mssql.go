@@ -15,6 +15,9 @@ import (
 var mssqlUserPasswdDict string
 
 func MssqlScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	starttime := time.Now().Unix()
 
 	userPasswdList := sortUserPassword(info, mssqlUserPasswdDict, []string{"mssql", "sqlserver"})

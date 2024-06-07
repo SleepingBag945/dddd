@@ -73,6 +73,10 @@ func TelnetScan(info *structs.HostInfo) (tmperr error) {
 
 		return tmperr
 	}
+
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	var upList []string
 	if structs.GlobalConfig.Password != "" {
 		upList = append(upList, structs.GlobalConfig.Password)

@@ -56,10 +56,25 @@ func ParsePort(ports string) (scanPorts []int) {
 var BackList map[string]struct{}
 var BackListLock sync.Mutex
 
-func PortScanTCP(IPs []string, Ports string, timeout int) []string {
+func PortScanTCP(IPs []string, Ports string, NoPorts string, timeout int) []string {
 	var AliveAddress []string
 	gologger.AuditTimeLogger("开始TCP端口扫描，端口设置: %s\nTCP端口扫描目标:%s", Ports, strings.Join(IPs, ","))
-	probePorts := ParsePort(Ports)
+	ports := ParsePort(Ports)
+	noPorts := ParsePort(NoPorts)
+
+	var probePorts []int
+	for _, port := range ports {
+		ok := false
+		for _, nport := range noPorts {
+			if nport == port {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			probePorts = append(probePorts, port)
+		}
+	}
 
 	IPPortCount := make(map[string]int)
 	BackList = make(map[string]struct{})
@@ -68,8 +83,8 @@ func PortScanTCP(IPs []string, Ports string, timeout int) []string {
 	if workers > len(IPs)*len(probePorts) {
 		workers = len(IPs) * len(probePorts)
 	}
-	Addrs := make(chan Addr, len(IPs)*len(probePorts))
-	results := make(chan string, len(IPs)*len(probePorts))
+	Addrs := make(chan Addr, structs.GlobalConfig.TCPPortScanThreads)
+	results := make(chan string, structs.GlobalConfig.TCPPortScanThreads)
 	var wg sync.WaitGroup
 
 	//接收结果

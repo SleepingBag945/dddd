@@ -15,6 +15,9 @@ import (
 var mysqlUserPasswdDict string
 
 func MysqlScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	starttime := time.Now().Unix()
 
 	userPasswdList := sortUserPassword(info, mysqlUserPasswdDict, []string{"mysql"})

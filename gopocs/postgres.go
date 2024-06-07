@@ -16,6 +16,9 @@ import (
 var postgreSQLUserPasswdDict string
 
 func PostgresScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
 	starttime := time.Now().Unix()
 	defer gologger.AuditTimeLogger("[Go] [PostgreSQL] PostgresScan return! %s:%v", info.Host, info.Ports)
 

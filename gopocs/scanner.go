@@ -36,6 +36,11 @@ func AddScan(scantype string, info structs.HostInfo, ch *chan struct{}, wg *sync
 }
 
 func ScanFunc(name *string, info *structs.HostInfo) {
+	defer func() {
+		if err := recover(); err != nil {
+			gologger.Error().Msgf("[-] %v:%v %v error: %v\n", info.Host, info.Ports, name, err)
+		}
+	}()
 	f := reflect.ValueOf(PluginList[*name])
 	in := []reflect.Value{reflect.ValueOf(info)}
 	f.Call(in)
@@ -94,11 +99,15 @@ func GoPocsDispatcher(nucleiResults []output.ResultEvent) {
 				&ch, &wg)
 		}
 		if protocol == "rdp" || port == "3389" {
+			if structs.GlobalConfig.NoServiceBruteForce {
+				continue
+			}
 			AddScan("RDP-Crack",
 				structs.HostInfo{Host: host, Ports: port},
 				&ch, &wg)
 		}
 		if protocol == "redis" || port == "6379" {
+			// 有未授权检测
 			AddScan("Redis-Crack",
 				structs.HostInfo{Host: host, Ports: port},
 				&ch, &wg)

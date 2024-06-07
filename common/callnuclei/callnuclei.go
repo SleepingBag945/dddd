@@ -28,23 +28,29 @@ var (
 	options    = &types.Options{}
 )
 
-func CallNuclei(TargetAndPocsName map[string][]string,
-	proxy string,
-	callBack func(result output.ResultEvent),
-	nameForSearch string,
-	NoInteractsh bool,
-	fs embed.FS,
-	np string,
-	excludeTags []string,
-	severities []string) []output.ResultEvent {
+type NucleiParams struct {
+	TargetAndPocsName map[string][]string
+	Proxy             string
+	CallBack          func(result output.ResultEvent)
+	NameForSearch     string
+	NoInteractsh      bool
+	Fs                embed.FS
+	NP                string
+	ExcludeTags       []string
+	Severities        []string
+	InteractshServer  string
+	InteractshToken   string
+}
+
+func CallNuclei(param NucleiParams) []output.ResultEvent {
 
 	// 设置结果回调
-	output.AddResultCallback = callBack
+	output.AddResultCallback = param.CallBack
 	if err := exportrunner.ExportRunnerConfigureOptions(); err != nil {
 		gologger.Fatal().Msgf("Could not initialize options: %s\n", err)
 	}
 
-	readConfig(TargetAndPocsName, proxy, nameForSearch, NoInteractsh, np, excludeTags)
+	readConfig(param)
 	// configPath, _ := flagSet.GetConfigFilePath()
 
 	if options.ListDslSignatures {
@@ -81,8 +87,8 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 		return []output.ResultEvent{}
 	}
 
-	nucleiRunner.EmbedPocsFS = fs
-	nucleiRunner.EnableSeverities = severities
+	nucleiRunner.EmbedPocsFS = param.Fs
+	nucleiRunner.EnableSeverities = param.Severities
 
 	// Setup graceful exits
 	resumeFileName := types.DefaultResumeFilePath()
@@ -97,7 +103,7 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 		}
 	}()
 
-	if err := nucleiRunner.RunEnumeration(TargetAndPocsName); err != nil {
+	if err := nucleiRunner.RunEnumeration(param.TargetAndPocsName); err != nil {
 		if options.Validate {
 			gologger.Fatal().Msgf("Could not validate templates: %s\n", err)
 		} else {
@@ -112,19 +118,14 @@ func CallNuclei(TargetAndPocsName map[string][]string,
 	return output.Results
 }
 
-func readConfig(TargetAndPocsName map[string][]string,
-	proxy string,
-	nameForSearch string,
-	NoInteractsh bool,
-	np string,
-	excludeTags []string) {
+func readConfig(param NucleiParams) {
 
 	pwd, _ := os.Getwd()
 
 	// target URLs/hosts to scan
 	// 扫描目标
 	var targets []string
-	for k, _ := range TargetAndPocsName {
+	for k, _ := range param.TargetAndPocsName {
 		targets = append(targets, k)
 	}
 	options.Targets = targets
@@ -166,12 +167,12 @@ func readConfig(TargetAndPocsName map[string][]string,
 	// 不嵌入可执行文件是为了方便增删poc。
 	// dddd v2.0开始默认支持内嵌，此文件夹内的pocs做补充处理
 
-	if strings.HasPrefix(np, "/") || np[1] == ':' {
+	if strings.HasPrefix(param.NP, "/") || param.NP[1] == ':' {
 		// unix绝对路径，windows绝对路径
-		options.Templates = []string{np}
+		options.Templates = []string{param.NP}
 	} else {
 		// 相对路径转绝对路径
-		options.Templates = []string{pwd + "/" + np}
+		options.Templates = []string{pwd + "/" + param.NP}
 	}
 
 	// list of template urls to run (comma-separated, file)
@@ -216,7 +217,7 @@ func readConfig(TargetAndPocsName map[string][]string,
 
 	// templates to exclude based on tags (comma-separated, file)
 	// 排除执行带有标记的模板（逗号分隔，文件）
-	options.ExcludeTags = excludeTags
+	options.ExcludeTags = param.ExcludeTags
 
 	// tags to be executed even if they are excluded either by default or configuration
 	// 执行默认或者配置排除的标记模板
@@ -395,10 +396,10 @@ func readConfig(TargetAndPocsName map[string][]string,
 	options.TlsImpersonate = false
 
 	// 使用interactsh反连检测平台（默认为oast.pro,oast.live,oast.site,oast.online,oast.fun,oast.me）
-	options.InteractshURL = ""
+	options.InteractshURL = param.InteractshServer
 
 	// 指定反连检测平台的身份凭证
-	options.InteractshToken = ""
+	options.InteractshToken = param.InteractshToken
 
 	// 指定保存在交互缓存中的请求数（默认：5000）
 	options.InteractionsCacheSize = 5000
@@ -413,7 +414,7 @@ func readConfig(TargetAndPocsName map[string][]string,
 	options.InteractionsCoolDownPeriod = 5
 
 	// 禁用反连检测平台，同时排除基于反连检测的模板
-	options.NoInteractsh = NoInteractsh
+	options.NoInteractsh = param.NoInteractsh
 
 	// overrides fuzzing type set in template (replace, prefix, postfix, infix)
 	// 覆盖模板中设置的模糊类型(替换、前缀、后缀、中缀)
@@ -497,10 +498,10 @@ func readConfig(TargetAndPocsName map[string][]string,
 	// 显示所有响应
 	options.DebugResponse = false
 	// 使用http/socks5代理（逗号分隔，文件）
-	if proxy == "" {
+	if param.Proxy == "" {
 		options.Proxy = nil
 	} else {
-		options.Proxy = []string{proxy}
+		options.Proxy = []string{param.Proxy}
 	}
 	// 代理所有请求
 	options.ProxyInternal = false
@@ -557,7 +558,7 @@ func readConfig(TargetAndPocsName map[string][]string,
 
 	options.SignTemplates = false
 
-	options.PocNameForSearch = nameForSearch
+	options.PocNameForSearch = param.NameForSearch
 
 	gologger.DefaultLogger.SetTimestamp(options.Timestamp, levels.LevelDebug)
 

@@ -25,6 +25,10 @@ func RedisScan(info *structs.HostInfo) (tmperr error) {
 		return errA
 	}
 
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return errA
+	}
+
 	var upList []string
 
 	if structs.GlobalConfig.Password != "" {

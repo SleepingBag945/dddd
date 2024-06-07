@@ -16,6 +16,10 @@ import (
 var sshUserPasswdDict string
 
 func SshScan(info *structs.HostInfo) (tmperr error) {
+	if structs.GlobalConfig.NoServiceBruteForce {
+		return
+	}
+
 	starttime := time.Now().Unix()
 	gologger.AuditTimeLogger("[Go] [SSH-Brute] start try %s:%v", info.Host, info.Ports)
 	defer gologger.AuditTimeLogger("[Go] [SSH-Brute] SshScan return %s:%v", info.Host, info.Ports)
