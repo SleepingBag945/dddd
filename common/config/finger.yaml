@@ -3968,7 +3968,6 @@ D_Link-DSL-2650U:
   - body="/ClientBin/Kingdee.BOS.XPF.App.xap"
   - title="金蝶云星空"
   - body="window.location='/k3cloud/html5/index.aspx"
-  - body="/K3Cloud"
   - body="kdUtils.min.js"
   - '(title="K/3 Cloud" && body="金蝶国际软件集团有限公司版权所有") || body="var formidafterlogin = ''\"BOS_MainConsoleSutra\"" || body="class=\"kd-div-loading-ct\""'
 KONKA-TV-2969:
