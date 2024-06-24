@@ -45,7 +45,10 @@ func AuditTimeLogger(format string, args ...interface{}) {
 	if !Audit {
 		return
 	}
-	loc, _ := time.LoadLocation("Asia/Shanghai")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		loc = time.FixedZone("CST", 8*3600) // 如果加载失败，设置一个固定的时区，这里设置的是CST（China Standard Time），偏移量为8小时（8*3600秒）
+	}
 	currentTime := time.Now().In(loc).String()
 	message := fmt.Sprintf(format, args...)
 	WriteFile("[ "+currentTime+" ] "+message, AuditLogFileName)
