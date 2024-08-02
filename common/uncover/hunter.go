@@ -8,11 +8,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/projectdiscovery/gologger"
-	"github.com/projectdiscovery/httpx/common/hashes"
-	"github.com/projectdiscovery/retryablehttp-go"
-	"github.com/projectdiscovery/subfinder/v2/pkg/passive"
-	"gopkg.in/yaml.v3"
 	"io"
 	"math/rand"
 	"net/http"
@@ -20,6 +15,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/projectdiscovery/gologger"
+	"github.com/projectdiscovery/httpx/common/hashes"
+	"github.com/projectdiscovery/retryablehttp-go"
+	"github.com/projectdiscovery/subfinder/v2/pkg/passive"
+	"gopkg.in/yaml.v3"
 )
 
 type HunterResp struct {
@@ -75,6 +76,22 @@ func getHunterKeys() []string {
 	return apiKeys
 }
 
+func keywordWriteFile(result string) {
+	var filename = "icp_no_result.txt"
+
+	var text = []byte(result + "\n")
+	fl, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Printf("Open %s error, %v\n", filename, err)
+		return
+	}
+	_, err = fl.Write(text)
+	fl.Close()
+	if err != nil {
+		fmt.Printf("Write %s error, %v\n", filename, err)
+	}
+}
+
 // SearchHunter 从Hunter中搜索目标
 func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string, []string) {
 	opts := retryablehttp.DefaultOptionsSpraying
@@ -101,7 +118,8 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 		q.Add("api-key", randKey)
 		q.Add("page", fmt.Sprintf("%d", page))
 		q.Add("page_size", fmt.Sprintf("%d", pageSize))
-		q.Add("is_web", "3")
+		q.Add("is_web", "1")
+		q.Add("port_filter", "true")
 		req.URL.RawQuery = q.Encode()
 
 		resp, errDo := client.Do(req)
@@ -144,6 +162,8 @@ func SearchHunterCore(keyword string, pageSize int, maxQueryPage int) ([]string,
 
 		if responseJson.Data.Total == 0 {
 			gologger.Error().Msgf("[Hunter] %s 无结果。", keyword)
+			// 写入无结果的keyword
+			keywordWriteFile(keyword)
 			time.Sleep(time.Second * 3)
 			return results, ipResult
 		}
